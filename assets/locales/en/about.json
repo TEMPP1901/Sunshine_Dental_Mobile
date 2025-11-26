@@ -1,0 +1,20 @@
+{
+  "title": "About Us",
+  "cardAboutUs": {
+    "title": "About Us",
+    "description": "We are a professional dental care center dedicated to providing the best oral health services."
+  },
+  "ourMission": {
+    "title": "Our Mission",
+    "description": "To provide exceptional dental care with the latest technology and a team of experienced professionals."
+  },
+  "featuredDoctors": {
+    "title": "Featured Doctors",
+    "description": "Meet our team of expert dentists"
+  },
+  "valuesAndCta": {
+    "title": "Our Values",
+    "description": "Excellence, Care, Innovation"
+  }
+}
+

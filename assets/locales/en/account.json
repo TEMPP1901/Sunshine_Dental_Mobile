@@ -1,0 +1,41 @@
+{
+  "title": "My Account",
+  "changePassword": {
+    "title": "Change Password",
+    "subtitle": "Update your account password",
+    "currentPassword": "Current password",
+    "newPassword": "New password",
+    "confirmPassword": "Confirm new password",
+    "updatePassword": "Update Password",
+    "errors": {
+      "fillAll": "Please fill in all fields.",
+      "passwordMismatch": "Passwords do not match.",
+      "passwordDifferent": "New password must be different from current.",
+      "passwordRule": "Password must be 8-100 chars, include upper, lower, digit, special char, and no spaces."
+    },
+    "success": "Password changed successfully."
+  },
+  "myAccount": {
+    "title": "My Account",
+    "fullName": "Full Name",
+    "email": "Email",
+    "phone": "Phone",
+    "username": "Username",
+    "saveChanges": "Save Changes",
+    "chooseAvatar": "Choose your avatar",
+    "avatarTitle": "Profile Picture",
+    "validation": {
+      "fullName": "Please enter your full name.",
+      "email": "Please enter your email.",
+      "emailFormat": "Please enter a valid email address."
+    },
+    "uploadAvatar": {
+      "button": "Upload Avatar",
+      "success": "Avatar updated successfully!",
+      "failed": "Failed to update avatar"
+    },
+    "success": "Profile updated successfully!",
+    "failed": "Failed to update profile"
+  }
+}
+

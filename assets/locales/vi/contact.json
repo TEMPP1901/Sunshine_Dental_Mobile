@@ -1,0 +1,29 @@
+{
+  "title": "Liên hệ",
+  "subtitle": "Hãy liên hệ với chúng tôi hoặc đến địa chỉ của chúng tôi.",
+  "infoCards": {
+    "callUs": {
+      "title": "Gọi cho chúng tôi",
+      "desc": "(123) 456-7880"
+    },
+    "emailUs": {
+      "title": "Email",
+      "desc": "info@example.com"
+    },
+    "location": {
+      "title": "Địa chỉ",
+      "desc": "123 Đường Chính, Thành phố, Tỉnh 12345"
+    },
+    "officeHours": {
+      "title": "Giờ làm việc",
+      "desc": "Thứ 2 – Thứ 6. 8:00–17:00"
+    }
+  },
+  "form": {
+    "name": "Tên",
+    "email": "Email",
+    "message": "Tin nhắn",
+    "sendMessage": "Gửi tin nhắn"
+  }
+}
+

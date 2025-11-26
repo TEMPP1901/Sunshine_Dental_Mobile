@@ -1,0 +1,26 @@
+{
+  "welcomeBack": "Chào mừng trở lại",
+  "formTitle": "Đăng nhập tài khoản",
+  "subtitle": "Đăng nhập để tận hưởng trải nghiệm y tế tốt nhất",
+  "email": "Email",
+  "password": "Mật khẩu",
+  "rememberMe": "Ghi nhớ tôi",
+  "forgotPassword": "Quên mật khẩu?",
+  "loginNow": "Đăng nhập",
+  "loggingIn": "Đang đăng nhập...",
+  "loginSuccess": "Đăng nhập thành công! Đang chuyển trang...",
+  "loginFailed": "Đăng nhập thất bại.",
+  "connectionTimeout": "Hết thời gian kết nối. Vui lòng kiểm tra kết nối internet.",
+  "connectionError": "Không thể kết nối đến server. Vui lòng kiểm tra xem backend có đang chạy không.",
+  "serverError": "Lỗi server ({code}). Vui lòng thử lại.",
+  "fillAll": "Vui lòng nhập đầy đủ thông tin.",
+  "errors": {
+    "invalidEmail": "Vui lòng nhập địa chỉ email hợp lệ."
+  },
+  "orLoginWith": "Hoặc đăng nhập bằng",
+  "google": "Google",
+  "apple": "Apple",
+  "noAccount": "Chưa có tài khoản?",
+  "signUp": "Đăng ký"
+}
+

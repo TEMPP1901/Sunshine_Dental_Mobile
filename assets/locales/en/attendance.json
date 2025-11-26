@@ -1,0 +1,70 @@
+{
+  "title": "Attendance",
+  "toast": {
+    "profileLoadFailed": "Unable to load your profile",
+    "loadFailed": "Unable to load attendance",
+    "permissionDenied": "Wi-Fi permission denied. Please allow access to verify your network.",
+    "captureCancelled": "Face capture cancelled.",
+    "embeddingFailed": "Unable to generate face embedding. Please try again.",
+    "clinicNotFound": "No clinic assignment found for today.",
+    "checkInSuccess": "Clock in successful.",
+    "checkOutSuccess": "Clock out successful.",
+    "noAttendance": "You have not checked in yet.",
+    "noAttendanceToCheckOut": "No shift available to check out."
+  },
+  "selectShift": {
+    "title": "Select shift to check out"
+  },
+  "dialog": {
+    "title": "{action} requires setup",
+    "message": "Face verification and WiFi validation must be integrated before attendance actions can be performed from the mobile app. Please coordinate with the backend team to provide the necessary biometric data, WiFi configuration, and clinic mapping.",
+    "confirm": "Understood"
+  },
+  "summary": {
+    "today": "Today",
+    "checkIn": "Check In",
+    "checkOut": "Check Out",
+    "status": "Status: {status}",
+    "unknown": "N/A"
+  },
+  "tab": {
+    "today": "Today",
+    "monthly": "This Month"
+  },
+  "monthly": {
+    "title": "Monthly Attendance",
+    "noData": "No attendance records found for this month."
+  },
+  "status": {
+    "verified": "Face verified",
+    "faceFailed": "Face verification failed",
+    "unknown": "Not verified",
+    "wifiValid": "Wi-Fi verified",
+    "wifiInvalid": "Wi-Fi mismatch"
+  },
+  "actions": {
+    "signIn": "Sign In",
+    "clockIn": "Clock In",
+    "clockOut": "Clock Out"
+  },
+  "info": {
+    "note": "Attendance requires verified face data and clinic WiFi configuration. If you need to register or update your biometric profile, please contact HR."
+  },
+  "explanation": {
+    "title": "Attendance Explanations Required",
+    "typeLate": "Late Arrival",
+    "typeAbsent": "Absent",
+    "typeMissingCheckIn": "Missing Check-In",
+    "typeMissingCheckOut": "Missing Check-Out",
+    "date": "Date: {date}",
+    "attendanceStatus": "Status: {status}",
+    "submitButton": "Submit Explanation",
+    "dialogTitle": "Submit Explanation",
+    "reasonLabel": "Reason",
+    "reasonHint": "Please explain why...",
+    "submitSuccess": "Explanation submitted successfully",
+    "submitFailed": "Failed to submit explanation",
+    "invalidData": "Invalid explanation data"
+  }
+}
+

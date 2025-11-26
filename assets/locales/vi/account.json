@@ -1,0 +1,41 @@
+{
+  "title": "Tài khoản của tôi",
+  "changePassword": {
+    "title": "Đổi mật khẩu",
+    "subtitle": "Cập nhật mật khẩu tài khoản",
+    "currentPassword": "Mật khẩu hiện tại",
+    "newPassword": "Mật khẩu mới",
+    "confirmPassword": "Xác nhận mật khẩu mới",
+    "updatePassword": "Cập nhật mật khẩu",
+    "errors": {
+      "fillAll": "Vui lòng nhập đầy đủ thông tin.",
+      "passwordMismatch": "Mật khẩu không khớp.",
+      "passwordDifferent": "Mật khẩu mới phải khác mật khẩu hiện tại.",
+      "passwordRule": "Mật khẩu phải có 8-100 ký tự, bao gồm chữ hoa, chữ thường, số, ký tự đặc biệt và không có khoảng trắng."
+    },
+    "success": "Đổi mật khẩu thành công."
+  },
+  "myAccount": {
+    "title": "Tài khoản của tôi",
+    "fullName": "Họ và tên",
+    "email": "Email",
+    "phone": "Số điện thoại",
+    "username": "Tên đăng nhập",
+    "saveChanges": "Lưu thay đổi",
+    "chooseAvatar": "Chọn ảnh đại diện",
+    "avatarTitle": "Ảnh đại diện",
+    "validation": {
+      "fullName": "Vui lòng nhập họ và tên.",
+      "email": "Vui lòng nhập email.",
+      "emailFormat": "Email không đúng định dạng."
+    },
+    "uploadAvatar": {
+      "button": "Tải ảnh đại diện",
+      "success": "Cập nhật ảnh đại diện thành công!",
+      "failed": "Cập nhật ảnh đại diện thất bại"
+    },
+    "success": "Cập nhật hồ sơ thành công!",
+    "failed": "Cập nhật hồ sơ thất bại"
+  }
+}
+

@@ -1,0 +1,41 @@
+{
+  "title": "Hồ sơ",
+  "toast": {
+    "loadFailed": "Không tải được thông tin hồ sơ",
+    "logoutSuccess": "Đăng xuất thành công"
+  },
+  "signInPrompt": "Bạn cần đăng nhập để xem hồ sơ của mình.",
+  "guest": "Khách",
+  "myAccountSubtitle": "Xem và cập nhật thông tin cá nhân",
+  "changePassword": {
+    "title": "Đổi mật khẩu",
+    "subtitle": "Cập nhật mật khẩu tài khoản"
+  },
+  "actions": {
+    "signIn": "Đăng nhập",
+    "openAttendance": "Mở chấm công",
+    "logout": "Đăng xuất",
+    "logoutConfirm": "Bạn có chắc chắn muốn đăng xuất?"
+  },
+  "attendanceCard": {
+    "title": "Chấm công",
+    "currentTime": "Thời gian hiện tại"
+  },
+  "info": {
+    "phone": "Số điện thoại",
+    "username": "Tên đăng nhập",
+    "roles": "Vai trò",
+    "noPhone": "Chưa cung cấp",
+    "noUsername": "Chưa cung cấp"
+  },
+  "settings": "Cài đặt",
+  "theme": {
+    "title": "Giao diện",
+    "light": "Sáng",
+    "dark": "Tối"
+  },
+  "language": {
+    "title": "Ngôn ngữ"
+  }
+}
+

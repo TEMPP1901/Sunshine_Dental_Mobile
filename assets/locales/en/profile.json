@@ -1,0 +1,41 @@
+{
+  "title": "Profile",
+  "toast": {
+    "loadFailed": "Failed to load user profile",
+    "logoutSuccess": "Logged out successfully"
+  },
+  "signInPrompt": "You need to sign in to view your profile.",
+  "guest": "Guest User",
+  "myAccountSubtitle": "View and update your personal details",
+  "changePassword": {
+    "title": "Change Password",
+    "subtitle": "Update your account password"
+  },
+  "actions": {
+    "signIn": "Sign In",
+    "openAttendance": "Open Attendance",
+    "logout": "Logout",
+    "logoutConfirm": "Are you sure you want to logout?"
+  },
+  "attendanceCard": {
+    "title": "Attendance",
+    "currentTime": "Current Time"
+  },
+  "info": {
+    "phone": "Phone",
+    "username": "Username",
+    "roles": "Roles",
+    "noPhone": "Not provided",
+    "noUsername": "Not provided"
+  },
+  "settings": "Settings",
+  "theme": {
+    "title": "Theme",
+    "light": "Light Mode",
+    "dark": "Dark Mode"
+  },
+  "language": {
+    "title": "Language"
+  }
+}
+

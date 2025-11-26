@@ -1,0 +1,26 @@
+{
+  "welcomeBack": "Welcome back",
+  "formTitle": "Log in to your account",
+  "subtitle": "Sign in to enjoy the best medical experience",
+  "email": "Email",
+  "password": "Password",
+  "rememberMe": "Remember me",
+  "forgotPassword": "Forgot Password?",
+  "loginNow": "Log in",
+  "loggingIn": "Logging in...",
+  "loginSuccess": "Login successful! Redirecting...",
+  "loginFailed": "Login failed.",
+  "connectionTimeout": "Connection timeout. Please check your internet connection.",
+  "connectionError": "Cannot connect to server. Please check if the backend is running.",
+  "serverError": "Server error ({code}). Please try again.",
+  "fillAll": "Please fill in all fields.",
+  "errors": {
+    "invalidEmail": "Please enter a valid email address."
+  },
+  "orLoginWith": "Or login with",
+  "google": "Google",
+  "apple": "Apple",
+  "noAccount": "Don't have an account?",
+  "signUp": "Sign up"
+}
+

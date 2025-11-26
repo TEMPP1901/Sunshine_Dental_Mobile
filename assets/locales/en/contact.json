@@ -1,0 +1,29 @@
+{
+  "title": "Contact Us",
+  "subtitle": "Get in touch with us or reach our location.",
+  "infoCards": {
+    "callUs": {
+      "title": "Call Us",
+      "desc": "(123) 456-7880"
+    },
+    "emailUs": {
+      "title": "Email Us",
+      "desc": "info@example.com"
+    },
+    "location": {
+      "title": "Location",
+      "desc": "123 Main Street, City, State 12345"
+    },
+    "officeHours": {
+      "title": "Office Hours",
+      "desc": "Mon – Fri. 8am–5pm"
+    }
+  },
+  "form": {
+    "name": "Name",
+    "email": "Email",
+    "message": "Message",
+    "sendMessage": "Send Message"
+  }
+}
+

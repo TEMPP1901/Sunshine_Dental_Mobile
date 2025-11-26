@@ -1,0 +1,70 @@
+{
+  "title": "Chấm công",
+  "toast": {
+    "profileLoadFailed": "Không tải được thông tin hồ sơ",
+    "loadFailed": "Không tải được dữ liệu chấm công",
+    "permissionDenied": "Bạn đã từ chối quyền truy cập Wi-Fi. Vui lòng cho phép để xác thực mạng.",
+    "captureCancelled": "Bạn đã hủy chụp khuôn mặt.",
+    "embeddingFailed": "Không thể tạo embedding khuôn mặt. Vui lòng thử lại.",
+    "clinicNotFound": "Không tìm thấy phân công phòng khám cho hôm nay.",
+    "checkInSuccess": "Chấm công vào thành công.",
+    "checkOutSuccess": "Chấm công ra thành công.",
+    "noAttendance": "Bạn chưa chấm công vào ngày hôm nay.",
+    "noAttendanceToCheckOut": "Không có ca nào để chấm công ra."
+  },
+  "selectShift": {
+    "title": "Chọn ca để chấm công ra"
+  },
+  "dialog": {
+    "title": "{action} cần được thiết lập",
+    "message": "Cần tích hợp xác thực khuôn mặt và kiểm tra WiFi trước khi thực hiện chấm công trên ứng dụng. Vui lòng phối hợp với bộ phận backend để cung cấp dữ liệu sinh trắc học, cấu hình WiFi và thông tin phòng khám.",
+    "confirm": "Tôi đã hiểu"
+  },
+  "summary": {
+    "today": "Hôm nay",
+    "checkIn": "Giờ vào",
+    "checkOut": "Giờ ra",
+    "status": "Trạng thái: {status}",
+    "unknown": "Không xác định"
+  },
+  "tab": {
+    "today": "Hôm nay",
+    "monthly": "Tháng này"
+  },
+  "monthly": {
+    "title": "Chấm công theo tháng",
+    "noData": "Không có dữ liệu chấm công trong tháng này."
+  },
+  "status": {
+    "verified": "Đã xác thực khuôn mặt",
+    "faceFailed": "Xác thực khuôn mặt thất bại",
+    "unknown": "Chưa xác thực",
+    "wifiValid": "Wi-Fi hợp lệ",
+    "wifiInvalid": "Wi-Fi không khớp"
+  },
+  "actions": {
+    "signIn": "Đăng nhập",
+    "clockIn": "Chấm công vào",
+    "clockOut": "Chấm công ra"
+  },
+  "info": {
+    "note": "Việc chấm công yêu cầu dữ liệu khuôn mặt đã xác thực và cấu hình WiFi của phòng khám. Nếu bạn cần đăng ký hoặc cập nhật hồ sơ sinh trắc học, vui lòng liên hệ bộ phận nhân sự."
+  },
+  "explanation": {
+    "title": "Cần giải trình chấm công",
+    "typeLate": "Đi trễ",
+    "typeAbsent": "Vắng mặt",
+    "typeMissingCheckIn": "Thiếu chấm công vào",
+    "typeMissingCheckOut": "Thiếu chấm công ra",
+    "date": "Ngày: {date}",
+    "attendanceStatus": "Trạng thái: {status}",
+    "submitButton": "Gửi giải trình",
+    "dialogTitle": "Gửi giải trình",
+    "reasonLabel": "Lý do",
+    "reasonHint": "Vui lòng giải thích lý do...",
+    "submitSuccess": "Gửi giải trình thành công",
+    "submitFailed": "Gửi giải trình thất bại",
+    "invalidData": "Dữ liệu giải trình không hợp lệ"
+  }
+}
+

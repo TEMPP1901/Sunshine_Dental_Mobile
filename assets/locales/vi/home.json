@@ -1,0 +1,40 @@
+{
+  "greeting": "Chào mừng bạn trở lại",
+  "promo": {
+    "heading": "Chăm sóc nha khoa toàn diện tại một nơi",
+    "subtitle": "Đặt lịch với đội ngũ bác sĩ đáng tin cậy",
+    "button": "Đặt lịch ngay"
+  },
+  "section": {
+    "services": "Dịch vụ phổ biến",
+    "availableDoctor": "Bác sĩ của chúng tôi",
+    "medicalRecord": "Hồ sơ điều trị"
+  },
+  "record": {
+    "hasTreatment": "Đã điều trị",
+    "recommended": "Khuyến nghị thêm",
+    "summary": "Theo dõi tiến trình điều trị và lời khuyên từ nha sĩ.",
+    "viewDetails": "Xem chi tiết"
+  },
+  "doctor": {
+    "empty": "Chưa có lịch bác sĩ.",
+    "error": "Không thể tải thông tin bác sĩ.",
+    "booking": "Đặt lịch hẹn",
+    "bookingWith": "Đặt lịch với {{name}}",
+    "bookingNote": "Bạn sẽ được chuyển đến trang đặt lịch để chọn ngày và giờ.",
+    "bookingRedirect": "Đang chuyển đến trang đặt lịch...",
+    "confirmBooking": "Tiếp tục"
+  },
+  "nav": {
+    "home": "Trang chủ",
+    "schedule": "Lịch hẹn",
+    "chat": "Trò chuyện",
+    "history": "Lịch sử",
+    "profile": "Hồ sơ"
+  },
+  "trustedBy": {
+    "heading": "Được tin tưởng bởi",
+    "logoAlt": "Logo đối tác {{index}}"
+  }
+}
+

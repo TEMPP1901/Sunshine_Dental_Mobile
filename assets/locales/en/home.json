@@ -1,0 +1,40 @@
+{
+  "greeting": "Welcome back",
+  "promo": {
+    "heading": "Comprehensive dental care in one place",
+    "subtitle": "Book your appointment with our trusted specialists",
+    "button": "Book Appointment"
+  },
+  "section": {
+    "services": "Popular Services",
+    "availableDoctor": "Our Doctors",
+    "medicalRecord": "Medical Record"
+  },
+  "record": {
+    "hasTreatment": "Completed treatments",
+    "recommended": "Recommended care",
+    "summary": "Keep track of your treatment progress and recommendations from our dentists.",
+    "viewDetails": "View Details"
+  },
+  "doctor": {
+    "empty": "Doctor schedule is not available yet.",
+    "error": "Unable to load doctor information.",
+    "booking": "Book Appointment",
+    "bookingWith": "Book appointment with {{name}}",
+    "bookingNote": "You will be redirected to the booking page to select date and time.",
+    "bookingRedirect": "Redirecting to booking page...",
+    "confirmBooking": "Continue"
+  },
+  "nav": {
+    "home": "Home",
+    "schedule": "Schedule",
+    "chat": "Chat",
+    "history": "History",
+    "profile": "Profile"
+  },
+  "trustedBy": {
+    "heading": "Trusted By",
+    "logoAlt": "Trusted Logo {{index}}"
+  }
+}
+
