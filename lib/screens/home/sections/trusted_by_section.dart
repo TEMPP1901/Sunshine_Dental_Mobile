@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 
+// Widget hiển thị danh sách logo các đối tác tin cậy, có hiệu ứng chạy lặp lại
 class TrustedBySection extends StatefulWidget {
   const TrustedBySection({super.key});
 
@@ -13,6 +14,7 @@ class _TrustedBySectionState extends State<TrustedBySection>
   late AnimationController _controller;
   late Animation<double> _animation;
 
+  // Khởi tạo hiệu ứng AnimationController & Animation cho việc trượt logo liên tục
   @override
   void initState() {
     super.initState();
@@ -23,12 +25,14 @@ class _TrustedBySectionState extends State<TrustedBySection>
     _animation = Tween<double>(begin: 0, end: 1).animate(_controller);
   }
 
+  // Thu hồi bộ điều khiển hiệu ứng khi widget bị huỷ
   @override
   void dispose() {
     _controller.dispose();
     super.dispose();
   }
 
+  // Xây dựng giao diện: hiển thị tiêu đề và danh sách logo đối tác
   @override
   Widget build(BuildContext context) {
     final isMobile = MediaQuery.of(context).size.width < 768;
@@ -49,7 +53,7 @@ class _TrustedBySectionState extends State<TrustedBySection>
         child: Column(
           children: [
             Text(
-              tr('home.trustedBy.heading'),
+              'Trusted by our valued partners',
               style: TextStyle(
                 fontSize: isMobile ? 20 : 24,
                 fontWeight: FontWeight.bold,
@@ -64,7 +68,8 @@ class _TrustedBySectionState extends State<TrustedBySection>
                 child: AnimatedBuilder(
                   animation: _animation,
                   builder: (context, child) {
-                    final double offset = _animation.value * -1200; // Adjust based on logo width + gap
+                    // Tính toán vị trí trượt của dãy logo dựa theo _animation
+                    final double offset = _animation.value * -1200;
                     return Stack(
                       children: [
                         Positioned(
@@ -98,7 +103,7 @@ class _TrustedBySectionState extends State<TrustedBySection>
                                   ),
                                 ),
                               )),
-                              // Duplicate for seamless loop
+                              // Lặp lại logo để tạo hiệu ứng seamless
                               ...logos.map((logo) => Container(
                                 width: 120,
                                 margin: const EdgeInsets.symmetric(horizontal: 48),

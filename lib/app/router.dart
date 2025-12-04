@@ -10,6 +10,10 @@ import '../screens/splash/splash_page.dart';
 import '../screens/onboarding/onboarding_page.dart';
 import '../screens/profile/profile_page.dart';
 import '../screens/attendance/attendance_page.dart';
+import '../screens/leave_request/leave_request_list_page.dart';
+import '../screens/leave_request/create_leave_request_page.dart';
+import '../screens/notification/notification_screen.dart';
+import '../screens/home/sections/my_schedule_page.dart';
 
 final appRouter = GoRouter(
   initialLocation: '/',
@@ -92,6 +96,38 @@ final appRouter = GoRouter(
         context,
         state,
         const AttendancePage(),
+      ),
+    ),
+    GoRoute(
+      path: '/leave-request',
+      pageBuilder: (context, state) => _buildPageWithTransition(
+        context,
+        state,
+        const LeaveRequestListPage(),
+      ),
+    ),
+    GoRoute(
+      path: '/leave-request/create',
+      pageBuilder: (context, state) => _buildPageWithTransition(
+        context,
+        state,
+        const CreateLeaveRequestPage(),
+      ),
+    ),
+    GoRoute(
+      path: '/notifications',
+      pageBuilder: (context, state) => _buildPageWithTransition(
+        context,
+        state,
+        const NotificationScreen(),
+      ),
+    ),
+    GoRoute(
+      path: '/schedule',
+      pageBuilder: (context, state) => _buildPageWithTransition(
+        context,
+        state,
+        const MySchedulePage(),
       ),
     ),
   ],

@@ -28,6 +28,7 @@
     "noPhone": "Not provided",
     "noUsername": "Not provided"
   },
+  "accountSettings": "Account Settings",
   "settings": "Settings",
   "theme": {
     "title": "Theme",

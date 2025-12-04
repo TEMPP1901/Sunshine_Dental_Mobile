@@ -8,53 +8,152 @@ import 'package:intl/intl.dart';
 
 import '../../providers/user_provider.dart';
 import '../../services/api_service.dart';
+import '../../services/notification_service.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    
-    return PopScope(
-      canPop: context.canPop(),
-      child: Scaffold(
-        backgroundColor: colorScheme.surfaceContainerLow, // Nền chính nhẹ nhàng
+    try {
+      final colorScheme = Theme.of(context).colorScheme;
+      final isDark = Theme.of(context).brightness == Brightness.dark;
+      
+      debugPrint(' [HomePage] Building with isDark: $isDark');
+      debugPrint(' [HomePage] Background color: ${colorScheme.surfaceContainerLow}');
+      
+      return Scaffold(
+        backgroundColor: isDark 
+            ? const Color(0xFF1E1E1E)
+            : colorScheme.surfaceContainerLow,
         body: SafeArea(
           child: Stack(
             children: [
               SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(24, 16, 24, 120), // Tăng padding ngang
+                padding: const EdgeInsets.fromLTRB(24, 16, 24, 120),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _HeaderSection(), // Không cần truyền theme
+                    Builder(
+                      builder: (context) {
+                        debugPrint(' [HomePage] Building _HeaderSection');
+                        try {
+                          return _HeaderSection();
+                        } catch (e, stackTrace) {
+                          debugPrint(' [HomePage] Error in _HeaderSection: $e');
+                          return Container(
+                            padding: const EdgeInsets.all(16),
+                            child: Text('Error: $e', style: const TextStyle(color: Colors.red)),
+                          );
+                        }
+                      },
+                    ),
                     const SizedBox(height: 24),
-                    const _PromoBanner(),
+                    Builder(
+                      builder: (context) {
+                        debugPrint(' [HomePage] Building _PromoBanner');
+                        try {
+                          return const _PromoBanner();
+                        } catch (e, stackTrace) {
+                          debugPrint('[HomePage] Error in _PromoBanner: $e');
+                          return const SizedBox.shrink();
+                        }
+                      },
+                    ),
                     const SizedBox(height: 32),
-                    _SectionTitle(
-                      title: 'home.section.services'.tr(),
-                      onSeeAll: () => Fluttertoast.showToast(msg: 'Navigating to Services'),
+                    Builder(
+                      builder: (context) {
+                        debugPrint(' [HomePage] Building _SectionTitle (Services)');
+                        try {
+                          return _SectionTitle(
+                            title: 'home.section.services'.tr(),
+                            onSeeAll: () => Fluttertoast.showToast(msg: 'Navigating to Services'),
+                          );
+                        } catch (e, stackTrace) {
+                          debugPrint(' [HomePage] Error in _SectionTitle (Services): $e');
+                          return const SizedBox.shrink();
+                        }
+                      },
                     ),
                     const SizedBox(height: 16),
-                    const _ServiceCarousel(),
+                    Builder(
+                      builder: (context) {
+                        debugPrint(' [HomePage] Building _ServiceCarousel');
+                        try {
+                          return const _ServiceCarousel();
+                        } catch (e, stackTrace) {
+                          debugPrint(' [HomePage] Error in _ServiceCarousel: $e');
+                          return const SizedBox.shrink();
+                        }
+                      },
+                    ),
                     const SizedBox(height: 32),
-                    _SectionTitle(
-                      title: 'home.section.availableDoctor'.tr(),
-                      onSeeAll: () => Fluttertoast.showToast(msg: 'Navigating to Doctors'),
+                    Builder(
+                      builder: (context) {
+                        debugPrint(' [HomePage] Building _SectionTitle (Doctors)');
+                        try {
+                          return _SectionTitle(
+                            title: 'home.section.availableDoctor'.tr(),
+                            onSeeAll: () => Fluttertoast.showToast(msg: 'Navigating to Doctors'),
+                          );
+                        } catch (e, stackTrace) {
+                          debugPrint(' [HomePage] Error in _SectionTitle (Doctors): $e');
+                          return const SizedBox.shrink();
+                        }
+                      },
                     ),
                     const SizedBox(height: 16),
-                    const _DoctorCard(),
+                    Builder(
+                      builder: (context) {
+                        debugPrint(' [HomePage] Building _DoctorCard');
+                        try {
+                          return const _DoctorCard();
+                        } catch (e, stackTrace) {
+                          debugPrint('[HomePage] Error in _DoctorCard: $e');
+                          return const SizedBox.shrink();
+                        }
+                      },
+                    ),
                     const SizedBox(height: 28),
-                    const _TrustedByBanner(),
+                    Builder(
+                      builder: (context) {
+                        debugPrint(' [HomePage] Building _TrustedByBanner');
+                        try {
+                          return const _TrustedByBanner();
+                        } catch (e, stackTrace) {
+                          debugPrint(' [HomePage] Error in _TrustedByBanner: $e');
+                          return const SizedBox.shrink();
+                        }
+                      },
+                    ),
                     const SizedBox(height: 28),
-                    _SectionTitle(
-                      title: 'home.section.medicalRecord'.tr(),
-                      onSeeAll: () => Fluttertoast.showToast(msg: 'Navigating to Records'),
-                      showSeeAll: false, // Không cần nút See All cho Medical Record
+                    Builder(
+                      builder: (context) {
+                        debugPrint(' [HomePage] Building _SectionTitle (MedicalRecord)');
+                        try {
+                          return _SectionTitle(
+                            title: 'home.section.medicalRecord'.tr(),
+                            onSeeAll: () => Fluttertoast.showToast(msg: 'Navigating to Records'),
+                            showSeeAll: false,
+                          );
+                        } catch (e, stackTrace) {
+                          debugPrint(' [HomePage] Error in _SectionTitle (MedicalRecord): $e');
+                          return const SizedBox.shrink();
+                        }
+                      },
                     ),
                     const SizedBox(height: 16),
-                    const _MedicalRecordPreview(),
+                    Builder(
+                      builder: (context) {
+                        debugPrint(' [HomePage] Building _MedicalRecordPreview');
+                        try {
+                          return const _MedicalRecordPreview();
+                        } catch (e, stackTrace) {
+                          debugPrint(' [HomePage] Error in _MedicalRecordPreview: $e');
+                          return const SizedBox.shrink();
+                        }
+                      },
+                    ),
                   ],
                 ),
               ),
@@ -62,17 +161,53 @@ class HomePage extends StatelessWidget {
                 left: 24,
                 right: 24,
                 bottom: 16,
-                child: const _QuickActionsBar(),
+                child: Builder(
+                  builder: (context) {
+                    debugPrint(' [HomePage] Building _QuickActionsBar');
+                    try {
+                      return const _QuickActionsBar();
+                    } catch (e, stackTrace) {
+                      debugPrint(' [HomePage] Error in _QuickActionsBar: $e');
+                      return const SizedBox.shrink();
+                    }
+                  },
+                ),
               ),
             ],
           ),
         ),
-      ),
-    );
+      );
+    } catch (e, stackTrace) {
+      debugPrint('[HomePage] Error building widget: $e');
+      debugPrint(' [HomePage] Stack trace: $stackTrace');
+      // UI dự phòng khi gặp lỗi
+      return Scaffold(
+        backgroundColor: Colors.white,
+        body: SafeArea(
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.error_outline, size: 48, color: Colors.red),
+                const SizedBox(height: 16),
+                Text('Error loading home page: $e'),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () {
+                    // Nhấn để thử tải lại
+                  },
+                  child: const Text('Retry'),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
   }
 }
 
-// ==================== HEADER SECTION ====================
+// HEADER SECTION: hiển thị thông tin người dùng và truy cập profile
 class _HeaderSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -80,19 +215,14 @@ class _HeaderSection extends StatelessWidget {
     final user = context.watch<UserProvider>().user;
     final fullName = user?['fullName']?.toString();
     final avatarUrl = user?['avatarUrl']?.toString();
-    ImageProvider? avatarImage;
-    if (avatarUrl != null && avatarUrl.isNotEmpty) {
-      avatarImage = NetworkImage(ApiService.resolveUrl(avatarUrl));
-    } else {
-      avatarImage = const AssetImage('assets/images/doctor.png');
-    }
+    final avatarImage = ApiService.resolveAvatarImage(avatarUrl);
     
     return Row(
       children: [
         GestureDetector(
-          onTap: () => context.go('/profile'), // Thêm hành động chạm vào Avatar để đi đến Profile
+          onTap: () => context.go('/profile'), // Đi đến trang Profile khi bấm vào avatar
           child: CircleAvatar(
-            radius: 24, // Giảm kích thước avatar
+            radius: 24,
             backgroundImage: avatarImage,
             backgroundColor: colorScheme.primaryContainer,
           ),
@@ -103,7 +233,7 @@ class _HeaderSection extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'home.greeting'.tr(), // Dùng tr() cho i18n
+                'home.greeting'.tr(),
                 style: Theme.of(context).textTheme.labelLarge?.copyWith(
                       color: colorScheme.onSurfaceVariant,
                       fontWeight: FontWeight.w500,
@@ -124,15 +254,89 @@ class _HeaderSection extends StatelessWidget {
           height: 48,
           width: 48,
           child: Card(
-            elevation: 2, // Dùng elevation nhẹ nhàng
+            elevation: 3,
+            shadowColor: Colors.black.withOpacity(0.1),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-            child: InkWell(
-              onTap: () => Fluttertoast.showToast(msg: 'Notification opened'),
-              borderRadius: BorderRadius.circular(16),
-              child: Icon(
-                Icons.notifications_none_rounded,
-                color: colorScheme.onSurface,
-                size: 24,
+            color: colorScheme.surface,
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: () {
+                  context.push('/notifications');
+                },
+                borderRadius: BorderRadius.circular(16),
+                child: ValueListenableBuilder<int>(
+                  valueListenable: NotificationService().unreadCount,
+                  builder: (context, count, child) {
+                    return Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        Center(
+                          child: Icon(
+                            Icons.notifications_none_rounded,
+                            color: colorScheme.onSurface,
+                            size: 24,
+                          ),
+                        ),
+                        if (count > 0)
+                          Positioned(
+                            top: -2,
+                            right: -2,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 6,
+                                vertical: 2,
+                              ),
+                              constraints: const BoxConstraints(
+                                minWidth: 18,
+                                minHeight: 18,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.red,
+                                borderRadius: BorderRadius.circular(10),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.red.withOpacity(0.3),
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: AnimatedSwitcher(
+                                duration: const Duration(milliseconds: 150),
+                                transitionBuilder: (Widget child, Animation<double> animation) {
+                                  return SlideTransition(
+                                    position: Tween<Offset>(
+                                      begin: const Offset(0, -0.3),
+                                      end: Offset.zero,
+                                    ).animate(CurvedAnimation(
+                                      parent: animation,
+                                      curve: Curves.easeOut,
+                                    )),
+                                    child: FadeTransition(
+                                      opacity: animation,
+                                      child: child,
+                                    ),
+                                  );
+                                },
+                                child: Text(
+                                  count > 99 ? '99+' : count.toString(),
+                                  key: ValueKey<int>(count),
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                    height: 1.2,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
+                    );
+                  },
+                ),
               ),
             ),
           ),
@@ -142,7 +346,7 @@ class _HeaderSection extends StatelessWidget {
   }
 }
 
-// ==================== PROMO BANNER ====================
+// PROMO BANNER: hiển thị quảng cáo nổi bật
 class _PromoBanner extends StatelessWidget {
   const _PromoBanner();
 
@@ -151,12 +355,11 @@ class _PromoBanner extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Card(
-      elevation: 6, // Banner nổi bật với elevation cao hơn
+      elevation: 6,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-      clipBehavior: Clip.antiAlias, // Cắt Image nếu tràn ra ngoài
+      clipBehavior: Clip.antiAlias,
       child: Container(
         decoration: BoxDecoration(
-          // Gradient sử dụng màu Primary và Secondary để bắt mắt hơn
           gradient: LinearGradient(
             colors: [colorScheme.primary, colorScheme.secondary.withOpacity(0.8)],
             begin: Alignment.topLeft,
@@ -174,7 +377,7 @@ class _PromoBanner extends StatelessWidget {
                     'home.promo.heading'.tr(),
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
                           color: colorScheme.onPrimary,
-                          fontWeight: FontWeight.w800, // Thêm độ đậm
+                          fontWeight: FontWeight.w800,
                         ),
                   ),
                   const SizedBox(height: 12),
@@ -187,8 +390,8 @@ class _PromoBanner extends StatelessWidget {
                   const SizedBox(height: 20),
                   FilledButton(
                     style: FilledButton.styleFrom(
-                      backgroundColor: colorScheme.onPrimary, // Nền trắng/sáng
-                      foregroundColor: colorScheme.primary, // Chữ màu primary
+                      backgroundColor: colorScheme.onPrimary,
+                      foregroundColor: colorScheme.primary,
                       padding: const EdgeInsets.symmetric(
                         horizontal: 24,
                         vertical: 12,
@@ -207,14 +410,13 @@ class _PromoBanner extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 16),
-            // Hình ảnh bên phải
             SizedBox(
               height: 120,
               width: 80,
               child: Image.asset(
                 'assets/images/hero-tooth.png',
                 fit: BoxFit.contain,
-                color: colorScheme.onPrimary.withOpacity(0.9), // Tinh chỉnh màu ảnh
+                color: colorScheme.onPrimary.withOpacity(0.9),
               ),
             ),
           ],
@@ -224,7 +426,7 @@ class _PromoBanner extends StatelessWidget {
   }
 }
 
-// ==================== SECTION TITLE ====================
+// SECTION TITLE: tiêu đề từng mục với nút See All
 class _SectionTitle extends StatelessWidget {
   const _SectionTitle({required this.title, required this.onSeeAll, this.showSeeAll = true});
 
@@ -241,12 +443,15 @@ class _SectionTitle extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            title,
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.w700,
-                  color: colorScheme.onBackground,
-                ),
+          Expanded(
+            child: Text(
+              title,
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: colorScheme.onBackground,
+                  ),
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
           if (showSeeAll)
             TextButton(
@@ -265,60 +470,172 @@ class _SectionTitle extends StatelessWidget {
   }
 }
 
-// ==================== SERVICE CAROUSEL ====================
-class _ServiceCarousel extends StatelessWidget {
+// SERVICE CAROUSEL: lấy danh sách dịch vụ nổi bật từ API và hiển thị ngang
+class _ServiceCarousel extends StatefulWidget {
   const _ServiceCarousel();
 
-  static final _services = [
-    _ServiceItem('Scaling', 'assets/images/tooth-logo.png'),
-    _ServiceItem('Braces', 'assets/images/patient1.png'),
-    _ServiceItem('Crown', 'assets/images/patient2.png'),
-    _ServiceItem('Whitening', 'assets/images/patient3.png'),
-  ];
+  @override
+  State<_ServiceCarousel> createState() => _ServiceCarouselState();
+}
+
+class _ServiceCarouselState extends State<_ServiceCarousel> {
+  bool _isLoading = true;
+  List<Map<String, dynamic>> _products = [];
+  String? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadProducts();
+  }
+
+  // Gọi API lấy danh sách dịch vụ
+  Future<void> _loadProducts() async {
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
+
+    try {
+      debugPrint(' [HomePage] Loading products...');
+      final response = await ApiService().get('/api/products');
+      final List<dynamic> products = response.data;
+      
+      // Lọc chỉ lấy sản phẩm đang hoạt động (isActive) và giới hạn hiển thị 8
+      final filteredProducts = products
+          .where((p) => p['isActive'] == true)
+          .take(8)
+          .map((p) => p as Map<String, dynamic>)
+          .toList();
+
+      if (!mounted) return;
+      debugPrint(' [HomePage] Products loaded: ${filteredProducts.length}');
+      setState(() {
+        _products = filteredProducts;
+        _isLoading = false;
+      });
+    } catch (e) {
+      debugPrint(' [HomePage] Error loading products: $e');
+      if (!mounted) return;
+      setState(() {
+        _error = e.toString();
+        _isLoading = false;
+        _products = [];
+      });
+    }
+  }
+
+  // Lấy link ảnh đại diện dịch vụ
+  String _getImageUrl(Map<String, dynamic> product) {
+    final images = product['image'];
+    if (images != null && images is List && images.isNotEmpty) {
+      final firstImage = images[0];
+      if (firstImage is Map) {
+        final imageUrl = firstImage['imageUrl']?.toString() ?? firstImage['url']?.toString();
+        if (imageUrl != null && imageUrl.isNotEmpty) {
+          return ApiService.resolveUrl(imageUrl);
+        }
+      }
+    }
+    return '';
+  }
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     
+    if (_isLoading) {
+      return SizedBox(
+        height: 110,
+        child: ListView.separated(
+          scrollDirection: Axis.horizontal,
+          itemCount: 4,
+          separatorBuilder: (_, __) => const SizedBox(width: 12),
+          itemBuilder: (context, index) {
+            return SizedBox(
+              width: 100,
+              child: Card(
+                elevation: 4,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                child: Center(
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: colorScheme.primary,
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
+      );
+    }
+
+    if (_error != null) {
+      debugPrint(' [HomePage] ServiceCarousel error: $_error');
+      return const SizedBox.shrink();
+    }
+    
+    if (_products.isEmpty) {
+      return const SizedBox.shrink();
+    }
+    
     return SizedBox(
-      height: 110, // Giảm nhẹ chiều cao
+      height: 110,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
-        itemCount: _services.length,
+        itemCount: _products.length,
         separatorBuilder: (_, __) => const SizedBox(width: 12),
         itemBuilder: (context, index) {
-          final item = _services[index];
+          final product = _products[index];
+          final productName = product['productName']?.toString() ?? 'Service';
+          final imageUrl = _getImageUrl(product);
           
           return SizedBox(
-            width: 100, // Giảm nhẹ chiều rộng
+            width: 100,
             child: Card(
               elevation: 4,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)), // Bo góc nhỏ hơn cho gọn
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
               child: InkWell(
-                onTap: () => Fluttertoast.showToast(msg: 'Selected ${item.title}'),
+                onTap: () {
+                  Fluttertoast.showToast(msg: 'Selected $productName');
+                },
                 borderRadius: BorderRadius.circular(20),
                 child: Padding(
-                  padding: const EdgeInsets.all(12),
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
                   child: Column(
+                    mainAxisSize: MainAxisSize.min,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       CircleAvatar(
-                        radius: 24,
+                        radius: 22,
                         backgroundColor: colorScheme.primaryContainer.withOpacity(0.5),
-                        // Image.asset trong CircleAvatar sẽ bị lỗi, dùng Icon tạm
-                        child: Icon(
-                          Icons.healing_outlined, 
-                          color: colorScheme.primary, 
-                          size: 24
-                        ),
+                        backgroundImage: imageUrl.isNotEmpty
+                            ? NetworkImage(
+                                imageUrl,
+                                headers: ApiService.authHeaders(),
+                              )
+                            : null,
+                        child: imageUrl.isEmpty
+                            ? Icon(
+                                Icons.healing_outlined,
+                                color: colorScheme.primary,
+                                size: 22,
+                              )
+                            : null,
                       ),
-                      const SizedBox(height: 8),
-                      Text(
-                        item.title,
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              fontWeight: FontWeight.w600,
-                              color: colorScheme.onSurface,
-                            ),
+                      const SizedBox(height: 6),
+                      Flexible(
+                        child: Text(
+                          productName,
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                fontWeight: FontWeight.w600,
+                                color: colorScheme.onSurface,
+                                fontSize: 11,
+                              ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.center,
+                        ),
                       ),
                     ],
                   ),
@@ -330,15 +647,9 @@ class _ServiceCarousel extends StatelessWidget {
       ),
     );
   }
-}
+} 
 
-class _ServiceItem {
-  const _ServiceItem(this.title, this.asset);
-  final String title;
-  final String asset;
-}
-
-
+// DOCTOR CARD: danh sách bác sĩ, có thể book lịch
 class _DoctorCard extends StatefulWidget {
   const _DoctorCard();
 
@@ -367,6 +678,7 @@ class _DoctorCardState extends State<_DoctorCard> {
     super.dispose();
   }
 
+  // Cập nhật trạng thái có thể bấm nút cuộn trái/phải
   void _updateScrollButtons() {
     if (!_scrollController.hasClients) return;
     final position = _scrollController.position;
@@ -376,6 +688,7 @@ class _DoctorCardState extends State<_DoctorCard> {
     });
   }
 
+  // Di chuyển carousel sang trái
   void _scrollLeft() {
     if (_scrollController.hasClients) {
       _scrollController.animateTo(
@@ -386,6 +699,7 @@ class _DoctorCardState extends State<_DoctorCard> {
     }
   }
 
+  // Di chuyển carousel sang phải
   void _scrollRight() {
     if (_scrollController.hasClients) {
       _scrollController.animateTo(
@@ -396,6 +710,7 @@ class _DoctorCardState extends State<_DoctorCard> {
     }
   }
 
+  // Hiển thị dialog đặt lịch hẹn với bác sĩ
   void _showBookingDialog(BuildContext context, Map<String, dynamic> doctor, Map<String, dynamic> clinic, Map<String, dynamic> room) {
     final colorScheme = Theme.of(context).colorScheme;
     final doctorName = doctor['fullName']?.toString() ?? 'Doctor';
@@ -473,7 +788,6 @@ class _DoctorCardState extends State<_DoctorCard> {
             FilledButton(
               onPressed: () {
                 Navigator.of(dialogContext).pop();
-                // Navigate to service page hoặc booking page
                 context.go('/service');
                 Fluttertoast.showToast(
                   msg: 'home.doctor.bookingRedirect'.tr(),
@@ -495,14 +809,13 @@ class _DoctorCardState extends State<_DoctorCard> {
     );
   }
 
+  // Gọi API lấy danh sách bác sĩ, có fallback dùng API schedule nếu lỗi
   Future<void> _fetchDoctors() async {
     try {
-      // Lấy danh sách bác sĩ từ API public
       final response = await ApiService().get('/api/hr/employees/doctors');
       final data = response.data;
       
       if (data is List && data.isNotEmpty) {
-        // Chuyển đổi từ employee format sang format tương tự schedule để tương thích với UI
         final doctorList = data.map((doctor) {
           final doctorMap = Map<String, dynamic>.from(doctor as Map);
           return {
@@ -530,12 +843,12 @@ class _DoctorCardState extends State<_DoctorCard> {
         });
       }
     } catch (e) {
-      // Fallback: Nếu API doctors không hoạt động, thử dùng API schedules/current
+      // Nếu gọi API doctors lỗi, thử gọi API schedules/current
       try {
         final scheduleResponse = await ApiService().get('/api/hr/schedules/current');
         final scheduleData = scheduleResponse.data;
         if (scheduleData is List && scheduleData.isNotEmpty) {
-          // Loại bỏ trùng lặp: Group theo doctorId
+          // Lọc loại trùng lặp, chỉ lấy một lịch cho mỗi bác sĩ
           final Map<int, Map<String, dynamic>> uniqueDoctors = {};
           for (var schedule in scheduleData) {
             final scheduleMap = Map<String, dynamic>.from(schedule as Map);
@@ -559,7 +872,7 @@ class _DoctorCardState extends State<_DoctorCard> {
           });
         }
       } catch (scheduleError) {
-        // Nếu cả 2 API đều lỗi, hiển thị error
+        // Nếu cả hai API đều lỗi, hiển thị thông báo lỗi ra màn hình
         setState(() {
           _error = 'home.doctor.error'.tr();
           _isLoading = false;
@@ -568,6 +881,7 @@ class _DoctorCardState extends State<_DoctorCard> {
     }
   }
 
+  // Build từng ô thông tin bác sĩ
   Widget _buildDoctorCard(BuildContext context, Map<String, dynamic> schedule) {
     final colorScheme = Theme.of(context).colorScheme;
     final doctor = Map<String, dynamic>.from(schedule['doctor'] ?? {});
@@ -576,28 +890,26 @@ class _DoctorCardState extends State<_DoctorCard> {
     final workDate = schedule['workDate']?.toString();
     final startTime = schedule['startTime']?.toString();
     final endTime = schedule['endTime']?.toString();
+    final status = schedule['status']?.toString().toUpperCase();
     final avatarUrl = doctor['avatarUrl']?.toString();
-
-    ImageProvider? avatar;
-    if (avatarUrl != null && avatarUrl.isNotEmpty) {
-      avatar = NetworkImage(ApiService.resolveUrl(avatarUrl));
-    } else {
-      avatar = const AssetImage('assets/images/doctor.png');
-    }
+    final avatarImage = ApiService.resolveAvatarImage(avatarUrl);
 
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(20),
-            child: Image(
-              image: avatar,
-              width: 72,
-              height: 72,
-              fit: BoxFit.cover,
-            ),
+          CircleAvatar(
+            radius: 36,
+            backgroundColor: colorScheme.surfaceContainerHighest,
+            backgroundImage: avatarImage,
+            child: avatarUrl == null || avatarUrl.isEmpty
+                ? Icon(
+                    Icons.person_rounded,
+                    size: 36,
+                    color: colorScheme.primary,
+                  )
+                : null,
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -633,6 +945,8 @@ class _DoctorCardState extends State<_DoctorCard> {
                     fontWeight: FontWeight.w500,
                     fontSize: 13,
                   ),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
                 ),
                 if (workDate != null || (startTime != null && endTime != null)) ...[
                   const SizedBox(height: 8),
@@ -652,6 +966,32 @@ class _DoctorCardState extends State<_DoctorCard> {
                           ),
                         ),
                       ),
+                      if (status != null) ...[
+                        const SizedBox(width: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: status == 'ACTIVE' 
+                                ? Colors.green.shade100 
+                                : status == 'INACTIVE'
+                                ? Colors.red.shade100
+                                : Colors.grey.shade200,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            status,
+                            style: TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w600,
+                              color: status == 'ACTIVE' 
+                                  ? Colors.green.shade800 
+                                  : status == 'INACTIVE'
+                                  ? Colors.red.shade800
+                                  : Colors.grey.shade700,
+                            ),
+                          ),
+                        ),
+                      ],
                     ],
                   ),
                 ],
@@ -659,12 +999,20 @@ class _DoctorCardState extends State<_DoctorCard> {
                 SizedBox(
                   height: 40,
                   child: OutlinedButton.icon(
-                    onPressed: () => _showBookingDialog(context, doctor, clinic, room),
+                    onPressed: status == 'INACTIVE' 
+                        ? null 
+                        : () => _showBookingDialog(context, doctor, clinic, room),
                     icon: const Icon(Icons.calendar_month_outlined, size: 18),
                     label: const Text('Book Now'),
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: colorScheme.primary,
-                      side: BorderSide(color: colorScheme.primary.withOpacity(0.5)),
+                      foregroundColor: status == 'INACTIVE' 
+                          ? colorScheme.onSurfaceVariant.withOpacity(0.38)
+                          : colorScheme.primary,
+                      side: BorderSide(
+                        color: status == 'INACTIVE' 
+                            ? colorScheme.outline.withOpacity(0.12)
+                            : colorScheme.primary.withOpacity(0.5),
+                      ),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     ),
                   ),
@@ -710,9 +1058,9 @@ class _DoctorCardState extends State<_DoctorCard> {
         ),
       );
     } else {
-      // Hiển thị danh sách bác sĩ dạng ListView theo chiều ngang với nút điều hướng
+      // Hiển thị horizontal list bác sĩ, có nút cuộn trái/phải
       content = SizedBox(
-        height: 180, // Chiều cao cố định cho horizontal list
+        height: 220,
         child: Stack(
           children: [
             ListView.separated(
@@ -722,7 +1070,7 @@ class _DoctorCardState extends State<_DoctorCard> {
               separatorBuilder: (context, index) => const SizedBox(width: 12),
               itemBuilder: (context, index) {
                 return SizedBox(
-                  width: 320, // Chiều rộng cố định cho mỗi card
+                  width: 320,
                   child: Card(
                     elevation: 4,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
@@ -731,7 +1079,6 @@ class _DoctorCardState extends State<_DoctorCard> {
                 );
               },
             ),
-            // Nút mũi tên trái
             if (_canScrollLeft)
               Positioned(
                 left: 0,
@@ -745,7 +1092,6 @@ class _DoctorCardState extends State<_DoctorCard> {
                   ),
                 ),
               ),
-            // Nút mũi tên phải
             if (_canScrollRight)
               Positioned(
                 right: 0,
@@ -763,7 +1109,6 @@ class _DoctorCardState extends State<_DoctorCard> {
         ),
       );
       
-      // Cập nhật trạng thái nút sau khi build
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _updateScrollButtons();
       });
@@ -773,7 +1118,7 @@ class _DoctorCardState extends State<_DoctorCard> {
   }
 }
 
-// ==================== TRUSTED BY BANNER ====================
+// TRUSTED BY BANNER: Logo khách hàng chạy ngang tự động
 class _TrustedByBanner extends StatefulWidget {
   const _TrustedByBanner();
 
@@ -806,6 +1151,7 @@ class _TrustedByBannerState extends State<_TrustedByBanner>
     super.dispose();
   }
 
+  // Hiển thị logo tròn
   Widget _badge(BuildContext context, String asset) {
     final colorScheme = Theme.of(context).colorScheme;
     return Container(
@@ -880,7 +1226,7 @@ class _TrustedByBannerState extends State<_TrustedByBanner>
   }
 }
 
-// ==================== MEDICAL RECORD PREVIEW ====================
+// MEDICAL RECORD PREVIEW: xem nhanh thông tin răng của user
 class _MedicalRecordPreview extends StatelessWidget {
   const _MedicalRecordPreview();
 
@@ -904,7 +1250,7 @@ class _MedicalRecordPreview extends StatelessWidget {
                   ),
             ),
             const SizedBox(height: 16),
-            // Placeholder cho biểu đồ/hình ảnh (Nếu có asset)
+            // Placeholder cho biểu đồ/hình ảnh
             Container(
               height: 120,
               decoration: BoxDecoration(
@@ -918,9 +1264,13 @@ class _MedicalRecordPreview extends StatelessWidget {
             const SizedBox(height: 16),
             Row(
               children: [
-                _LegendDot(color: colorScheme.tertiary, label: 'home.record.hasTreatment'.tr()),
+                Expanded(
+                  child: _LegendDot(color: colorScheme.tertiary, label: 'home.record.hasTreatment'.tr()),
+                ),
                 const SizedBox(width: 16),
-                _LegendDot(color: colorScheme.primary, label: 'home.record.recommended'.tr()),
+                Expanded(
+                  child: _LegendDot(color: colorScheme.primary, label: 'home.record.recommended'.tr()),
+                ),
               ],
             ),
             const SizedBox(height: 16),
@@ -932,7 +1282,6 @@ class _MedicalRecordPreview extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            // Nút Xem chi tiết
             SizedBox(
               height: 48,
               child: TextButton.icon(
@@ -951,6 +1300,7 @@ class _MedicalRecordPreview extends StatelessWidget {
   }
 }
 
+// Dot chú thích trong medical record preview
 class _LegendDot extends StatelessWidget {
   const _LegendDot({required this.color, required this.label});
 
@@ -961,9 +1311,10 @@ class _LegendDot extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     return Row(
+      mainAxisSize: MainAxisSize.min,
       children: [
         Container(
-          height: 10, // Giảm kích thước dot
+          height: 10,
           width: 10,
           decoration: BoxDecoration(
             color: color,
@@ -971,11 +1322,15 @@ class _LegendDot extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 6),
-        Text(
-          label,
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            color: colorScheme.onSurfaceVariant,
-            fontWeight: FontWeight.w500,
+        Flexible(
+          child: Text(
+            label,
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: colorScheme.onSurfaceVariant,
+              fontWeight: FontWeight.w500,
+            ),
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
           ),
         ),
       ],
@@ -983,40 +1338,57 @@ class _LegendDot extends StatelessWidget {
   }
 }
 
-// ==================== QUICK ACTIONS BAR (BOTTOM NAV) ====================
+// QUICK ACTIONS BAR: bottom nav, truy cập nhanh các chức năng quan trọng
 class _QuickActionsBar extends StatelessWidget {
   const _QuickActionsBar();
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final user = context.watch<UserProvider>().user;
+    final roles = (user?['roles'] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [];
+    final isDoctor = roles.contains('DOCTOR');
     
     final icons = [
       Icons.home_rounded,
-      Icons.calendar_today_rounded,
+      if (isDoctor) Icons.calendar_today_rounded,
       Icons.message_outlined,
       Icons.history_rounded,
       Icons.person_rounded,
     ];
-    final labels = ['home.nav.home', 'home.nav.schedule', 'home.nav.chat', 'home.nav.history', 'home.nav.profile'];
-    final routes = ['/home', '/schedule', '/chat', '/history', '/profile'];
+    final labels = [
+      'home.nav.home',
+      if (isDoctor) 'home.nav.schedule',
+      'home.nav.chat',
+      'home.nav.history',
+      'home.nav.profile'
+    ];
+    final routes = [
+      '/home',
+      if (isDoctor) '/schedule',
+      '/chat',
+      '/history',
+      '/profile'
+    ];
     
-    const currentIndex = 0; // Giả định Home là tab đầu tiên
+    const currentIndex = 0;
 
     return Card(
-      elevation: 10, // Elevation cao để nổi bật
+      elevation: 10,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8), // Giảm padding
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: List.generate(icons.length, (index) {
             final isActive = index == currentIndex;
-            final isPrimaryAction = index == 2; // Ví dụ: Chat/Message là trung tâm
+            // xác định icon primary (ví dụ chat có size to hơn) dựa trên vai trò
+            final chatIndex = isDoctor ? 2 : 1;
+            final isPrimaryAction = index == chatIndex; 
             
             return GestureDetector(
               onTap: () {
-                if (routes[index] != '/home' && routes[index] != '/profile') {
+                if (routes[index] != '/home' && routes[index] != '/profile' && routes[index] != '/schedule') {
                    Fluttertoast.showToast(msg: '${labels[index].tr()} is coming soon');
                 } else {
                   context.go(routes[index]);
@@ -1046,7 +1418,7 @@ class _QuickActionsBar extends StatelessWidget {
                   Text(
                     labels[index].tr(),
                     style: TextStyle(
-                      fontSize: 10, // Font nhỏ hơn cho gọn
+                      fontSize: 10,
                       fontWeight: FontWeight.w600,
                       color: isActive
                           ? colorScheme.primary

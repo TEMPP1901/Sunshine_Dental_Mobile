@@ -11,6 +11,7 @@ class TestimonialsSection extends StatefulWidget {
 class _TestimonialsSectionState extends State<TestimonialsSection> {
   int _currentIndex = 0;
 
+  // Danh sách các đánh giá khách hàng với thông tin ảnh, quote, tên, chi tiết (trích từ file dịch)
   final List<Map<String, String>> _testimonials = [
     {
       'image': 'assets/images/patient1.png',
@@ -34,6 +35,7 @@ class _TestimonialsSectionState extends State<TestimonialsSection> {
 
   @override
   Widget build(BuildContext context) {
+    // Xác định thiết bị là mobile để tùy chỉnh UI
     final isMobile = MediaQuery.of(context).size.width < 768;
     final current = _testimonials[_currentIndex];
 
@@ -48,7 +50,7 @@ class _TestimonialsSectionState extends State<TestimonialsSection> {
         child: Column(
           children: [
             Text(
-              tr('home.testimonials.heading'),
+              "Customer Testimonials",
               style: TextStyle(
                 fontSize: isMobile ? 24 : 40,
                 fontWeight: FontWeight.bold,
@@ -60,9 +62,10 @@ class _TestimonialsSectionState extends State<TestimonialsSection> {
             LayoutBuilder(
               builder: (context, constraints) {
                 if (constraints.maxWidth > 768) {
+                  // Giao diện desktop
                   return Row(
                     children: [
-                      // Image
+                      // Ảnh đại diện khách hàng
                       Expanded(
                         flex: 1,
                         child: Padding(
@@ -87,8 +90,7 @@ class _TestimonialsSectionState extends State<TestimonialsSection> {
                         ),
                       ),
                       const SizedBox(width: 32),
-                      
-                      // Quote
+                      // Trích dẫn đánh giá
                       Expanded(
                         flex: 1,
                         child: Column(
@@ -135,6 +137,7 @@ class _TestimonialsSectionState extends State<TestimonialsSection> {
                     ],
                   );
                 } else {
+                  // Giao diện mobile
                   return Column(
                     children: [
                       ClipRRect(
@@ -188,16 +191,15 @@ class _TestimonialsSectionState extends State<TestimonialsSection> {
                 }
               },
             ),
-            
             const SizedBox(height: 32),
-            
-            // Pagination dots
+            // Dãy chấm chuyển testimonial (Pagination dots)
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: List.generate(
                 _testimonials.length,
                 (index) => GestureDetector(
                   onTap: () {
+                    // Đổi testimonial theo index được chọn
                     setState(() {
                       _currentIndex = index;
                     });
@@ -224,7 +226,7 @@ class _TestimonialsSectionState extends State<TestimonialsSection> {
                       boxShadow: _currentIndex == index
                           ? [
                               BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.1),
+                                color: Colors.black.withOpacity(0.1),
                                 blurRadius: 4,
                                 spreadRadius: 1,
                               ),

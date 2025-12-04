@@ -11,6 +11,7 @@ class ThemeProvider extends ChangeNotifier {
     _loadTheme();
   }
 
+  // Hàm tải chế độ giao diện đã lưu từ SharedPreferences
   Future<void> _loadTheme() async {
     final prefs = await SharedPreferences.getInstance();
     final themeString = prefs.getString(_themeKey);
@@ -23,6 +24,7 @@ class ThemeProvider extends ChangeNotifier {
     }
   }
 
+  // Lưu và thay đổi chế độ giao diện
   Future<void> setThemeMode(ThemeMode mode) async {
     _themeMode = mode;
     final prefs = await SharedPreferences.getInstance();
@@ -30,14 +32,15 @@ class ThemeProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  // Kiểm tra đang ở chế độ dark mode hay không
   bool get isDarkMode {
     if (_themeMode == ThemeMode.system) {
-      // You can check system brightness here if needed
-      return false; // Default to light
+      return false;
     }
     return _themeMode == ThemeMode.dark;
   }
 
+  // Chuyển đổi giữa light và dark mode
   void toggleTheme() {
     if (_themeMode == ThemeMode.light) {
       setThemeMode(ThemeMode.dark);
@@ -46,4 +49,3 @@ class ThemeProvider extends ChangeNotifier {
     }
   }
 }
-

@@ -8,37 +8,40 @@ class FaqSection extends StatefulWidget {
 }
 
 class _FaqSectionState extends State<FaqSection> {
+  // Danh sách câu hỏi và trả lời (tiếng Anh)
   final List<Map<String, String>> _faqs = const [
     {
       'q': 'What are your office hours?',
-      'a': 'Mon-Fri 9:00–17:00. Saturday & Sunday day off.',
+      'a': 'Monday to Friday: 9:00 AM – 5:00 PM. Closed on Saturday & Sunday.',
     },
     {
-      'q': 'Do you accept my insurance?',
-      'a': 'Yes, we support major insurers and provide detailed invoices.',
+      'q': 'Can I use my insurance at your clinic?',
+      'a': 'Yes, we accept most major insurances and also provide detailed invoices for you.',
     },
     {
-      'q': 'How often should I visit for a checkup?',
-      'a': 'Every 6 months, or as your dentist advises.',
+      'q': 'How often should I have a dental check-up?',
+      'a': 'We recommend visiting every 6 months or as advised by your dentist.',
     },
     {
-      'q': 'What services do you offer?',
-      'a': 'General dentistry, orthodontics, cosmetic procedures, and more.',
+      'q': 'Which dental services are available?',
+      'a': 'We offer general dentistry, orthodontics, cosmetic dentistry, preventive care, and more.',
     },
     {
-      'q': 'Do you offer emergency dental care?',
-      'a': 'Yes, we provide urgent care during office hours.',
+      'q': 'Is emergency dental care provided?',
+      'a': 'Yes, we handle emergencies during our office hours. Please call ahead.',
     },
     {
-      'q': 'How can I schedule an appointment?',
-      'a': 'Call us or use our online booking system on the website.',
+      'q': 'How to make an appointment?',
+      'a': 'You can call us directly or use the online booking system on our website.',
     },
   ];
 
+  // Quản lý trạng thái mở rộng/collapse của từng mục FAQ
   final Set<int> _expandedIndices = {};
 
   @override
   Widget build(BuildContext context) {
+    // Xác định thiết bị có phải là mobile hay không
     final isMobile = MediaQuery.of(context).size.width < 768;
     
     return Container(
@@ -82,6 +85,7 @@ class _FaqSectionState extends State<FaqSection> {
                   isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
                   color: Colors.black54,
                 ),
+                // Xử lý sự kiện khi mở rộng hoặc thu gọn mục FAQ
                 onExpansionChanged: (expanded) {
                   setState(() {
                     if (expanded) {

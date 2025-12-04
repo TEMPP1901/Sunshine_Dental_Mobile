@@ -14,6 +14,7 @@ class FaceEmbeddingService {
 
   final ImagePicker _picker = ImagePicker();
 
+  // Chụp ảnh khuôn mặt từ camera trước
   Future<XFile?> captureFaceImage() async {
     return _picker.pickImage(
       source: ImageSource.camera,
@@ -22,6 +23,7 @@ class FaceEmbeddingService {
     );
   }
 
+  // Trích xuất embedding từ ảnh khuôn mặt đã chọn
   Future<String> extractEmbedding(XFile imageFile) async {
     final file = File(imageFile.path);
     final fileName = imageFile.name;
@@ -33,8 +35,8 @@ class FaceEmbeddingService {
       ),
     });
 
-    final response =
-        await ApiService().postFormData('/api/hr/attendance/embedding', formData);
+    final response = await ApiService()
+        .postFormData('/api/hr/attendance/embedding', formData);
 
     final embedding = response.data?['embedding']?.toString();
     if (embedding == null || embedding.isEmpty) {
@@ -44,5 +46,3 @@ class FaceEmbeddingService {
     return embedding;
   }
 }
-
-

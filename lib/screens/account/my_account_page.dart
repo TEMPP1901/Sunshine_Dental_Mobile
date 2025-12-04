@@ -23,7 +23,7 @@ class _MyAccountPageState extends State<MyAccountPage> {
   final _fullNameController = TextEditingController();
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
-  
+
   bool _isLoading = false;
   bool _isLoadingUser = true;
   XFile? _newAvatar;
@@ -35,13 +35,15 @@ class _MyAccountPageState extends State<MyAccountPage> {
   @override
   void initState() {
     super.initState();
+    // Hàm load user và dữ liệu user từ API, đồng thời kiểm tra đăng nhập
     _loadUser();
   }
 
+  // Lấy dữ liệu user từ API và kiểm tra token đăng nhập.
   Future<void> _loadUser() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('accessToken');
-    
+
     if (token == null) {
       if (mounted) {
         context.go('/login');
@@ -58,7 +60,7 @@ class _MyAccountPageState extends State<MyAccountPage> {
         _emailController.text = userData['email'] ?? '';
         _phoneController.text = userData['phone'] ?? '';
       });
-      
+
       await prefs.setString('user', jsonEncode(userData));
       if (mounted) {
         context.read<UserProvider>().setUser(userData);
@@ -74,6 +76,7 @@ class _MyAccountPageState extends State<MyAccountPage> {
     }
   }
 
+  // Hàm cho phép chọn hình đại diện mới từ thư viện ảnh
   Future<void> _pickImage() async {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
@@ -85,9 +88,10 @@ class _MyAccountPageState extends State<MyAccountPage> {
     }
   }
 
+  // Upload hình đại diện mới lên server
   Future<void> _uploadAvatar() async {
     if (_newAvatar == null || _user == null) return;
-    
+
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('accessToken');
     if (token == null) {
@@ -99,7 +103,7 @@ class _MyAccountPageState extends State<MyAccountPage> {
       final formData = FormData.fromMap({
         'file': await MultipartFile.fromFile(_newAvatar!.path),
       });
-      
+
       final response = await ApiService().dio.patch(
         '/api/users/${_user!['userId']}/avatar',
         data: formData,
@@ -115,21 +119,22 @@ class _MyAccountPageState extends State<MyAccountPage> {
         _newAvatar = null;
         _previewUrl = null;
       });
-      
+
       await prefs.setString('user', jsonEncode(updatedUser));
       if (mounted) {
         context.read<UserProvider>().updateUser(updatedUser);
       }
-      
+
       Fluttertoast.showToast(msg: 'account.myAccount.uploadAvatar.success'.tr());
     } catch (e) {
       Fluttertoast.showToast(msg: 'account.myAccount.uploadAvatar.failed'.tr());
     }
   }
 
+  // Hàm lưu thay đổi thông tin user
   Future<void> _saveChanges() async {
     if (!_formKey.currentState!.validate() || _user == null) return;
-    
+
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('accessToken');
     if (token == null) {
@@ -151,12 +156,12 @@ class _MyAccountPageState extends State<MyAccountPage> {
 
       final updatedUser = response.data;
       setState(() => _user = updatedUser);
-      
+
       await prefs.setString('user', jsonEncode(updatedUser));
       if (mounted) {
         context.read<UserProvider>().setUser(updatedUser);
       }
-      
+
       Fluttertoast.showToast(msg: 'account.myAccount.success'.tr());
     } catch (e) {
       Fluttertoast.showToast(msg: 'account.myAccount.failed'.tr());
@@ -252,6 +257,7 @@ class _MyAccountPageState extends State<MyAccountPage> {
     );
   }
 
+  // Render thông tin form tài khoản
   Widget _buildFormCard(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
@@ -375,6 +381,7 @@ class _MyAccountPageState extends State<MyAccountPage> {
     );
   }
 
+  // Render card hình đại diện và chức năng upload ảnh mới
   Widget _buildAvatarCard(BuildContext context, dynamic avatarSrc) {
     final colorScheme = Theme.of(context).colorScheme;
 
@@ -382,7 +389,7 @@ class _MyAccountPageState extends State<MyAccountPage> {
     if (_previewUrl != null) {
       avatarImage = FileImage(File(_previewUrl!));
     } else if (avatarSrc is String) {
-      avatarImage = NetworkImage(avatarSrc);
+      avatarImage = ApiService.resolveAvatarImage(avatarSrc);
     }
 
     return Card(
@@ -442,6 +449,7 @@ class _MyAccountPageState extends State<MyAccountPage> {
     );
   }
 
+  // Render một trường form có gắn icon
   Widget _buildTextField(
     BuildContext context, {
     required TextEditingController controller,
@@ -472,4 +480,3 @@ class _MyAccountPageState extends State<MyAccountPage> {
     );
   }
 }
-

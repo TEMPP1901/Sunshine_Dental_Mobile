@@ -11,6 +11,7 @@ class UserProvider extends ChangeNotifier {
     _loadUser();
   }
 
+  // Hàm load user từ SharedPreferences khi khởi tạo
   Future<void> _loadUser() async {
     final prefs = await SharedPreferences.getInstance();
     final userStr = prefs.getString('user');
@@ -24,6 +25,7 @@ class UserProvider extends ChangeNotifier {
     }
   }
 
+  // Thiết lập user mới và lưu vào SharedPreferences
   Future<void> setUser(Map<String, dynamic> userData) async {
     final prefs = await SharedPreferences.getInstance();
     _user = userData;
@@ -31,6 +33,7 @@ class UserProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  // Cập nhật dữ liệu user
   Future<void> updateUser(Map<String, dynamic> updates) async {
     if (_user != null) {
       _user = {..._user!, ...updates};
@@ -40,9 +43,9 @@ class UserProvider extends ChangeNotifier {
     }
   }
 
+  // Xóa dữ liệu user khỏi trạng thái ứng dụng
   void clearUser() {
     _user = null;
     notifyListeners();
   }
 }
-

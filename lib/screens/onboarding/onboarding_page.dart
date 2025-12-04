@@ -70,7 +70,7 @@ class OnboardingPage extends StatelessWidget {
                                   ),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Colors.black.withValues(alpha: 0.08),
+                                      color: Colors.black.withOpacity(0.08),
                                       blurRadius: 20,
                                       spreadRadius: -3,
                                     ),
@@ -94,7 +94,7 @@ class OnboardingPage extends StatelessWidget {
                                 ),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withValues(alpha: 0.08),
+                                    color: Colors.black.withOpacity(0.08),
                                     blurRadius: 20,
                                     spreadRadius: -3,
                                   ),
@@ -117,7 +117,7 @@ class OnboardingPage extends StatelessWidget {
                                 ),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withValues(alpha: 0.08),
+                                    color: Colors.black.withOpacity(0.08),
                                     blurRadius: 20,
                                     spreadRadius: -3,
                                   ),
@@ -135,7 +135,7 @@ class OnboardingPage extends StatelessWidget {
                                 height: 220,
                                 fit: BoxFit.contain,
                                 errorBuilder: (context, error, stackTrace) {
-                                  // Fallback về tooth-logo nếu hero-tooth không có
+                                  // Nếu hero-tooth không có, fallback về tooth-logo
                                   return Image.asset(
                                     'assets/images/tooth-logo.png',
                                     width: 220,
@@ -161,9 +161,9 @@ class OnboardingPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  'Find a health center that meets your needs and supports your well-being.',
+                  'Find the best care for you and your loved ones.',
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                    color: theme.colorScheme.onSurface.withOpacity(0.7),
                     height: 1.5,
                   ),
                 ),
@@ -178,6 +178,7 @@ class OnboardingPage extends StatelessWidget {
                         borderRadius: BorderRadius.circular(28),
                       ),
                     ),
+                    // Khi nhấn, chuyển tới màn hình đăng ký
                     onPressed: () {
                       context.go('/register');
                     },
@@ -197,10 +198,11 @@ class OnboardingPage extends StatelessWidget {
                     Text(
                       'Already have an account? ',
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                        color: theme.colorScheme.onSurface.withOpacity(0.7),
                       ),
                     ),
                     TextButton(
+                      // Khi nhấn, chuyển tới trang đăng nhập
                       onPressed: () => context.go('/login'),
                       child: const Text(
                         'Sign in',
@@ -221,5 +223,3 @@ class OnboardingPage extends StatelessWidget {
     );
   }
 }
-
-

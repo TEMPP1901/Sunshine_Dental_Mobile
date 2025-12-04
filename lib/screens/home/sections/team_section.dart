@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:easy_localization/easy_localization.dart';
 
+// Widget hiển thị phần thông tin đội ngũ bác sĩ trên trang chủ
 class TeamSection extends StatelessWidget {
   const TeamSection({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // Xác định chế độ mobile hay desktop
     final isMobile = MediaQuery.of(context).size.width < 768;
-    
+
     return Container(
       padding: EdgeInsets.symmetric(
         vertical: isMobile ? 32 : 64,
@@ -19,7 +20,7 @@ class TeamSection extends StatelessWidget {
         child: Column(
           children: [
             Text(
-              tr('home.team.heading'),
+              'Meet Our Professional Team',
               style: TextStyle(
                 fontSize: isMobile ? 24 : 40,
                 fontWeight: FontWeight.bold,
@@ -31,9 +32,10 @@ class TeamSection extends StatelessWidget {
             LayoutBuilder(
               builder: (context, constraints) {
                 if (constraints.maxWidth > 768) {
+                  // Layout desktop: chia 3 cột
                   return Row(
                     children: [
-                      // Left Card
+                      // Cột trái: thông tin tổng quan phòng khám
                       Expanded(
                         child: Container(
                           padding: const EdgeInsets.all(24),
@@ -50,7 +52,7 @@ class TeamSection extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                tr('home.team.leftTitle'),
+                                'Dedicated to Better Patient Outcomes',
                                 style: const TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
@@ -59,7 +61,7 @@ class TeamSection extends StatelessWidget {
                               ),
                               const SizedBox(height: 16),
                               Text(
-                                tr('home.team.leftDescription'),
+                                'Our team is comprised of highly qualified and passionate professionals dedicated to providing outstanding dental care for every smile.',
                                 style: const TextStyle(
                                   fontSize: 14,
                                   color: Colors.black87,
@@ -70,8 +72,7 @@ class TeamSection extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 24),
-                      
-                      // Center Doctor Image
+                      // Ảnh đại diện bác sĩ trung tâm
                       Expanded(
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(24),
@@ -90,15 +91,14 @@ class TeamSection extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 24),
-                      
-                      // Right Info
+                      // Cột phải: thông tin bác sĩ chi tiết
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              tr('home.team.doctorName'),
+                              'Dr. John Smith',
                               style: const TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
@@ -107,7 +107,7 @@ class TeamSection extends StatelessWidget {
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              tr('home.team.doctorDescription'),
+                              'With over 15 years of experience in the dental field, Dr. Smith is passionate about delivering the best care and beautiful smiles for his patients.',
                               style: const TextStyle(
                                 fontSize: 14,
                                 color: Colors.black87,
@@ -119,37 +119,37 @@ class TeamSection extends StatelessWidget {
                               runSpacing: 8,
                               children: [
                                 RichText(
-                                  text: TextSpan(
-                                    style: const TextStyle(fontSize: 14),
+                                  text: const TextSpan(
+                                    style: TextStyle(fontSize: 14),
                                     children: [
                                       TextSpan(
-                                        text: '${tr('home.team.speciality')}: ',
-                                        style: const TextStyle(
+                                        text: 'Speciality: ',
+                                        style: TextStyle(
                                           color: Color(0xFFFF6600),
                                           fontWeight: FontWeight.w600,
                                         ),
                                       ),
                                       TextSpan(
-                                        text: tr('home.team.specialityValue'),
-                                        style: const TextStyle(color: Color(0xFF0D1B3E)),
+                                        text: 'Orthodontics & Cosmetic Dentistry',
+                                        style: TextStyle(color: Color(0xFF0D1B3E)),
                                       ),
                                     ],
                                   ),
                                 ),
                                 RichText(
-                                  text: TextSpan(
-                                    style: const TextStyle(fontSize: 14),
+                                  text: const TextSpan(
+                                    style: TextStyle(fontSize: 14),
                                     children: [
                                       TextSpan(
-                                        text: '${tr('home.team.joinedSince')}: ',
-                                        style: const TextStyle(
+                                        text: 'Joined since: ',
+                                        style: TextStyle(
                                           color: Color(0xFFFF6600),
                                           fontWeight: FontWeight.w600,
                                         ),
                                       ),
                                       TextSpan(
-                                        text: tr('home.team.joinedValue'),
-                                        style: const TextStyle(color: Color(0xFF0D1B3E)),
+                                        text: '2008',
+                                        style: TextStyle(color: Color(0xFF0D1B3E)),
                                       ),
                                     ],
                                   ),
@@ -166,7 +166,7 @@ class TeamSection extends StatelessWidget {
                                 border: Border.all(color: Colors.white, width: 2),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withValues(alpha: 0.1),
+                                    color: Colors.black.withOpacity(0.1),
                                     blurRadius: 4,
                                     spreadRadius: 1,
                                   ),
@@ -175,16 +175,18 @@ class TeamSection extends StatelessWidget {
                               child: Material(
                                 color: Colors.transparent,
                                 child: InkWell(
-                                  onTap: () {},
+                                  onTap: () {
+                                    // TODO: navigate to doctor detail page
+                                  },
                                   borderRadius: BorderRadius.circular(28),
                                   child: Container(
                                     padding: const EdgeInsets.symmetric(
                                       horizontal: 24,
                                       vertical: 8,
                                     ),
-                                    child: Text(
-                                      tr('home.team.button'),
-                                      style: const TextStyle(
+                                    child: const Text(
+                                      'Learn more',
+                                      style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 16,
                                         color: Colors.white,
@@ -200,6 +202,7 @@ class TeamSection extends StatelessWidget {
                     ],
                   );
                 } else {
+                  // Layout mobile: dồn nội dung theo chiều dọc
                   return Column(
                     children: [
                       Container(
@@ -217,7 +220,7 @@ class TeamSection extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              tr('home.team.leftTitle'),
+                              'Dedicated to Better Patient Outcomes',
                               style: const TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
@@ -226,14 +229,13 @@ class TeamSection extends StatelessWidget {
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              tr('home.team.leftDescription'),
+                              'Our team is comprised of highly qualified and passionate professionals dedicated to providing outstanding dental care for every smile.',
                               style: const TextStyle(fontSize: 14),
                             ),
                           ],
                         ),
                       ),
                       const SizedBox(height: 24),
-                      
                       ClipRRect(
                         borderRadius: BorderRadius.circular(24),
                         child: Image.asset(
@@ -251,12 +253,11 @@ class TeamSection extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 24),
-                      
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            tr('home.team.doctorName'),
+                            'Dr. John Smith',
                             style: const TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
@@ -265,7 +266,7 @@ class TeamSection extends StatelessWidget {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            tr('home.team.doctorDescription'),
+                            'With over 15 years of experience in the dental field, Dr. Smith is passionate about delivering the best care and beautiful smiles for his patients.',
                             style: const TextStyle(fontSize: 14),
                           ),
                           const SizedBox(height: 16),
@@ -273,38 +274,38 @@ class TeamSection extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               RichText(
-                                text: TextSpan(
-                                  style: const TextStyle(fontSize: 14),
+                                text: const TextSpan(
+                                  style: TextStyle(fontSize: 14),
                                   children: [
                                     TextSpan(
-                                      text: '${tr('home.team.speciality')}: ',
-                                      style: const TextStyle(
+                                      text: 'Speciality: ',
+                                      style: TextStyle(
                                         color: Color(0xFFFF6600),
                                         fontWeight: FontWeight.w600,
                                       ),
                                     ),
                                     TextSpan(
-                                      text: tr('home.team.specialityValue'),
-                                      style: const TextStyle(color: Color(0xFF0D1B3E)),
+                                      text: 'Orthodontics & Cosmetic Dentistry',
+                                      style: TextStyle(color: Color(0xFF0D1B3E)),
                                     ),
                                   ],
                                 ),
                               ),
                               const SizedBox(height: 8),
                               RichText(
-                                text: TextSpan(
-                                  style: const TextStyle(fontSize: 14),
+                                text: const TextSpan(
+                                  style: TextStyle(fontSize: 14),
                                   children: [
                                     TextSpan(
-                                      text: '${tr('home.team.joinedSince')}: ',
-                                      style: const TextStyle(
+                                      text: 'Joined since: ',
+                                      style: TextStyle(
                                         color: Color(0xFFFF6600),
                                         fontWeight: FontWeight.w600,
                                       ),
                                     ),
                                     TextSpan(
-                                      text: tr('home.team.joinedValue'),
-                                      style: const TextStyle(color: Color(0xFF0D1B3E)),
+                                      text: '2008',
+                                      style: TextStyle(color: Color(0xFF0D1B3E)),
                                     ),
                                   ],
                                 ),
@@ -323,16 +324,18 @@ class TeamSection extends StatelessWidget {
                             child: Material(
                               color: Colors.transparent,
                               child: InkWell(
-                                onTap: () {},
+                                onTap: () {
+                                  // TODO: navigate to doctor detail page
+                                },
                                 borderRadius: BorderRadius.circular(28),
                                 child: Container(
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 24,
                                     vertical: 8,
                                   ),
-                                  child: Text(
-                                    tr('home.team.button'),
-                                    style: const TextStyle(
+                                  child: const Text(
+                                    'Learn more',
+                                    style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 16,
                                       color: Colors.white,

@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "413328154690",
+    "project_id": "sunshinedental-b30ef",
+    "storage_bucket": "sunshinedental-b30ef.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:413328154690:android:b9e4d768bcff859fe6cddb",
+        "android_client_info": {
+          "package_name": "com.SDC_Mobile.sunshine_denttal_mobile"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDkv7ROEByRHAPKvz3ocJLEYwBBLNOFbr4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
+

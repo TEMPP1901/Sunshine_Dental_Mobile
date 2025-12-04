@@ -12,6 +12,7 @@ import '../../services/api_service.dart';
 import '../../providers/theme_provider.dart';
 import '../../providers/language_provider.dart';
 
+// Trang Profile người dùng
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
 
@@ -23,12 +24,24 @@ class _ProfilePageState extends State<ProfilePage> {
   static const _attendanceRoles = {
     'HR',
     'DOCTOR',
-    'RECEPTIONIST',
+    'RECEPTION',
     'ACCOUNTANT',
   };
 
   static const _attendanceForbiddenRoles = {
     'ADMIN',
+    'USER',
+  };
+
+  static const _leaveRequestRoles = {
+    'HR',
+    'DOCTOR',
+    'RECEPTION',
+    'ACCOUNTANT',
+    'ADMIN',
+  };
+
+  static const _leaveRequestForbiddenRoles = {
     'USER',
   };
 
@@ -51,6 +64,7 @@ class _ProfilePageState extends State<ProfilePage> {
     super.dispose();
   }
 
+  // Lấy thông tin người dùng từ SharedPreferences
   Future<void> _loadUser() async {
     final prefs = await SharedPreferences.getInstance();
     final raw = prefs.getString('user');
@@ -67,7 +81,7 @@ class _ProfilePageState extends State<ProfilePage> {
     try {
       final decoded = jsonDecode(raw);
       if (decoded is Map<String, dynamic>) {
-        // Cache today label
+        // Lưu label ngày hôm nay để hiện ra phù hợp với ngôn ngữ đang chọn
         _cachedTodayLabel = DateFormat.yMMMMEEEEd(context.locale.toString())
             .format(DateTime.now());
         
@@ -94,13 +108,13 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
+  // Khởi tạo đồng hồ thời gian thực
   void _startClock() {
     _clockText = DateFormat('HH:mm:ss').format(DateTime.now());
     _clockTimer = Timer.periodic(const Duration(seconds: 1), (_) {
       if (!mounted) return;
       final now = DateTime.now();
       final newText = DateFormat('HH:mm:ss').format(now);
-      // Only update if text actually changed
       if (_clockText != newText) {
         setState(() {
           _clockText = newText;
@@ -109,6 +123,7 @@ class _ProfilePageState extends State<ProfilePage> {
     });
   }
 
+  // Xử lý đăng xuất tài khoản và xóa toàn bộ local storage
   Future<void> _handleLogout() async {
     final confirmed = await showDialog<bool>(
       context: context,
@@ -140,6 +155,7 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
+  // Chuẩn hóa tên role sang viết hoa, bỏ "ROLE_"
   String _normalizeRole(dynamic role) {
     final roleStr = role?.toString().toUpperCase() ?? '';
     if (roleStr.startsWith('ROLE_')) {
@@ -148,6 +164,7 @@ class _ProfilePageState extends State<ProfilePage> {
     return roleStr;
   }
 
+  // Tách và chuẩn hóa danh sách các role ra thành List<String>
   List<String> _extractNormalizedRoles(dynamic roles) {
     if (roles == null) return [];
 
@@ -182,6 +199,7 @@ class _ProfilePageState extends State<ProfilePage> {
     return [];
   }
 
+  // Kiểm tra quyền chấm công theo role
   bool get _canCheckAttendance {
     try {
       final roles = _extractNormalizedRoles(_user?['roles']);
@@ -196,29 +214,44 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
+  // Kiểm tra quyền xem và gửi đơn nghỉ phép theo role
+  bool get _canViewLeaveRequest {
+    try {
+      final roles = _extractNormalizedRoles(_user?['roles']);
+      if (roles.isEmpty) return false;
+
+      final hasForbiddenRole = roles.any(_leaveRequestForbiddenRoles.contains);
+      if (hasForbiddenRole) return false;
+
+      return roles.any(_leaveRequestRoles.contains);
+    } catch (_) {
+      return false;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     
     return PopScope(
       canPop: context.canPop(),
-        child: Scaffold(
-         backgroundColor: colorScheme.background, // Nền chính
-         appBar: AppBar(
-           backgroundColor: colorScheme.background,
-           elevation: 0,
-           leading: IconButton(
-             icon: const Icon(Icons.arrow_back_ios_new_rounded),
-             onPressed: () {
-               if (context.canPop()) {
-                 context.pop();
-               } else {
-                 context.go('/home');
-               }
-             },
-           ),
-           title: Text('profile.title'.tr()),
-         ),
+      child: Scaffold(
+        backgroundColor: colorScheme.background,
+        appBar: AppBar(
+          backgroundColor: colorScheme.background,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios_new_rounded),
+            onPressed: () {
+              if (context.canPop()) {
+                context.pop();
+              } else {
+                context.go('/home');
+              }
+            },
+          ),
+          title: Text('profile.title'.tr()),
+        ),
         body: SafeArea(
           child: _isLoading
               ? const Center(child: CircularProgressIndicator())
@@ -228,11 +261,12 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  // Xây dựng giao diện content chính của profile
   Widget _buildContent(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
     if (_user == null) {
-      // Giao diện khi chưa đăng nhập (Gọn gàng, hiện đại)
+      // Giao diện khi chưa đăng nhập
       return Center(
         child: Padding(
           padding: const EdgeInsets.all(32),
@@ -289,7 +323,7 @@ class _ProfilePageState extends State<ProfilePage> {
       phone = null;
     }
     
-    // Tích hợp Username vào Menu Tài khoản
+    // Lấy username để hiển thị menu tài khoản
     String? username;
     try {
       final usernameValue = _user?['username'];
@@ -312,7 +346,7 @@ class _ProfilePageState extends State<ProfilePage> {
       padding: const EdgeInsets.only(bottom: 40),
       child: Column(
         children: [
-          // Header Profile (Tối giản)
+          // Header Profile
           Container(
             width: double.infinity,
             padding: const EdgeInsets.only(top: 12, bottom: 24, left: 24, right: 24),
@@ -328,13 +362,8 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                   ),
                   child: CircleAvatar(
-                    radius: 48, // Giảm kích thước avatar
-                    backgroundImage: avatarUrl != null && avatarUrl.isNotEmpty
-                          ? NetworkImage(
-                              ApiService.resolveUrl(avatarUrl),
-                              headers: ApiService.authHeaders(),
-                            )
-                          : null,
+                    radius: 48,
+                    backgroundImage: ApiService.resolveAvatarImage(avatarUrl),
                     backgroundColor: colorScheme.surfaceContainerHighest,
                     child: avatarUrl == null || avatarUrl.isEmpty
                         ? Icon(
@@ -398,40 +427,64 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                 ],
                 const SizedBox(height: 16),
-                // Roles badges
+                // Display role badges
                 if (roles != null) _buildRolesBadges(roles),
               ],
             ),
           ),
-          // Content
+          // Main Menu content
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                
-                // Attendance Card
+                // Card chấm công (Attendance)
                 if (_canCheckAttendance) ...[
                   RepaintBoundary(
                     child: _buildAttendanceCard(context, todayLabel),
                   ),
                   const SizedBox(height: 24),
                 ],
-                
-                // Account Settings
+                // Account Settings section
                 _buildSectionHeader(context, 'profile.accountSettings'.tr()),
                 const SizedBox(height: 8),
                 _buildMenuListItem(
                   context,
-                  icon: Icons.manage_accounts_outlined,
+                  icon: Icons.person_outline,
                   title: 'account.myAccount.title'.tr(),
-                  // Tích hợp Username vào Subtitle
-                  subtitle: username != null && username.isNotEmpty ? 
-                            '${'profile.info.username'.tr()}: $username' : 
-                            'profile.myAccountSubtitle'.tr(),
+                  subtitle: 'account.myAccount.subtitle'.tr(),
                   onTap: () => context.go('/my-account'),
                   isFirst: true,
+                  customIcon: Stack(
+                    children: [
+                      Icon(Icons.person_outline, color: colorScheme.primary, size: 24),
+                      Positioned(
+                        right: -2,
+                        bottom: -2,
+                        child: Container(
+                          padding: const EdgeInsets.all(2),
+                          decoration: BoxDecoration(
+                            color: colorScheme.surface,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.settings_outlined,
+                            color: colorScheme.primary,
+                            size: 12,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
+                if (_canViewLeaveRequest)
+                  _buildMenuListItem(
+                    context,
+                    icon: Icons.calendar_today_outlined,
+                    title: 'leaveRequest.title'.tr(),
+                    subtitle: 'leaveRequest.subtitle'.tr(),
+                    onTap: () => context.go('/leave-request'),
+                  ),
                 _buildMenuListItem(
                   context,
                   icon: Icons.key_outlined,
@@ -440,9 +493,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   onTap: () => context.go('/change-password'),
                   isLast: true,
                 ),
-                
                 const SizedBox(height: 24),
-                
                 // General Settings section
                 _buildSectionHeader(context, 'profile.settings'.tr()),
                 const SizedBox(height: 8),
@@ -452,9 +503,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 RepaintBoundary(
                   child: _buildLanguageListItem(context),
                 ),
-                
                 const SizedBox(height: 24),
-                
                 // Logout button
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -479,8 +528,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  // ============== WIDGET HELPER FUNCTIONS ==============
-
+  // Hiển thị section header cho từng nhóm menu
   Widget _buildSectionHeader(BuildContext context, String title) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -488,12 +536,13 @@ class _ProfilePageState extends State<ProfilePage> {
         title,
         style: Theme.of(context).textTheme.titleSmall?.copyWith(
               fontWeight: FontWeight.w700,
-              color: Theme.of(context).colorScheme.primary, // Màu nhấn cho tiêu đề
+              color: Theme.of(context).colorScheme.primary,
             ),
       ),
     );
   }
 
+  // Hiển thị từng dòng menu trong section
   Widget _buildMenuListItem(
     BuildContext context, {
     required IconData icon,
@@ -503,72 +552,80 @@ class _ProfilePageState extends State<ProfilePage> {
     bool isFirst = false,
     bool isLast = false,
     Widget? trailingWidget,
+    Widget? customIcon,
   }) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    // Thiết lập bo góc cho nhóm danh sách
-    BorderRadius borderRadius;
-    if (isFirst && isLast) {
-      borderRadius = BorderRadius.circular(16);
-    } else if (isFirst) {
-      borderRadius = const BorderRadius.vertical(top: Radius.circular(16));
-    } else if (isLast) {
-      borderRadius = const BorderRadius.vertical(bottom: Radius.circular(16));
-    } else {
-      borderRadius = BorderRadius.zero;
-    }
-    
-    Border? border;
-    if (isFirst || isLast) {
-      border = Border.all(color: colorScheme.outlineVariant.withOpacity(0.5));
-    }
-
-    return Container(
-      margin: isFirst ? null : const EdgeInsets.only(top: 0),
-      decoration: BoxDecoration(
-        color: colorScheme.surface,
-        borderRadius: borderRadius,
-        border: border,
+    return Card(
+      elevation: 2,
+      shadowColor: Colors.black.withOpacity(0.1),
+      margin: EdgeInsets.only(
+        bottom: isLast ? 0 : 12,
       ),
-      child: Column(
-        children: [
-          Material(
-            color: Colors.transparent,
-            child: InkWell(
-              onTap: onTap,
-              child: ListTile(
-                leading: Icon(icon, color: colorScheme.primary, size: 24),
-                title: Text(
-                  title,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w500,
-                        color: colorScheme.onSurface,
-                      ),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(16),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Row(
+              children: [
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: colorScheme.primaryContainer.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: customIcon ?? Icon(
+                    icon,
+                    color: colorScheme.primary,
+                    size: 24,
+                  ),
                 ),
-                subtitle: subtitle != null ? Text( 
-                  subtitle,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: colorScheme.onSurfaceVariant,
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.w600,
+                              color: colorScheme.onSurface,
+                            ),
                       ),
-                ) : null,
-                trailing: trailingWidget ?? Icon(
+                      if (subtitle != null) ...[
+                        const SizedBox(height: 4),
+                        Text(
+                          subtitle,
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                color: colorScheme.onSurfaceVariant,
+                                fontSize: 13,
+                              ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+                trailingWidget ?? Icon(
                   Icons.arrow_forward_ios_rounded,
                   size: 18,
                   color: colorScheme.onSurfaceVariant,
                 ),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 4),
-              ),
+              ],
             ),
           ),
-          // Đường kẻ ngang chỉ hiển thị bên trong (giữa các item)
-          if (!isLast)
-            Divider(height: 1, thickness: 0.5, color: colorScheme.outlineVariant.withOpacity(0.5), indent: 24, endIndent: 24),
-        ],
+        ),
       ),
     );
   }
 
-  // Widget riêng cho Theme Switch, sử dụng _buildMenuListItem
+  // Hiển thị option chuyển chủ đề sáng/tối
   Widget _buildThemeListItem(BuildContext context) {
     return Consumer<ThemeProvider>(
       builder: (context, themeProvider, _) {
@@ -594,7 +651,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  // Widget riêng cho Language Toggler, sử dụng _buildMenuListItem
+  // Hiển thị option chuyển đổi ngôn ngữ
   Widget _buildLanguageListItem(BuildContext context) {
     return Consumer<LanguageProvider>(
       builder: (context, languageProvider, _) {
@@ -635,21 +692,21 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  // Hiện thẻ chấm công (attendance) real-time
   Widget _buildAttendanceCard(BuildContext context, String todayLabel) {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Card(
-      elevation: 6, // Tăng nhẹ elevation để thẻ nổi bật hơn
+      elevation: 6,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       child: Container(
         width: double.infinity,
-        padding: const EdgeInsets.all(20), // Giảm padding tổng thể từ 24 xuống 20
+        padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(24),
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            // Sử dụng màu Primary Darker và Secondary để tạo Gradient SÂU và BẮT MẮT hơn
             colors: [
               colorScheme.primary.withOpacity(0.9),
               colorScheme.secondary.withOpacity(0.8), 
@@ -659,11 +716,11 @@ class _ProfilePageState extends State<ProfilePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header (Icon & Title)
+            // Header (icon + title)
             Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(8), // Giảm padding icon
+                  padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: colorScheme.onPrimary.withOpacity(0.2),
                     borderRadius: BorderRadius.circular(10),
@@ -671,7 +728,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   child: Icon(
                     Icons.watch_later_outlined,
                     color: colorScheme.onPrimary,
-                    size: 20, // Giảm kích thước icon
+                    size: 20,
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -683,16 +740,16 @@ class _ProfilePageState extends State<ProfilePage> {
                         'profile.attendanceCard.title'.tr(),
                         style: TextStyle(
                           color: colorScheme.onPrimary,
-                          fontSize: 16, // Giảm kích thước title
+                          fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const SizedBox(height: 2), // Giảm khoảng cách
+                      const SizedBox(height: 2),
                       Text(
                         todayLabel,
                         style: TextStyle(
                           color: colorScheme.onPrimary.withOpacity(0.7),
-                          fontSize: 12, // Giảm kích thước label ngày
+                          fontSize: 12,
                         ),
                       ),
                     ],
@@ -700,15 +757,15 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ],
             ),
-            const SizedBox(height: 20), // Khoảng cách sau header
+            const SizedBox(height: 20),
 
-            // Clock Display (Gọn gàng hơn)
+            // Hiện đồng hồ thời gian thực
             RepaintBoundary(
               child: Container(
-                padding: const EdgeInsets.all(16), // Giảm padding đồng hồ
+                padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: colorScheme.onPrimary.withOpacity(0.1), // Nền đồng hồ trong suốt hơn
-                  borderRadius: BorderRadius.circular(12), // Bo góc nhỏ hơn
+                  color: colorScheme.onPrimary.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
                   border: Border.all(color: colorScheme.onPrimary.withOpacity(0.2)),
                 ),
                 child: Row(
@@ -721,7 +778,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           'profile.attendanceCard.currentTime'.tr(),
                           style: TextStyle(
                             color: colorScheme.onPrimary.withOpacity(0.8),
-                            fontSize: 11, // Rất nhỏ để nhấn mạnh thời gian
+                            fontSize: 11,
                           ),
                         ),
                         const SizedBox(height: 6),
@@ -729,33 +786,32 @@ class _ProfilePageState extends State<ProfilePage> {
                           _clockText,
                           style: TextStyle(
                             color: colorScheme.onPrimary,
-                            fontSize: 36, // Giữ kích thước lớn, nhưng tăng độ đậm
-                            fontWeight: FontWeight.w900, // Thêm độ đậm
-                            letterSpacing: 2, // Thêm khoảng cách chữ để sang trọng
+                            fontSize: 36,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 2,
                           ),
                         ),
                       ],
                     ),
                     Icon(
-                      Icons.fingerprint_rounded,
+                      Icons.face_retouching_natural_rounded,
                       color: colorScheme.onPrimary.withOpacity(0.8),
-                      size: 40, // Giảm kích thước fingerprint
+                      size: 40,
                     ),
                   ],
                 ),
               ),
             ),
             const SizedBox(height: 20),
-            
-            // Action Button
+            // Button chuyển đến trang chấm công
             SizedBox(
               width: double.infinity,
               child: FilledButton.icon(
                 icon: const Icon(Icons.arrow_forward_rounded),
                 style: FilledButton.styleFrom(
                   backgroundColor: colorScheme.onPrimary,
-                  foregroundColor: colorScheme.primary, // Chữ màu primary nổi bật
-                  padding: const EdgeInsets.symmetric(vertical: 14), // Giảm padding nút
+                  foregroundColor: colorScheme.primary,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -776,6 +832,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  // Hiển thị danh sách các badge role của user
   Widget _buildRolesBadges(dynamic roles) {
     List<String> roleList = [];
     final colorScheme = Theme.of(context).colorScheme;
@@ -823,7 +880,7 @@ class _ProfilePageState extends State<ProfilePage> {
               borderRadius: BorderRadius.circular(16),
             ),
             child: Text(
-              _normalizeRole(role).tr(),
+              'common.roles.${_normalizeRole(role)}'.tr(),
               style: TextStyle(
                 color: colorScheme.onPrimaryContainer,
                 fontSize: 12,

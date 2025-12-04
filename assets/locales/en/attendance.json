@@ -10,7 +10,10 @@
     "checkInSuccess": "Clock in successful.",
     "checkOutSuccess": "Clock out successful.",
     "noAttendance": "You have not checked in yet.",
-    "noAttendanceToCheckOut": "No shift available to check out."
+    "noAttendanceToCheckOut": "No shift available to check out.",
+    "invalidAttendanceId": "Invalid attendance ID.",
+    "faceVerificationFailed": "Face verification failed.",
+    "wifiInvalid": "Wi-Fi does not match clinic configuration."
   },
   "selectShift": {
     "title": "Select shift to check out"
@@ -20,10 +23,15 @@
     "message": "Face verification and WiFi validation must be integrated before attendance actions can be performed from the mobile app. Please coordinate with the backend team to provide the necessary biometric data, WiFi configuration, and clinic mapping.",
     "confirm": "Understood"
   },
+  "noDataMonthly": "No attendance records found for this month.",
+  "noDataToday": "No attendance data for today",
+  "noDataTodayWeekend": "Today is a day off, no work shifts",
+  "noShiftsToday": "No work shifts today",
   "summary": {
     "today": "Today",
     "checkIn": "Check In",
     "checkOut": "Check Out",
+    "totalHours": "Total Hours",
     "status": "Status: {status}",
     "unknown": "N/A"
   },
@@ -40,10 +48,15 @@
     "faceFailed": "Face verification failed",
     "unknown": "Not verified",
     "wifiValid": "Wi-Fi verified",
-    "wifiInvalid": "Wi-Fi mismatch"
+    "wifiInvalid": "Wi-Fi mismatch",
+    "present": "Present",
+    "absent": "Absent",
+    "late": "Late",
+    "leaveEarly": "Left Early"
   },
   "actions": {
     "signIn": "Sign In",
+    "signInAgain": "Sign In Again",
     "clockIn": "Clock In",
     "clockOut": "Clock Out"
   },
@@ -56,6 +69,9 @@
     "typeAbsent": "Absent",
     "typeMissingCheckIn": "Missing Check-In",
     "typeMissingCheckOut": "Missing Check-Out",
+    "late": "Late Arrival",
+    "earlyLeave": "Left Early",
+    "submit": "Submit",
     "date": "Date: {date}",
     "attendanceStatus": "Status: {status}",
     "submitButton": "Submit Explanation",
@@ -67,4 +83,3 @@
     "invalidData": "Invalid explanation data"
   }
 }
-

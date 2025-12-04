@@ -1,0 +1,37 @@
+{
+  "title": "Leave Requests",
+  "subtitle": "Manage your leave requests",
+  "createTitle": "Create Leave Request",
+  "createNew": "Create New",
+  "noRequests": "You don't have any leave requests yet",
+  "startDate": "Start Date",
+  "endDate": "End Date",
+  "type": "Leave Type",
+  "reason": "Reason",
+  "reasonPlaceholder": "Enter reason for leave...",
+  "createSuccess": "Leave request created successfully",
+  "cancel": "Cancel",
+  "cancelConfirm": "Confirm Cancellation",
+  "cancelMessage": "Are you sure you want to cancel this leave request?",
+  "cancelSuccess": "Leave request cancelled successfully",
+  "approvedBy": "Approved By",
+  "types": {
+    "vacation": "Vacation",
+    "sick": "Sick Leave",
+    "personal": "Personal Leave",
+    "other": "Other"
+  },
+  "shiftType": "Shift",
+  "shiftTypeHint": "Select the shift you want to take leave. If you select full day, you will be off for both morning and afternoon shifts.",
+  "shiftTypes": {
+    "fullDay": "Full Day",
+    "morning": "Morning Shift",
+    "afternoon": "Afternoon Shift"
+  },
+  "status": {
+    "approved": "Approved",
+    "rejected": "Rejected",
+    "pending": "Pending"
+  }
+}
+

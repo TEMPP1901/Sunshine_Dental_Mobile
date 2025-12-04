@@ -14,9 +14,7 @@ class AttendanceService {
   final FaceEmbeddingService _faceEmbeddingService = FaceEmbeddingService();
   final NetworkInfo _networkInfo = NetworkInfo();
 
-  /// Lấy danh sách attendance hôm nay
-  /// [userId] - ID của user
-  /// [isDoctor] - true nếu là bác sĩ (lấy danh sách), false nếu là nhân viên (lấy 1 record)
+  // Lấy danh sách điểm danh hôm nay (trả lại nhiều bản ghi với bác sĩ, 1 bản ghi với nhân viên)
   Future<Map<String, dynamic>> fetchTodayAttendance(
     dynamic userId,
     bool isDoctor,
@@ -27,13 +25,14 @@ class AttendanceService {
 
     try {
       if (isDoctor) {
-        // BÁC SĨ: Lấy danh sách tất cả các ca
+        // Lấy danh sách điểm danh hôm nay cho bác sĩ (có thể nhiều ca)
         final response = await _apiService.get(
           '/api/hr/attendance/today-list',
           queryParameters: {'userId': userId},
         );
         if (response.data is List) {
           final list = (response.data as List)
+              .where((item) => item is Map)
               .map((item) => Map<String, dynamic>.from(item as Map))
               .toList();
           return {
@@ -41,33 +40,60 @@ class AttendanceService {
             'data': list,
             'single': list.isNotEmpty ? list[0] : null,
           };
-        } else {
-          return {
-            'success': true,
-            'data': [],
-            'single': null,
-          };
+        } else if (response.data is String) {
+          try {
+            final parsed = jsonDecode(response.data as String);
+            if (parsed is List) {
+              final list = parsed
+                  .where((item) => item is Map)
+                  .map((item) => Map<String, dynamic>.from(item as Map))
+                  .toList();
+              return {
+                'success': true,
+                'data': list,
+                'single': list.isNotEmpty ? list[0] : null,
+              };
+            }
+          } catch (_) {}
         }
+        return {
+          'success': true,
+          'data': [],
+          'single': null,
+        };
       } else {
-        // NHÂN VIÊN: Lấy 1 record
+        // Lấy điểm danh hôm nay cho nhân viên (chỉ một bản ghi)
         final response = await _apiService.get(
           '/api/hr/attendance/today',
           queryParameters: {'userId': userId},
         );
         if (response.data != null) {
-          final single = Map<String, dynamic>.from(response.data as Map);
-          return {
-            'success': true,
-            'data': [single],
-            'single': single,
-          };
-        } else {
-          return {
-            'success': true,
-            'data': [],
-            'single': null,
-          };
+          if (response.data is Map) {
+            final single = Map<String, dynamic>.from(response.data as Map);
+            return {
+              'success': true,
+              'data': [single],
+              'single': single,
+            };
+          } else if (response.data is String) {
+            try {
+              final parsed = jsonDecode(response.data as String);
+              if (parsed is Map) {
+                final single = Map<String, dynamic>.from(parsed as Map);
+                return {
+                  'success': true,
+                  'data': [single],
+                  'single': single,
+                };
+              }
+            } catch (_) {}
+          }
         }
+        return {
+          'success': true,
+          'data': [],
+          'single': null,
+        };
       }
     } on DioException catch (dioError) {
       final status = dioError.response?.statusCode;
@@ -77,20 +103,28 @@ class AttendanceService {
           'data': [],
           'single': null,
         };
-      } else {
-        final serverMessage = dioError.response?.data?['message'];
+      } else if (status == 401) {
+        final serverMessage = dioError.response?.data?['message']?.toString();
         throw Exception(
-          serverMessage?.toString().isNotEmpty == true
-              ? serverMessage.toString()
+          serverMessage?.isNotEmpty == true
+              ? serverMessage
+              : 'Unauthorized. Please login again.',
+        );
+      } else {
+        final serverMessage = dioError.response?.data?['message']?.toString() ??
+            dioError.response?.data?['error']?.toString();
+        throw Exception(
+          serverMessage?.isNotEmpty == true
+              ? serverMessage
               : 'attendance.toast.loadFailed'.tr(),
         );
       }
     } catch (e) {
-      throw Exception('attendance.toast.loadFailed'.tr());
+      throw Exception(e.toString().replaceFirst('Exception: ', ''));
     }
   }
 
-  /// Lấy danh sách attendance theo tháng
+  // Lấy dữ liệu điểm danh theo tháng và phân trang
   Future<Map<String, dynamic>> fetchMonthlyAttendance(
     dynamic userId,
     int year,
@@ -124,18 +158,78 @@ class AttendanceService {
         final data = response.data;
         List<Map<String, dynamic>> items = [];
 
-        if (data['content'] is List) {
-          items = (data['content'] as List)
-              .map((item) => Map<String, dynamic>.from(item as Map))
-              .toList();
+        if (data is Map<String, dynamic>) {
+          if (data['content'] is List) {
+            items = (data['content'] as List)
+                .where((item) => item is Map)
+                .map((item) => Map<String, dynamic>.from(item as Map))
+                .toList();
+          }
+
+          final totalPages = data['totalPages'] as int? ?? 0;
+          final currentPage = data['number'] as int? ?? 0;
+
+          return {
+            'success': true,
+            'data': items,
+            'currentPage': currentPage,
+            'totalPages': totalPages,
+            'hasMore': currentPage + 1 < totalPages,
+          };
         } else if (data is List) {
           items = data
+              .where((item) => item is Map)
               .map((item) => Map<String, dynamic>.from(item as Map))
               .toList();
+
+          return {
+            'success': true,
+            'data': items,
+            'currentPage': 0,
+            'totalPages': 0,
+            'hasMore': false,
+          };
+        } else if (data is String) {
+          try {
+            final parsed = jsonDecode(data);
+            if (parsed is Map<String, dynamic>) {
+              if (parsed['content'] is List) {
+                items = (parsed['content'] as List)
+                    .where((item) => item is Map)
+                    .map((item) => Map<String, dynamic>.from(item as Map))
+                    .toList();
+              }
+              final totalPages = parsed['totalPages'] as int? ?? 0;
+              final currentPage = parsed['number'] as int? ?? 0;
+
+              return {
+                'success': true,
+                'data': items,
+                'currentPage': currentPage,
+                'totalPages': totalPages,
+                'hasMore': currentPage + 1 < totalPages,
+              };
+            } else if (parsed is List) {
+              items = parsed
+                  .where((item) => item is Map)
+                  .map((item) => Map<String, dynamic>.from(item as Map))
+                  .toList();
+
+              return {
+                'success': true,
+                'data': items,
+                'currentPage': 0,
+                'totalPages': 0,
+                'hasMore': false,
+              };
+            }
+          } catch (_) {
+            throw Exception('Invalid response format: $data');
+          }
         }
 
-        final totalPages = data['totalPages'] as int? ?? 0;
-        final currentPage = data['number'] as int? ?? 0;
+        final totalPages = 0;
+        final currentPage = 0;
 
         return {
           'success': true,
@@ -173,7 +267,7 @@ class AttendanceService {
     }
   }
 
-  /// Lấy danh sách explanations cần xử lý
+  // Lấy danh sách giải trình chưa xử lý (giải trình cần xử lý)
   Future<List<Map<String, dynamic>>> fetchExplanationsNeeding(
     dynamic userId,
   ) async {
@@ -188,17 +282,27 @@ class AttendanceService {
       );
       if (response.data is List) {
         return (response.data as List)
+            .where((item) => item is Map)
             .map((item) => Map<String, dynamic>.from(item as Map))
             .toList();
+      } else if (response.data is String) {
+        try {
+          final parsed = jsonDecode(response.data as String);
+          if (parsed is List) {
+            return parsed
+                .where((item) => item is Map)
+                .map((item) => Map<String, dynamic>.from(item as Map))
+                .toList();
+          }
+        } catch (_) {}
       }
       return [];
     } catch (e) {
-      // Silently fail - explanations are optional
       return [];
     }
   }
 
-  /// Submit explanation
+  // Gửi giải trình cho một điểm danh
   Future<void> submitExplanation(
     int attendanceId,
     String explanationType,
@@ -225,7 +329,7 @@ class AttendanceService {
     }
   }
 
-  /// Check-in
+  // Check-in (điểm danh vào)
   Future<Map<String, dynamic>> checkIn({
     required dynamic userId,
     required String faceEmbedding,
@@ -263,7 +367,7 @@ class AttendanceService {
     }
   }
 
-  /// Check-out
+  // Check-out (điểm danh ra)
   Future<Map<String, dynamic>> checkOut({
     required int attendanceId,
     required String faceEmbedding,
@@ -297,7 +401,7 @@ class AttendanceService {
     }
   }
 
-  /// Lấy clinicId cho bác sĩ dựa trên schedule hôm nay
+  // Xác định clinicId của bác sĩ dựa vào lịch làm việc hôm nay (ưu tiên ca hiện tại, nếu chưa có thì lấy ca sớm nhất sắp tới)
   Future<int?> resolveDoctorClinicId(dynamic userId) async {
     if (userId == null) {
       return null;
@@ -333,13 +437,14 @@ class AttendanceService {
         if (start == null || end == null) continue;
 
         if (!now.isBefore(start) && !now.isAfter(end)) {
-          // Currently working
+          // Nếu đang trong ca làm, lấy ca hiện tại
           if (selected == null ||
               (selectedStart != null && start.isAfter(selectedStart))) {
             selected = entry.cast<String, dynamic>();
             selectedStart = start;
           }
         } else if (now.isBefore(start)) {
+          // Nếu chưa đến ca, lấy ca sớm nhất tiếp theo
           if (upcomingStart == null || start.isBefore(upcomingStart)) {
             upcoming = entry.cast<String, dynamic>();
             upcomingStart = start;
@@ -358,7 +463,7 @@ class AttendanceService {
     return null;
   }
 
-  /// Đảm bảo có quyền WiFi
+  // Đảm bảo ứng dụng có quyền truy cập wifi trên Android
   Future<bool> ensureWifiPermissions() async {
     if (!Platform.isAndroid) {
       return true;
@@ -374,14 +479,12 @@ class AttendanceService {
       if (nearbyStatus.isDenied && nearbyStatus != PermissionStatus.granted) {
         return false;
       }
-    } catch (_) {
-      // Older Android versions may not support NEARBY_WIFI_DEVICES, ignore.
-    }
+    } catch (_) {}
 
     return true;
   }
 
-  /// Thu thập thông tin WiFi
+  // Thu thập thông tin wifi hiện tại
   Future<Map<String, String?>> collectWifiInfo() async {
     final ssid = await _networkInfo.getWifiName();
     final bssid = await _networkInfo.getWifiBSSID();
@@ -391,7 +494,7 @@ class AttendanceService {
     };
   }
 
-  /// Capture và extract face embedding
+  // Chụp ảnh và trích xuất embedding khuôn mặt từ ảnh
   Future<String?> captureEmbedding() async {
     final imageFile = await _faceEmbeddingService.captureFaceImage();
     if (imageFile == null) {
@@ -405,7 +508,7 @@ class AttendanceService {
     }
   }
 
-  /// Helper: Combine date and time
+  // Kết hợp một ngày với một chuỗi giờ phút giây (trả về đối tượng DateTime, null nếu lỗi)
   DateTime? _combineDateAndTime(DateTime date, String? time) {
     if (time == null || time.isEmpty) return null;
     try {

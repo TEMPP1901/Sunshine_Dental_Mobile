@@ -5,10 +5,11 @@ import 'package:easy_localization/easy_localization.dart';
 class HeroSection extends StatelessWidget {
   const HeroSection({super.key});
 
+  // Xây dựng giao diện phần hero trên trang chủ (Hero section UI)
   @override
   Widget build(BuildContext context) {
     final isMobile = MediaQuery.of(context).size.width < 768;
-    
+
     return Container(
       padding: EdgeInsets.only(
         top: isMobile ? 48 : 96,
@@ -34,7 +35,7 @@ class HeroSection extends StatelessWidget {
         ),
         child: Column(
           children: [
-            // Heading with gradient text
+            // Đoạn tiêu đề chính với hiệu ứng gradient
             Container(
               constraints: const BoxConstraints(maxWidth: 896),
               margin: const EdgeInsets.only(bottom: 48),
@@ -44,7 +45,7 @@ class HeroSection extends StatelessWidget {
                   stops: [0.0, 0.56, 1.0],
                 ).createShader(bounds),
                 child: Text(
-                  tr('home.hero.heading'),
+                  'Dental Care, Smile Everywhere!',
                   style: TextStyle(
                     fontSize: isMobile ? 48 : 72,
                     fontWeight: FontWeight.bold,
@@ -57,7 +58,7 @@ class HeroSection extends StatelessWidget {
               ),
             ),
 
-            // Grid: Avatar Left - Button - Avatar Right
+            // Lưới gồm hai avatar và nút CTA ở giữa
             Container(
               constraints: const BoxConstraints(maxWidth: 1152),
               margin: const EdgeInsets.only(bottom: 48),
@@ -66,7 +67,6 @@ class HeroSection extends StatelessWidget {
                   if (constraints.maxWidth > 768) {
                     return Row(
                       children: [
-                        // Avatar Left
                         Expanded(
                           child: Column(
                             children: [
@@ -96,9 +96,9 @@ class HeroSection extends StatelessWidget {
                                     color: Colors.black87,
                                   ),
                                   children: [
-                                    TextSpan(text: '${tr('home.hero.avatarLeft.line1')}\n'),
+                                    const TextSpan(text: 'Your trusted\n'),
                                     TextSpan(
-                                      text: tr('home.hero.avatarLeft.brand'),
+                                      text: 'Sunshine Dental',
                                       style: const TextStyle(
                                         color: Color(0xFF3366FF),
                                         fontWeight: FontWeight.bold,
@@ -110,8 +110,8 @@ class HeroSection extends StatelessWidget {
                             ],
                           ),
                         ),
-                        
-                        // CTA Button
+
+                        // Nút hành động chuyển đến trang giới thiệu phòng khám
                         Container(
                           child: Container(
                             decoration: BoxDecoration(
@@ -131,9 +131,9 @@ class HeroSection extends StatelessWidget {
                                     horizontal: 24,
                                     vertical: 12,
                                   ),
-                                  child: Text(
-                                    tr('home.hero.cta'),
-                                    style: const TextStyle(
+                                  child: const Text(
+                                    "Learn more about us",
+                                    style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 16,
                                       color: Colors.white,
@@ -144,8 +144,7 @@ class HeroSection extends StatelessWidget {
                             ),
                           ),
                         ),
-                        
-                        // Avatar Right
+
                         Expanded(
                           child: Column(
                             children: [
@@ -167,11 +166,11 @@ class HeroSection extends StatelessWidget {
                                 ),
                               ),
                               const SizedBox(height: 8),
-                              Text(
-                                '${tr('home.hero.avatarRight.line1')}\n${tr('home.hero.avatarRight.line2')}',
+                              const Text(
+                                'Modern facilities\nFriendly staff',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                  fontSize: isMobile ? 16 : 18,
+                                  fontSize: 18,
                                 ),
                               ),
                             ],
@@ -200,9 +199,9 @@ class HeroSection extends StatelessWidget {
                                   horizontal: 24,
                                   vertical: 12,
                                 ),
-                                child: Text(
-                                  tr('home.hero.cta'),
-                                  style: const TextStyle(
+                                child: const Text(
+                                  "Learn more about us",
+                                  style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 16,
                                     color: Colors.white,
@@ -218,10 +217,10 @@ class HeroSection extends StatelessWidget {
                 },
               ),
             ),
-            
+
             const SizedBox(height: 32),
 
-            // Tooth Image with floating tags
+            // Ảnh chiếc răng trung tâm kèm các tag nổi bật (Tooth image with floating tags)
             Stack(
               alignment: Alignment.center,
               children: [
@@ -238,8 +237,8 @@ class HeroSection extends StatelessWidget {
                     );
                   },
                 ),
-                
-                // Floating Tags - top left
+
+                // Tag nổi bật: Phòng ngừa
                 Positioned(
                   top: 80,
                   left: isMobile ? 0 : -40,
@@ -251,7 +250,7 @@ class HeroSection extends StatelessWidget {
                       border: Border.all(color: const Color(0xFFE0E7FF)),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.1),
+                          color: Colors.black.withOpacity(0.1),
                           blurRadius: 4,
                           spreadRadius: 1,
                         ),
@@ -267,7 +266,7 @@ class HeroSection extends StatelessWidget {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          tr('home.hero.tags.preventive'),
+                          'Preventive Care',
                           style: TextStyle(
                             fontSize: isMobile ? 12 : 14,
                             color: const Color(0xFF3366FF),
@@ -278,8 +277,8 @@ class HeroSection extends StatelessWidget {
                     ),
                   ),
                 ),
-                
-                // Floating Tags - bottom right
+
+                // Tag nổi bật: Hiện đại
                 Positioned(
                   bottom: 80,
                   right: isMobile ? 0 : -40,
@@ -291,7 +290,7 @@ class HeroSection extends StatelessWidget {
                       border: Border.all(color: const Color(0xFFE0E7FF)),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.1),
+                          color: Colors.black.withOpacity(0.1),
                           blurRadius: 4,
                           spreadRadius: 1,
                         ),
@@ -307,7 +306,7 @@ class HeroSection extends StatelessWidget {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          tr('home.hero.tags.modern'),
+                          'Modern Treatments',
                           style: TextStyle(
                             fontSize: isMobile ? 12 : 14,
                             color: const Color(0xFF3366FF),
@@ -318,8 +317,8 @@ class HeroSection extends StatelessWidget {
                     ),
                   ),
                 ),
-                
-                // Floating Tags - top right
+
+                // Tag nổi bật: Trang thiết bị
                 Positioned(
                   top: 80,
                   right: isMobile ? 0 : -40,
@@ -331,7 +330,7 @@ class HeroSection extends StatelessWidget {
                       border: Border.all(color: const Color(0xFFE0E7FF)),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.1),
+                          color: Colors.black.withOpacity(0.1),
                           blurRadius: 4,
                           spreadRadius: 1,
                         ),
@@ -347,7 +346,7 @@ class HeroSection extends StatelessWidget {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          tr('home.hero.tags.equipment'),
+                          'Top Equipment',
                           style: TextStyle(
                             fontSize: isMobile ? 12 : 14,
                             color: const Color(0xFF3366FF),

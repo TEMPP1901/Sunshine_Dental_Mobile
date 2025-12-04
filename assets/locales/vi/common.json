@@ -2,7 +2,18 @@
   "signInRequired": "Vui lòng đăng nhập để tiếp tục",
   "understood": "Tôi đã hiểu",
   "cancel": "Hủy",
+  "confirm": "Xác nhận",
   "submit": "Gửi",
-  "seeAll": "Xem tất cả"
+  "retry": "Thử lại",
+  "seeAll": "Xem tất cả",
+  "roles": {
+    "USER": "Người dùng",
+    "ADMIN": "Quản trị viên",
+    "HR": "Nhân sự",
+    "DOCTOR": "Bác sĩ",
+    "RECEPTION": "Lễ tân",
+    "RECEPTIONIST": "Lễ tân",
+    "ACCOUNTANT": "Kế toán"
+  }
 }
 

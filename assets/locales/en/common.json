@@ -2,7 +2,18 @@
   "signInRequired": "Please sign in to continue",
   "understood": "Understood",
   "cancel": "Cancel",
+  "confirm": "Confirm",
   "submit": "Submit",
-  "seeAll": "See All"
+  "retry": "Retry",
+  "seeAll": "See All",
+  "roles": {
+    "USER": "User",
+    "ADMIN": "Administrator",
+    "HR": "Human Resources",
+    "DOCTOR": "Doctor",
+    "RECEPTION": "Receptionist",
+    "RECEPTIONIST": "Receptionist",
+    "ACCOUNTANT": "Accountant"
+  }
 }
 

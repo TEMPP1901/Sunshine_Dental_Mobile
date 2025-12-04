@@ -1,0 +1,37 @@
+{
+  "title": "Đơn xin nghỉ",
+  "subtitle": "Quản lý đơn xin nghỉ của bạn",
+  "createTitle": "Tạo đơn xin nghỉ",
+  "createNew": "Tạo đơn mới",
+  "noRequests": "Bạn chưa có đơn xin nghỉ nào",
+  "startDate": "Ngày bắt đầu",
+  "endDate": "Ngày kết thúc",
+  "type": "Loại nghỉ",
+  "reason": "Lý do",
+  "reasonPlaceholder": "Nhập lý do xin nghỉ...",
+  "createSuccess": "Tạo đơn xin nghỉ thành công",
+  "cancel": "Hủy đơn",
+  "cancelConfirm": "Xác nhận hủy đơn",
+  "cancelMessage": "Bạn có chắc chắn muốn hủy đơn xin nghỉ này?",
+  "cancelSuccess": "Hủy đơn xin nghỉ thành công",
+  "approvedBy": "Người duyệt",
+  "types": {
+    "vacation": "Nghỉ phép",
+    "sick": "Nghỉ ốm",
+    "personal": "Nghỉ cá nhân",
+    "other": "Khác"
+  },
+  "shiftType": "Ca làm việc",
+  "shiftTypeHint": "Chọn ca bạn muốn xin nghỉ. Nếu chọn cả ngày, bạn sẽ nghỉ cả ca sáng và ca chiều.",
+  "shiftTypes": {
+    "fullDay": "Cả ngày",
+    "morning": "Ca sáng",
+    "afternoon": "Ca chiều"
+  },
+  "status": {
+    "approved": "Đã duyệt",
+    "rejected": "Đã từ chối",
+    "pending": "Đang chờ"
+  }
+}
+

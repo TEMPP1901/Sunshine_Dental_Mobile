@@ -9,32 +9,46 @@ import 'app/router.dart';
 import 'providers/user_provider.dart';
 import 'providers/theme_provider.dart';
 import 'providers/language_provider.dart';
+import 'providers/attendance_provider.dart';
+
+import 'package:firebase_core/firebase_core.dart';
+import 'services/notification_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Khởi tạo Firebase
+  await Firebase.initializeApp();
   
-  // Set up error handling
+  // Khởi tạo Notification Service (không block UI)
+  NotificationService().initialize().then((_) {
+    debugPrint('NotificationService initialized');
+  }).catchError((e) {
+    debugPrint('Failed to initialize NotificationService: $e');
+  });
+
+  // Xử lý lỗi trong framework Flutter
   FlutterError.onError = (FlutterErrorDetails details) {
     FlutterError.presentError(details);
     debugPrint('Flutter Error: ${details.exception}');
     debugPrint('Stack trace: ${details.stack}');
   };
-  
-  // Handle errors outside of Flutter
+
+  // Xử lý lỗi ngoài phạm vi Flutter framework
   PlatformDispatcher.instance.onError = (error, stack) {
     debugPrint('Platform Error: $error');
     debugPrint('Stack trace: $stack');
     return true;
   };
-  
-  // Initialize EasyLocalization with custom asset loader
+
+  // Khởi tạo EasyLocalization với loader tùy chỉnh
   await EasyLocalization.ensureInitialized();
-  
-  // Load saved language preference
+
+  // Lấy ngôn ngữ đã lưu từ SharedPreferences
   final prefs = await SharedPreferences.getInstance();
   final languageCode = prefs.getString('language') ?? 'en';
   final savedLocale = Locale(languageCode);
-  
+
   runApp(
     EasyLocalization(
       supportedLocales: const [Locale('en'), Locale('vi')],
@@ -47,7 +61,7 @@ void main() async {
   );
 }
 
-/// Custom asset loader to merge multiple JSON files
+// Loader thực hiện merge nhiều file json ngôn ngữ lại với nhau
 class MultiAssetLoader extends AssetLoader {
   const MultiAssetLoader();
 
@@ -55,7 +69,7 @@ class MultiAssetLoader extends AssetLoader {
   Future<Map<String, dynamic>> load(String path, Locale locale) async {
     final Map<String, dynamic> merged = {};
 
-    // List of all screen translation files
+    // Danh sách các file ngôn ngữ cho từng màn hình
     final files = [
       'common',
       'login',
@@ -67,12 +81,13 @@ class MultiAssetLoader extends AssetLoader {
       'account',
       'attendance',
       'profile',
+      'leaveRequest',
       'onboarding',
       'splash',
       'web',
     ];
 
-    // Load each file and merge into the main map
+    // Lần lượt đọc từng file và merge vào map chính
     for (final file in files) {
       try {
         final String jsonString = await rootBundle
@@ -80,7 +95,7 @@ class MultiAssetLoader extends AssetLoader {
         final Map<String, dynamic> jsonData = json.decode(jsonString);
         merged[file] = jsonData;
       } catch (e) {
-        // File might not exist, skip it
+        // Bỏ qua file không tồn tại
         continue;
       }
     }
@@ -99,10 +114,11 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => UserProvider()),
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => LanguageProvider()),
+        ChangeNotifierProvider(create: (_) => AttendanceProvider()),
       ],
       child: Consumer2<ThemeProvider, LanguageProvider>(
         builder: (context, themeProvider, languageProvider, _) {
-          // Update locale when language changes
+          // Khi đổi ngôn ngữ thì set lại locale cho context
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (context.mounted && context.locale != languageProvider.locale) {
               context.setLocale(languageProvider.locale);
@@ -117,50 +133,88 @@ class MyApp extends StatelessWidget {
             locale: languageProvider.locale,
             routerConfig: appRouter,
             theme: ThemeData(
-              primaryColor: const Color(0xFF3366FF),
-              scaffoldBackgroundColor: Colors.grey[50],
+              primaryColor: const Color(0xFF1A237E), // Màu xanh navy
+              scaffoldBackgroundColor: const Color(0xFFF5F5F7),
               colorScheme: ColorScheme.fromSeed(
-                seedColor: const Color(0xFF3366FF),
+                seedColor: const Color(0xFF1A237E),
                 brightness: Brightness.light,
+              ).copyWith(
+                primary: const Color(0xFF1A237E),
+                surface: Colors.white,
+                surfaceContainerHighest: const Color(0xFFECEFF1),
+                onSurface: const Color(0xFF263238),
+                onSurfaceVariant: const Color(0xFF546E7A),
+                outline: const Color(0xFFCFD8DC),
               ),
               appBarTheme: const AppBarTheme(
                 backgroundColor: Colors.white,
-                foregroundColor: Color(0xFF0D1B3E),
-                elevation: 0,
-              ),
-              cardColor: Colors.white,
-              useMaterial3: true,
-            ),
-            darkTheme: ThemeData(
-              primaryColor: const Color(0xFF3366FF),
-              scaffoldBackgroundColor: const Color(0xFF0F0F0F),
-              colorScheme: ColorScheme.fromSeed(
-                seedColor: const Color(0xFF3366FF),
-                brightness: Brightness.dark,
-              ).copyWith(
-                surface: const Color(0xFF1C1C1C),
-                surfaceContainerHighest: const Color(0xFF2A2A2A),
-                onSurface: Colors.white,
-                onSurfaceVariant: Colors.white70,
-              ),
-              appBarTheme: const AppBarTheme(
-                backgroundColor: Color(0xFF1C1C1C),
-                foregroundColor: Colors.white,
+                foregroundColor: Color(0xFF263238),
                 elevation: 0,
                 surfaceTintColor: Colors.transparent,
               ),
-              cardColor: const Color(0xFF1C1C1C),
+              cardColor: Colors.white,
               cardTheme: CardThemeData(
-                color: const Color(0xFF1C1C1C),
-                elevation: 2,
-                shadowColor: Colors.black.withValues(alpha: 0.3),
+                color: Colors.white,
+                elevation: 0,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(12), // Bo góc thẻ card
+                  side: const BorderSide(color: Color(0xFFECEFF1), width: 1),
                 ),
               ),
               inputDecorationTheme: InputDecorationTheme(
                 filled: true,
-                fillColor: const Color(0xFF1C1C1C),
+                fillColor: Colors.white,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: const BorderSide(color: Color(0xFFCFD8DC)),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: const BorderSide(color: Color(0xFFCFD8DC)),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: const BorderSide(color: Color(0xFF1A237E), width: 2),
+                ),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              ),
+              useMaterial3: true,
+            ),
+            darkTheme: ThemeData(
+              primaryColor: const Color(0xFF5C6BC0),
+              scaffoldBackgroundColor: const Color(0xFF121212),
+              colorScheme: ColorScheme.fromSeed(
+                seedColor: const Color(0xFF5C6BC0),
+                brightness: Brightness.dark,
+              ).copyWith(
+                primary: const Color(0xFF5C6BC0),
+                surface: const Color(0xFF1E1E1E),
+                surfaceContainerLow: const Color(0xFF1E1E1E),
+                surfaceContainerHighest: const Color(0xFF2C2C2C),
+                onSurface: const Color(0xFFEEEEEE),
+                onBackground: const Color(0xFFEEEEEE),
+                onSurfaceVariant: const Color(0xFFB0BEC5),
+                outline: const Color(0xFF424242),
+              ),
+              appBarTheme: const AppBarTheme(
+                backgroundColor: Color(0xFF0B0F19),
+                foregroundColor: Color(0xFFE0E0E0),
+                elevation: 0,
+                surfaceTintColor: Colors.transparent,
+              ),
+              cardColor: const Color(0xFF202836),
+              cardTheme: CardThemeData(
+                color: const Color(0xFF202836),
+                elevation: 0,
+                shadowColor: Colors.black,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  side: const BorderSide(color: Color(0xFF3E4756), width: 1),
+                ),
+              ),
+              inputDecorationTheme: InputDecorationTheme(
+                filled: true,
+                fillColor: const Color(0xFF151A26),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide(color: Colors.grey[700]!),
@@ -183,4 +237,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-

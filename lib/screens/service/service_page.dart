@@ -11,24 +11,24 @@ class ServicePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Trả về màn hình dịch vụ, có thể quay lại màn trước nếu có thể
     return PopScope(
       canPop: context.canPop(),
       child: Scaffold(
-      appBar: AppBar(
-        title: Text('service.title'.tr()),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            const ServicesGridSection(),
-            const WhyChooseUsSection(),
-            const HowItWorksSection(),
-            const FaqSection(),
-          ],
+        appBar: AppBar(
+          title: const Text('Service'),
         ),
-      ),
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              const ServicesGridSection(),
+              const WhyChooseUsSection(),
+              const HowItWorksSection(),
+              const FaqSection(),
+            ],
+          ),
+        ),
       ),
     );
   }
 }
-

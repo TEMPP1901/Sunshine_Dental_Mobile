@@ -10,7 +10,10 @@
     "checkInSuccess": "Chấm công vào thành công.",
     "checkOutSuccess": "Chấm công ra thành công.",
     "noAttendance": "Bạn chưa chấm công vào ngày hôm nay.",
-    "noAttendanceToCheckOut": "Không có ca nào để chấm công ra."
+    "noAttendanceToCheckOut": "Không có ca nào để chấm công ra.",
+    "invalidAttendanceId": "ID chấm công không hợp lệ.",
+    "faceVerificationFailed": "Xác thực khuôn mặt thất bại.",
+    "wifiInvalid": "Wi-Fi không khớp với cấu hình phòng khám."
   },
   "selectShift": {
     "title": "Chọn ca để chấm công ra"
@@ -20,10 +23,15 @@
     "message": "Cần tích hợp xác thực khuôn mặt và kiểm tra WiFi trước khi thực hiện chấm công trên ứng dụng. Vui lòng phối hợp với bộ phận backend để cung cấp dữ liệu sinh trắc học, cấu hình WiFi và thông tin phòng khám.",
     "confirm": "Tôi đã hiểu"
   },
+  "noDataMonthly": "Không có dữ liệu chấm công trong tháng này.",
+  "noDataToday": "Chưa có dữ liệu chấm công hôm nay",
+  "noDataTodayWeekend": "Hôm nay là ngày nghỉ, không có ca làm việc",
+  "noShiftsToday": "Hôm nay không có ca làm việc",
   "summary": {
     "today": "Hôm nay",
     "checkIn": "Giờ vào",
     "checkOut": "Giờ ra",
+    "totalHours": "Tổng giờ làm",
     "status": "Trạng thái: {status}",
     "unknown": "Không xác định"
   },
@@ -40,10 +48,15 @@
     "faceFailed": "Xác thực khuôn mặt thất bại",
     "unknown": "Chưa xác thực",
     "wifiValid": "Wi-Fi hợp lệ",
-    "wifiInvalid": "Wi-Fi không khớp"
+    "wifiInvalid": "Wi-Fi không khớp",
+    "present": "Có mặt",
+    "absent": "Vắng mặt",
+    "late": "Đi trễ",
+    "leaveEarly": "Về sớm"
   },
   "actions": {
     "signIn": "Đăng nhập",
+    "signInAgain": "Đăng nhập lại",
     "clockIn": "Chấm công vào",
     "clockOut": "Chấm công ra"
   },
@@ -56,6 +69,9 @@
     "typeAbsent": "Vắng mặt",
     "typeMissingCheckIn": "Thiếu chấm công vào",
     "typeMissingCheckOut": "Thiếu chấm công ra",
+    "late": "Đi trễ",
+    "earlyLeave": "Về sớm",
+    "submit": "Gửi",
     "date": "Ngày: {date}",
     "attendanceStatus": "Trạng thái: {status}",
     "submitButton": "Gửi giải trình",
@@ -67,4 +83,3 @@
     "invalidData": "Dữ liệu giải trình không hợp lệ"
   }
 }
-

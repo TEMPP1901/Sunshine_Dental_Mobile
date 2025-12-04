@@ -6,7 +6,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:dio/dio.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../services/api_service.dart';
-import 'package:easy_localization/easy_localization.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -23,7 +22,7 @@ class _SignUpPageState extends State<SignUpPage> {
   final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
-  
+
   bool _isLoading = false;
   bool _showPassword = false;
   bool _showConfirmPassword = false;
@@ -47,7 +46,7 @@ class _SignUpPageState extends State<SignUpPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          tr('signup.leftTitle'),
+          'Choose your avatar',
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -102,7 +101,7 @@ class _SignUpPageState extends State<SignUpPage> {
         if (_previewUrl != null) ...[
           const SizedBox(height: 16),
           Text(
-            tr('signup.previewAlt'),
+            'Preview custom avatar',
             style: TextStyle(
               fontWeight: FontWeight.w600,
               color: Theme.of(context).colorScheme.onSurface,
@@ -118,7 +117,7 @@ class _SignUpPageState extends State<SignUpPage> {
         OutlinedButton.icon(
           onPressed: _pickImage,
           icon: const Icon(Icons.upload_rounded),
-          label: Text(tr('signup.leftChooseFile')),
+          label: Text('Choose file'),
           style: OutlinedButton.styleFrom(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             shape: RoundedRectangleBorder(
@@ -133,7 +132,7 @@ class _SignUpPageState extends State<SignUpPage> {
   InputDecoration _inputDecoration(String label, IconData? icon) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    
+
     return InputDecoration(
       labelText: label,
       prefixIcon: icon != null ? Icon(icon, color: const Color(0xFF3366FF)) : null,
@@ -143,7 +142,7 @@ class _SignUpPageState extends State<SignUpPage> {
           : const Color(0xFFF5F7FB),
       labelStyle: TextStyle(
         color: isDark
-            ? theme.colorScheme.onSurface.withValues(alpha: 0.7)
+            ? theme.colorScheme.onSurface.withOpacity(0.7)
             : null,
       ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
@@ -174,14 +173,14 @@ class _SignUpPageState extends State<SignUpPage> {
 
   Widget _buildFormSection(List<String> defaultAvatars) {
     final theme = Theme.of(context);
-    
+
     return Form(
       key: _formKey,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            tr('signup.createTitle'),
+            'Create a new account',
             style: TextStyle(
               fontSize: 26,
               fontWeight: FontWeight.w700,
@@ -191,10 +190,10 @@ class _SignUpPageState extends State<SignUpPage> {
           ),
           const SizedBox(height: 6),
           Text(
-            tr('signup.subtitle'),
+            'Please fill out the form below to register',
             style: TextStyle(
               fontSize: 14,
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+              color: theme.colorScheme.onSurface.withOpacity(0.6),
             ),
             textAlign: TextAlign.center,
           ),
@@ -202,12 +201,12 @@ class _SignUpPageState extends State<SignUpPage> {
           TextFormField(
             controller: _fullNameController,
             decoration: _inputDecoration(
-              tr('signup.fields.fullName'),
+              'Full name',
               Icons.person_outline,
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return tr('signup.errors.fillAll');
+                return 'This field is required';
               }
               return null;
             },
@@ -216,12 +215,12 @@ class _SignUpPageState extends State<SignUpPage> {
           TextFormField(
             controller: _usernameController,
             decoration: _inputDecoration(
-              tr('signup.fields.username'),
+              'Username',
               Icons.badge_outlined,
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return tr('signup.errors.fillAll');
+                return 'This field is required';
               }
               return null;
             },
@@ -231,15 +230,15 @@ class _SignUpPageState extends State<SignUpPage> {
             controller: _emailController,
             keyboardType: TextInputType.emailAddress,
             decoration: _inputDecoration(
-              tr('signup.fields.email'),
+              'Email',
               Icons.alternate_email_rounded,
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return tr('signup.errors.fillAll');
+                return 'This field is required';
               }
               if (!value.contains('@')) {
-                return tr('signup.errors.invalidEmail');
+                return 'Invalid email address';
               }
               return null;
             },
@@ -249,12 +248,12 @@ class _SignUpPageState extends State<SignUpPage> {
             controller: _phoneController,
             keyboardType: TextInputType.phone,
             decoration: _inputDecoration(
-              tr('signup.fields.phone'),
+              'Phone number',
               Icons.phone_outlined,
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return tr('signup.errors.fillAll');
+                return 'This field is required';
               }
               return null;
             },
@@ -264,7 +263,7 @@ class _SignUpPageState extends State<SignUpPage> {
             controller: _passwordController,
             obscureText: !_showPassword,
             decoration: _inputDecoration(
-              tr('signup.fields.password'),
+              'Password',
               Icons.lock_outline,
             ).copyWith(
               suffixIcon: IconButton(
@@ -276,10 +275,10 @@ class _SignUpPageState extends State<SignUpPage> {
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return tr('signup.errors.fillAll');
+                return 'This field is required';
               }
               if (value.length < 6) {
-                return tr('signup.errors.passwordLength');
+                return 'Password must be at least 6 characters';
               }
               return null;
             },
@@ -289,26 +288,22 @@ class _SignUpPageState extends State<SignUpPage> {
             controller: _confirmPasswordController,
             obscureText: !_showConfirmPassword,
             decoration: _inputDecoration(
-              tr('signup.fields.confirmPassword'),
+              'Confirm password',
               Icons.lock_open_rounded,
             ).copyWith(
               suffixIcon: IconButton(
                 icon: Icon(
-                  _showConfirmPassword
-                      ? Icons.visibility_off
-                      : Icons.visibility,
+                  _showConfirmPassword ? Icons.visibility_off : Icons.visibility,
                 ),
-                onPressed: () => setState(
-                  () => _showConfirmPassword = !_showConfirmPassword,
-                ),
+                onPressed: () => setState(() => _showConfirmPassword = !_showConfirmPassword),
               ),
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return tr('signup.errors.fillAll');
+                return 'This field is required';
               }
               if (value != _passwordController.text) {
-                return tr('signup.errors.passwordMismatch');
+                return 'Passwords do not match';
               }
               return null;
             },
@@ -333,12 +328,11 @@ class _SignUpPageState extends State<SignUpPage> {
                       width: 24,
                       child: CircularProgressIndicator(
                         strokeWidth: 3,
-                        valueColor:
-                            AlwaysStoppedAnimation<Color>(Colors.white),
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                       ),
                     )
                   : Text(
-                      tr('signup.buttons.signUp'),
+                      'Sign Up',
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
@@ -351,16 +345,16 @@ class _SignUpPageState extends State<SignUpPage> {
             child: RichText(
               text: TextSpan(
                 style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
+                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
                   fontSize: 14,
                 ),
                 children: [
-                  TextSpan(text: '${tr('signup.bottom.haveAccount')} '),
+                  TextSpan(text: "Already have an account? "),
                   WidgetSpan(
                     child: GestureDetector(
                       onTap: () => context.go('/login'),
                       child: Text(
-                        tr('signup.bottom.login'),
+                        "Login",
                         style: const TextStyle(
                           color: Color(0xFF0D6EFD),
                           fontWeight: FontWeight.w700,
@@ -377,6 +371,7 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
+  // Phương thức chọn ảnh đại diện tuỳ chỉnh bằng thư viện image_picker
   Future<void> _pickImage() async {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
@@ -389,6 +384,7 @@ class _SignUpPageState extends State<SignUpPage> {
     }
   }
 
+  // Xử lý logic đăng ký tài khoản mới và upload avatar nếu có
   Future<void> _handleSignUp() async {
     if (!_formKey.currentState!.validate()) {
       return;
@@ -396,7 +392,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
     if (_passwordController.text != _confirmPasswordController.text) {
       Fluttertoast.showToast(
-        msg: tr('signup.errors.passwordMismatch'),
+        msg: 'Passwords do not match',
         toastLength: Toast.LENGTH_SHORT,
       );
       return;
@@ -405,7 +401,7 @@ class _SignUpPageState extends State<SignUpPage> {
     setState(() => _isLoading = true);
 
     try {
-      // Prepare avatar URL
+      // Chuẩn bị đường dẫn avatar
       String? initialAvatarUrl;
       if (_selectedAvatarUrl != null) {
         initialAvatarUrl = _selectedAvatarUrl;
@@ -414,7 +410,7 @@ class _SignUpPageState extends State<SignUpPage> {
         }
       }
 
-      // Sign up
+      // Gửi dữ liệu đăng ký lên server
       final response = await ApiService().post(
         '/api/auth/sign-up',
         data: {
@@ -424,7 +420,7 @@ class _SignUpPageState extends State<SignUpPage> {
           'phone': _phoneController.text.trim(),
           'password': _passwordController.text,
           'avatarUrl': initialAvatarUrl,
-          'locale': context.locale.languageCode,
+          'locale': 'en',
         },
       );
 
@@ -433,10 +429,10 @@ class _SignUpPageState extends State<SignUpPage> {
       final patientCode = data['patientCode'];
 
       if (userId == null) {
-        throw Exception(tr('signup.errors.idMissing'));
+        throw Exception('Account ID is missing!');
       }
 
-      // Upload custom avatar if selected
+      // Nếu người dùng chọn avatar tuỳ chỉnh thì upload avatar đó lên
       if (_customAvatar != null) {
         final formData = FormData.fromMap({
           'file': await MultipartFile.fromFile(_customAvatar!.path),
@@ -455,17 +451,17 @@ class _SignUpPageState extends State<SignUpPage> {
         }
       }
 
-      // Show success message
-      String successMsg = tr('signup.success.registered');
+      // Hiển thị thông báo đăng ký thành công
+      String successMsg = 'Registration successful';
       if (patientCode != null) {
-        successMsg = '$successMsg — ${tr('signup.labels.patientCode')}: $patientCode';
+        successMsg = '$successMsg — Your patient code: $patientCode';
       }
       Fluttertoast.showToast(
         msg: successMsg,
         toastLength: Toast.LENGTH_SHORT,
       );
 
-      // Navigate to login
+      // Sau 2s chuyển sang trang đăng nhập
       if (mounted) {
         Future.delayed(const Duration(seconds: 2), () {
           if (mounted) {
@@ -474,7 +470,8 @@ class _SignUpPageState extends State<SignUpPage> {
         });
       }
     } catch (e) {
-      String errorMsg = tr('signup.errors.failed');
+      // Xử lý các trường hợp lỗi khi đăng ký
+      String errorMsg = 'Registration failed. Please try again!';
       if (e is DioException && e.response != null) {
         final message = e.response?.data?['message'];
         if (message != null) {
@@ -503,12 +500,12 @@ class _SignUpPageState extends State<SignUpPage> {
 
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    
+
     return PopScope(
       canPop: context.canPop(),
       onPopInvoked: (didPop) {
         if (!didPop && !context.canPop()) {
-          // Only redirect if we're at the root and can't pop
+          // Nếu ở trang root thì quay lại màn hình login
           context.go('/login');
         }
       },
@@ -562,71 +559,69 @@ class _SignUpPageState extends State<SignUpPage> {
                           boxShadow: [
                             BoxShadow(
                               color: isDark
-                                  ? Colors.black.withValues(alpha: 0.5)
-                                  : Colors.black.withValues(alpha: 0.15),
+                                  ? Colors.black.withOpacity(0.5)
+                                  : Colors.black.withOpacity(0.15),
                               blurRadius: 30,
                               offset: const Offset(0, 18),
                             ),
                           ],
                         ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Container(
-                            height: 220,
-                            decoration: const BoxDecoration(
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(40),
-                                topRight: Radius.circular(40),
-                              ),
-                              image: DecorationImage(
-                                image: AssetImage('assets/images/doctor.png'),
-                                fit: BoxFit.cover,
-                                alignment: Alignment.topCenter,
-                              ),
-                            ),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: const BorderRadius.only(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Container(
+                              height: 220,
+                              decoration: const BoxDecoration(
+                                borderRadius: BorderRadius.only(
                                   topLeft: Radius.circular(40),
                                   topRight: Radius.circular(40),
                                 ),
-                                gradient: LinearGradient(
-                                  begin: Alignment.topCenter,
-                                  end: Alignment.bottomCenter,
-                                  colors: [
-                                    const Color(0xFF05152E).withValues(alpha: 0.55),
-                                    const Color(0xFF05152E).withValues(alpha: 0.1),
-                                  ],
+                                image: DecorationImage(
+                                  image: AssetImage('assets/images/doctor.png'),
+                                  fit: BoxFit.cover,
+                                  alignment: Alignment.topCenter,
                                 ),
                               ),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: const BorderRadius.only(
+                                    topLeft: Radius.circular(40),
+                                    topRight: Radius.circular(40),
+                                  ),
+                                  gradient: LinearGradient(
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter,
+                                    colors: [
+                                      const Color(0xFF05152E).withOpacity(0.55),
+                                      const Color(0xFF05152E).withOpacity(0.1),
+                                    ],
+                                  ),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 24,
+                                  vertical: 20,
+                                ),
+                                alignment: Alignment.bottomLeft,
+                              ),
+                            ),
+                            Padding(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 24,
-                                vertical: 20,
+                                vertical: 24,
                               ),
-                              alignment: Alignment.bottomLeft,
-                              // Decorative overlay removed as requested
+                              child: _buildFormSection(defaultAvatars),
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 24,
-                              vertical: 24,
-                            ),
-                            child: _buildFormSection(defaultAvatars),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
           ),
         ),
       ),
-      ),
     );
   }
 }
-
