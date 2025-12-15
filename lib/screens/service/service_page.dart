@@ -1,4 +1,3 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'sections/services_grid_section.dart';
@@ -15,9 +14,7 @@ class ServicePage extends StatelessWidget {
     return PopScope(
       canPop: context.canPop(),
       child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Service'),
-        ),
+        appBar: AppBar(title: const Text('Service')),
         body: SingleChildScrollView(
           child: Column(
             children: [

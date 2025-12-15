@@ -19,13 +19,16 @@ void main() async {
 
   // Khởi tạo Firebase
   await Firebase.initializeApp();
-  
+
   // Khởi tạo Notification Service (không block UI)
-  NotificationService().initialize().then((_) {
-    debugPrint('NotificationService initialized');
-  }).catchError((e) {
-    debugPrint('Failed to initialize NotificationService: $e');
-  });
+  NotificationService()
+      .initialize()
+      .then((_) {
+        debugPrint('NotificationService initialized');
+      })
+      .catchError((e) {
+        debugPrint('Failed to initialize NotificationService: $e');
+      });
 
   // Xử lý lỗi trong framework Flutter
   FlutterError.onError = (FlutterErrorDetails details) {
@@ -90,8 +93,9 @@ class MultiAssetLoader extends AssetLoader {
     // Lần lượt đọc từng file và merge vào map chính
     for (final file in files) {
       try {
-        final String jsonString = await rootBundle
-            .loadString('assets/locales/${locale.languageCode}/$file.json');
+        final String jsonString = await rootBundle.loadString(
+          'assets/locales/${locale.languageCode}/$file.json',
+        );
         final Map<String, dynamic> jsonData = json.decode(jsonString);
         merged[file] = jsonData;
       } catch (e) {
@@ -135,17 +139,18 @@ class MyApp extends StatelessWidget {
             theme: ThemeData(
               primaryColor: const Color(0xFF1A237E), // Màu xanh navy
               scaffoldBackgroundColor: const Color(0xFFF5F5F7),
-              colorScheme: ColorScheme.fromSeed(
-                seedColor: const Color(0xFF1A237E),
-                brightness: Brightness.light,
-              ).copyWith(
-                primary: const Color(0xFF1A237E),
-                surface: Colors.white,
-                surfaceContainerHighest: const Color(0xFFECEFF1),
-                onSurface: const Color(0xFF263238),
-                onSurfaceVariant: const Color(0xFF546E7A),
-                outline: const Color(0xFFCFD8DC),
-              ),
+              colorScheme:
+                  ColorScheme.fromSeed(
+                    seedColor: const Color(0xFF1A237E),
+                    brightness: Brightness.light,
+                  ).copyWith(
+                    primary: const Color(0xFF1A237E),
+                    surface: Colors.white,
+                    surfaceContainerHighest: const Color(0xFFECEFF1),
+                    onSurface: const Color(0xFF263238),
+                    onSurfaceVariant: const Color(0xFF546E7A),
+                    outline: const Color(0xFFCFD8DC),
+                  ),
               appBarTheme: const AppBarTheme(
                 backgroundColor: Colors.white,
                 foregroundColor: Color(0xFF263238),
@@ -174,28 +179,34 @@ class MyApp extends StatelessWidget {
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
-                  borderSide: const BorderSide(color: Color(0xFF1A237E), width: 2),
+                  borderSide: const BorderSide(
+                    color: Color(0xFF1A237E),
+                    width: 2,
+                  ),
                 ),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 14,
+                ),
               ),
               useMaterial3: true,
             ),
             darkTheme: ThemeData(
               primaryColor: const Color(0xFF5C6BC0),
               scaffoldBackgroundColor: const Color(0xFF121212),
-              colorScheme: ColorScheme.fromSeed(
-                seedColor: const Color(0xFF5C6BC0),
-                brightness: Brightness.dark,
-              ).copyWith(
-                primary: const Color(0xFF5C6BC0),
-                surface: const Color(0xFF1E1E1E),
-                surfaceContainerLow: const Color(0xFF1E1E1E),
-                surfaceContainerHighest: const Color(0xFF2C2C2C),
-                onSurface: const Color(0xFFEEEEEE),
-                onBackground: const Color(0xFFEEEEEE),
-                onSurfaceVariant: const Color(0xFFB0BEC5),
-                outline: const Color(0xFF424242),
-              ),
+              colorScheme:
+                  ColorScheme.fromSeed(
+                    seedColor: const Color(0xFF5C6BC0),
+                    brightness: Brightness.dark,
+                  ).copyWith(
+                    primary: const Color(0xFF5C6BC0),
+                    surface: const Color(0xFF1E1E1E),
+                    surfaceContainerLow: const Color(0xFF1E1E1E),
+                    surfaceContainerHighest: const Color(0xFF2C2C2C),
+                    onSurface: const Color(0xFFEEEEEE),
+                    onSurfaceVariant: const Color(0xFFB0BEC5),
+                    outline: const Color(0xFF424242),
+                  ),
               appBarTheme: const AppBarTheme(
                 backgroundColor: Color(0xFF0B0F19),
                 foregroundColor: Color(0xFFE0E0E0),
@@ -225,7 +236,10 @@ class MyApp extends StatelessWidget {
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: Color(0xFF3366FF), width: 2),
+                  borderSide: const BorderSide(
+                    color: Color(0xFF3366FF),
+                    width: 2,
+                  ),
                 ),
               ),
               useMaterial3: true,

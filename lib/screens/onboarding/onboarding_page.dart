@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../../services/api_service.dart';
 
 class OnboardingPage extends StatelessWidget {
   const OnboardingPage({super.key});
@@ -17,18 +16,12 @@ class OnboardingPage extends StatelessWidget {
               ? LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [
-                    const Color(0xFF0A0A0A),
-                    const Color(0xFF1A1A2E),
-                  ],
+                  colors: [const Color(0xFF0A0A0A), const Color(0xFF1A1A2E)],
                 )
               : const LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [
-                    Color(0xFFE8F4F8),
-                    Color(0xFFD4E8F0),
-                  ],
+                  colors: [Color(0xFFE8F4F8), Color(0xFFD4E8F0)],
                 ),
         ),
         child: SafeArea(
@@ -65,7 +58,9 @@ class OnboardingPage extends StatelessWidget {
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
                                   image: DecorationImage(
-                                    image: AssetImage('assets/images/patient1.png'),
+                                    image: AssetImage(
+                                      'assets/images/patient1.png',
+                                    ),
                                     fit: BoxFit.cover,
                                   ),
                                   boxShadow: [
@@ -89,7 +84,9 @@ class OnboardingPage extends StatelessWidget {
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 image: DecorationImage(
-                                  image: AssetImage('assets/images/patient2.png'),
+                                  image: AssetImage(
+                                    'assets/images/patient2.png',
+                                  ),
                                   fit: BoxFit.cover,
                                 ),
                                 boxShadow: [
@@ -125,7 +122,7 @@ class OnboardingPage extends StatelessWidget {
                               ),
                             ),
                           ),
-                          // Hình cây răng ở giữa 
+                          // Hình cây răng ở giữa
                           Center(
                             child: Transform.translate(
                               offset: const Offset(0, 15),

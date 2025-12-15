@@ -32,8 +32,8 @@ class AttendanceService {
         );
         if (response.data is List) {
           final list = (response.data as List)
-              .where((item) => item is Map)
-              .map((item) => Map<String, dynamic>.from(item as Map))
+              .whereType<Map>()
+              .map((item) => Map<String, dynamic>.from(item))
               .toList();
           return {
             'success': true,
@@ -45,8 +45,8 @@ class AttendanceService {
             final parsed = jsonDecode(response.data as String);
             if (parsed is List) {
               final list = parsed
-                  .where((item) => item is Map)
-                  .map((item) => Map<String, dynamic>.from(item as Map))
+                  .whereType<Map>()
+                  .map((item) => Map<String, dynamic>.from(item))
                   .toList();
               return {
                 'success': true,
@@ -56,11 +56,7 @@ class AttendanceService {
             }
           } catch (_) {}
         }
-        return {
-          'success': true,
-          'data': [],
-          'single': null,
-        };
+        return {'success': true, 'data': [], 'single': null};
       } else {
         // Lấy điểm danh hôm nay cho nhân viên (chỉ một bản ghi)
         final response = await _apiService.get(
@@ -79,7 +75,7 @@ class AttendanceService {
             try {
               final parsed = jsonDecode(response.data as String);
               if (parsed is Map) {
-                final single = Map<String, dynamic>.from(parsed as Map);
+                final single = Map<String, dynamic>.from(parsed);
                 return {
                   'success': true,
                   'data': [single],
@@ -89,20 +85,12 @@ class AttendanceService {
             } catch (_) {}
           }
         }
-        return {
-          'success': true,
-          'data': [],
-          'single': null,
-        };
+        return {'success': true, 'data': [], 'single': null};
       }
     } on DioException catch (dioError) {
       final status = dioError.response?.statusCode;
       if (status == 404) {
-        return {
-          'success': true,
-          'data': [],
-          'single': null,
-        };
+        return {'success': true, 'data': [], 'single': null};
       } else if (status == 401) {
         final serverMessage = dioError.response?.data?['message']?.toString();
         throw Exception(
@@ -111,7 +99,8 @@ class AttendanceService {
               : 'Unauthorized. Please login again.',
         );
       } else {
-        final serverMessage = dioError.response?.data?['message']?.toString() ??
+        final serverMessage =
+            dioError.response?.data?['message']?.toString() ??
             dioError.response?.data?['error']?.toString();
         throw Exception(
           serverMessage?.isNotEmpty == true
@@ -161,8 +150,8 @@ class AttendanceService {
         if (data is Map<String, dynamic>) {
           if (data['content'] is List) {
             items = (data['content'] as List)
-                .where((item) => item is Map)
-                .map((item) => Map<String, dynamic>.from(item as Map))
+                .whereType<Map>()
+                .map((item) => Map<String, dynamic>.from(item))
                 .toList();
           }
 
@@ -178,8 +167,8 @@ class AttendanceService {
           };
         } else if (data is List) {
           items = data
-              .where((item) => item is Map)
-              .map((item) => Map<String, dynamic>.from(item as Map))
+              .whereType<Map>()
+              .map((item) => Map<String, dynamic>.from(item))
               .toList();
 
           return {
@@ -195,8 +184,8 @@ class AttendanceService {
             if (parsed is Map<String, dynamic>) {
               if (parsed['content'] is List) {
                 items = (parsed['content'] as List)
-                    .where((item) => item is Map)
-                    .map((item) => Map<String, dynamic>.from(item as Map))
+                    .whereType<Map>()
+                    .map((item) => Map<String, dynamic>.from(item))
                     .toList();
               }
               final totalPages = parsed['totalPages'] as int? ?? 0;
@@ -211,8 +200,8 @@ class AttendanceService {
               };
             } else if (parsed is List) {
               items = parsed
-                  .where((item) => item is Map)
-                  .map((item) => Map<String, dynamic>.from(item as Map))
+                  .whereType<Map>()
+                  .map((item) => Map<String, dynamic>.from(item))
                   .toList();
 
               return {
@@ -282,16 +271,16 @@ class AttendanceService {
       );
       if (response.data is List) {
         return (response.data as List)
-            .where((item) => item is Map)
-            .map((item) => Map<String, dynamic>.from(item as Map))
+            .whereType<Map>()
+            .map((item) => Map<String, dynamic>.from(item))
             .toList();
       } else if (response.data is String) {
         try {
           final parsed = jsonDecode(response.data as String);
           if (parsed is List) {
             return parsed
-                .where((item) => item is Map)
-                .map((item) => Map<String, dynamic>.from(item as Map))
+                .whereType<Map>()
+                .map((item) => Map<String, dynamic>.from(item))
                 .toList();
           }
         } catch (_) {}
@@ -348,13 +337,12 @@ class AttendanceService {
         payload['clinicId'] = clinicId;
       }
 
-      final response =
-          await _apiService.post('/api/hr/attendance/check-in', data: payload);
+      final response = await _apiService.post(
+        '/api/hr/attendance/check-in',
+        data: payload,
+      );
 
-      return {
-        'success': true,
-        'data': response.data,
-      };
+      return {'success': true, 'data': response.data};
     } on DioException catch (dioError) {
       final serverMessage = dioError.response?.data?['message']?.toString();
       throw Exception(
@@ -382,13 +370,12 @@ class AttendanceService {
         'bssid': bssid,
       };
 
-      final response =
-          await _apiService.post('/api/hr/attendance/check-out', data: payload);
+      final response = await _apiService.post(
+        '/api/hr/attendance/check-out',
+        data: payload,
+      );
 
-      return {
-        'success': true,
-        'data': response.data,
-      };
+      return {'success': true, 'data': response.data};
     } on DioException catch (dioError) {
       final serverMessage = dioError.response?.data?['message']?.toString();
       throw Exception(
@@ -410,8 +397,7 @@ class AttendanceService {
     try {
       final today = DateTime.now();
       final isoDate = DateFormat('yyyy-MM-dd').format(today);
-      final response =
-          await _apiService.get('/api/hr/schedules/date/$isoDate');
+      final response = await _apiService.get('/api/hr/schedules/date/$isoDate');
 
       final data = response.data;
       if (data is! List) {
@@ -488,10 +474,7 @@ class AttendanceService {
   Future<Map<String, String?>> collectWifiInfo() async {
     final ssid = await _networkInfo.getWifiName();
     final bssid = await _networkInfo.getWifiBSSID();
-    return {
-      'ssid': ssid,
-      'bssid': bssid,
-    };
+    return {'ssid': ssid, 'bssid': bssid};
   }
 
   // Chụp ảnh và trích xuất embedding khuôn mặt từ ảnh
@@ -516,11 +499,16 @@ class AttendanceService {
         return DateTime.parse(time);
       }
       final parsed = DateFormat.Hms().parse(time);
-      return DateTime(date.year, date.month, date.day, parsed.hour,
-          parsed.minute, parsed.second);
+      return DateTime(
+        date.year,
+        date.month,
+        date.day,
+        parsed.hour,
+        parsed.minute,
+        parsed.second,
+      );
     } catch (_) {
       return null;
     }
   }
 }
-

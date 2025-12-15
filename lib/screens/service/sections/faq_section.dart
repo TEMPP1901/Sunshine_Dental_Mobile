@@ -16,23 +16,28 @@ class _FaqSectionState extends State<FaqSection> {
     },
     {
       'q': 'Can I use my insurance at your clinic?',
-      'a': 'Yes, we accept most major insurances and also provide detailed invoices for you.',
+      'a':
+          'Yes, we accept most major insurances and also provide detailed invoices for you.',
     },
     {
       'q': 'How often should I have a dental check-up?',
-      'a': 'We recommend visiting every 6 months or as advised by your dentist.',
+      'a':
+          'We recommend visiting every 6 months or as advised by your dentist.',
     },
     {
       'q': 'Which dental services are available?',
-      'a': 'We offer general dentistry, orthodontics, cosmetic dentistry, preventive care, and more.',
+      'a':
+          'We offer general dentistry, orthodontics, cosmetic dentistry, preventive care, and more.',
     },
     {
       'q': 'Is emergency dental care provided?',
-      'a': 'Yes, we handle emergencies during our office hours. Please call ahead.',
+      'a':
+          'Yes, we handle emergencies during our office hours. Please call ahead.',
     },
     {
       'q': 'How to make an appointment?',
-      'a': 'You can call us directly or use the online booking system on our website.',
+      'a':
+          'You can call us directly or use the online booking system on our website.',
     },
   ];
 
@@ -43,7 +48,7 @@ class _FaqSectionState extends State<FaqSection> {
   Widget build(BuildContext context) {
     // Xác định thiết bị có phải là mobile hay không
     final isMobile = MediaQuery.of(context).size.width < 768;
-    
+
     return Container(
       padding: EdgeInsets.all(isMobile ? 16 : 48),
       color: Colors.grey[50],
@@ -63,14 +68,12 @@ class _FaqSectionState extends State<FaqSection> {
             final index = entry.key;
             final faq = entry.value;
             final isExpanded = _expandedIndices.contains(index);
-            
+
             return Container(
               margin: const EdgeInsets.only(bottom: 1),
               decoration: BoxDecoration(
                 color: Colors.white,
-                border: Border(
-                  bottom: BorderSide(color: Colors.grey[200]!),
-                ),
+                border: Border(bottom: BorderSide(color: Colors.grey[200]!)),
               ),
               child: ExpansionTile(
                 title: Text(
@@ -82,7 +85,9 @@ class _FaqSectionState extends State<FaqSection> {
                   ),
                 ),
                 trailing: Icon(
-                  isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+                  isExpanded
+                      ? Icons.keyboard_arrow_up
+                      : Icons.keyboard_arrow_down,
                   color: Colors.black54,
                 ),
                 // Xử lý sự kiện khi mở rộng hoặc thu gọn mục FAQ
@@ -112,7 +117,7 @@ class _FaqSectionState extends State<FaqSection> {
                 ],
               ),
             );
-          }).toList(),
+          }),
         ],
       ),
     );
