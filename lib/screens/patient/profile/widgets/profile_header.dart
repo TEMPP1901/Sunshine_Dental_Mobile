@@ -16,9 +16,9 @@ class ProfileHeader extends StatelessWidget {
   List<String> _extractNormalizedRoles(dynamic roles) {
     if (roles == null) return [];
     List<dynamic> rawList = [];
-    if (roles is List)
+    if (roles is List) {
       rawList = roles;
-    else if (roles is String)
+    } else if (roles is String)
       rawList = roles.split(',');
 
     return rawList

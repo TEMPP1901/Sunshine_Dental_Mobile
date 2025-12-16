@@ -309,4 +309,30 @@ class UserProvider extends ChangeNotifier {
     _isLoading = value;
     notifyListeners();
   }
+
+  // --- 9. LOGIN WITH QR CODE (MỚI) ---
+  Future<bool> loginWithQrCode(String qrToken) async {
+    _setLoading(true);
+    _errorMessage = null;
+    try {
+      // Backend của bạn: POST /api/auth/qr-login?token=...
+      final response = await _apiService.post(
+        '/api/auth/qr-login',
+        queryParameters: {'token': qrToken},
+        data: {}, // Body rỗng vì token gửi qua query param
+      );
+
+      // Response trả về có dạng { message: "...", result: { accessToken... } }
+      // Kiểm tra cấu trúc ApiResponse của backend bạn
+      final resultData = response.data['result'] ?? response.data;
+
+      await _handleLoginSuccess(resultData);
+      return true;
+    } on DioException catch (e) {
+      _handleError(e);
+      return false;
+    } finally {
+      _setLoading(false);
+    }
+  }
 }

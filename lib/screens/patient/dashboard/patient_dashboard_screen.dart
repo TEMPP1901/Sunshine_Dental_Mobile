@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 import '../../../../models/patient/patient_models.dart';
 import '../../../../services/patient/patient_service.dart';
 import '../appointments/widgets/appointment_card.dart';
@@ -115,8 +114,9 @@ class _PatientDashboardScreenState extends State<PatientDashboardScreen> {
                             final discount = _getDiscountInfo(
                               _data!.memberTier,
                             );
-                            if (discount == null)
+                            if (discount == null) {
                               return const SizedBox.shrink();
+                            }
                             return Container(
                               margin: const EdgeInsets.only(top: 12),
                               padding: const EdgeInsets.symmetric(

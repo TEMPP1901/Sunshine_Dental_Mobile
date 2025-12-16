@@ -26,7 +26,8 @@ class ApiService {
       // - 10.0.2.2: Là địa chỉ localhost của máy tính (Host) khi nhìn từ Máy ảo (Emulator).
       // - Nếu bạn chạy trên ĐIỆN THOẠI THẬT: Bạn phải đổi lại thành IP LAN (ví dụ: 192.168.1.x)
 
-      const baseUrl = 'http://10.0.2.2:8080';
+      const baseUrl = // 'http://10.0.2.2:8080';
+          'http://192.168.100.232:8080';
 
       debugPrint(' [ApiService] Platform: Android Emulator, using: $baseUrl');
       debugPrint(

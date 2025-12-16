@@ -7,6 +7,7 @@ import 'package:easy_localization/easy_localization.dart';
 import '../../providers/user_provider.dart';
 import 'widgets/login_form_email.dart';
 import 'widgets/login_form_phone.dart';
+import 'qr_scan_page.dart'; // [MỚI] Import trang Scan QR
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -20,7 +21,6 @@ class _LoginPageState extends State<LoginPage>
   late TabController _tabController;
 
   // --- Controllers ---
-  // Giữ controller ở đây để không bị mất dữ liệu khi user chuyển qua lại giữa các Tab
   final _emailCtrl = TextEditingController();
   final _emailPassCtrl = TextEditingController();
   final _phoneCtrl = TextEditingController();
@@ -145,12 +145,39 @@ class _LoginPageState extends State<LoginPage>
 
     return Scaffold(
       backgroundColor: Colors.white,
+
+      // [MỚI] AppBar chứa nút QR Code Scanner
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        // Dùng iconBack nếu cần, hoặc để tự động (nếu push từ trang khác)
+        // automaticallyImplyLeading: false,
+        actions: [
+          IconButton(
+            onPressed: () {
+              // Chuyển hướng sang trang Scan QR
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => const QrScanPage()),
+              );
+            },
+            icon: const Icon(
+              Icons.qr_code_scanner,
+              color: Color(0xFF3366FF),
+              size: 28,
+            ),
+            tooltip: "Scan Login QR",
+          ),
+          const SizedBox(width: 16),
+        ],
+      ),
+
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Column(
             children: [
-              const SizedBox(height: 20),
+              // Đã có AppBar nên giảm khoảng cách top xuống một chút
+              const SizedBox(height: 10),
 
               // 1. Header Logo & Title
               const Icon(

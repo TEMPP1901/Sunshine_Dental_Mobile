@@ -47,18 +47,20 @@ class _UpcomingAppointmentCardState extends State<UpcomingAppointmentCard> {
         }
       }
 
-      if (mounted)
+      if (mounted) {
         setState(() {
           _appointment = null;
           _isLoading = false;
         });
+      }
     } catch (e) {
       debugPrint("Error fetching upcoming appointment: $e");
-      if (mounted)
+      if (mounted) {
         setState(() {
           _appointment = null;
           _isLoading = false;
         });
+      }
     }
   }
 
