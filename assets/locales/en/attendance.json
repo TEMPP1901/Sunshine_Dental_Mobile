@@ -43,6 +43,9 @@
     "title": "Monthly Attendance",
     "noData": "No attendance records found for this month."
   },
+  "Check In": "Check In",
+  "Check Out": "Check Out",
+  "No attendance data for this month": "No attendance data for this month",
   "status": {
     "verified": "Face verified",
     "faceFailed": "Face verification failed",
@@ -53,6 +56,10 @@
     "absent": "Absent",
     "late": "Late",
     "leaveEarly": "Left Early"
+  },
+  "shiftType": {
+    "morning": "Morning Shift",
+    "afternoon": "Afternoon Shift"
   },
   "actions": {
     "signIn": "Sign In",

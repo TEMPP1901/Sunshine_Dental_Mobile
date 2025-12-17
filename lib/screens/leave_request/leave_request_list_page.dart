@@ -87,6 +87,8 @@ class _LeaveRequestListPageState extends State<LeaveRequestListPage> {
         return Colors.red;
       case 'PENDING':
         return Colors.orange;
+      case 'PENDING_ADMIN':
+        return Colors.purple; // Màu tím cho trạng thái chờ Admin
       default:
         return Colors.grey;
     }
@@ -100,7 +102,9 @@ class _LeaveRequestListPageState extends State<LeaveRequestListPage> {
       case 'REJECTED':
         return 'leaveRequest.status.rejected'.tr();
       case 'PENDING':
-        return 'leaveRequest.status.pending'.tr();
+        return 'leaveRequest.status.pending'.tr(); // Pending HR
+      case 'PENDING_ADMIN':
+        return 'Pending Admin'; // Hoặc thêm key vào file ngôn ngữ
       default:
         return status ?? '';
     }

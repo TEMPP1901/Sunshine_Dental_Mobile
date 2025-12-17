@@ -14,6 +14,17 @@ import '../screens/leave_request/leave_request_list_page.dart';
 import '../screens/leave_request/create_leave_request_page.dart';
 import '../screens/notification/notification_screen.dart';
 import '../screens/home/sections/my_schedule_page.dart';
+import '../screens/camera/face_camera_screen.dart';
+import '../screens/face_registration/face_registration_page.dart';
+import '../screens/face_registration/update_face_profile_page.dart';
+import '../screens/admin/admin_dashboard_page.dart';
+import '../screens/hr/face_profile_approval_page.dart';
+import '../screens/hr/employee_list_page.dart';
+import '../screens/hr/attendance_history_page.dart';
+import '../screens/hr/schedule_page.dart';
+import '../screens/hr/approved_leave_page.dart';
+import '../screens/hr/hr_hub_page.dart';
+import '../screens/hr/pending_explanations_page.dart';
 
 final appRouter = GoRouter(
   initialLocation: '/',
@@ -128,6 +139,102 @@ final appRouter = GoRouter(
         context,
         state,
         const MySchedulePage(),
+      ),
+    ),
+    GoRoute(
+      path: '/face-camera',
+      pageBuilder: (context, state) => _buildPageWithTransition(
+        context,
+        state,
+        const FaceCameraScreen(),
+      ),
+    ),
+    GoRoute(
+      path: '/face-registration',
+      pageBuilder: (context, state) => _buildPageWithTransition(
+        context,
+        state,
+        const FaceRegistrationPage(),
+      ),
+    ),
+    GoRoute(
+      path: '/update-face-profile',
+      pageBuilder: (context, state) => _buildPageWithTransition(
+        context,
+        state,
+        const UpdateFaceProfilePage(),
+      ),
+    ),
+    GoRoute(
+      path: '/admin',
+      pageBuilder: (context, state) => _buildPageWithTransition(
+        context,
+        state,
+        const AdminDashboardPage(),
+      ),
+    ),
+    GoRoute(
+      path: '/hr/hub',
+      pageBuilder: (context, state) => _buildPageWithTransition(
+        context,
+        state,
+        const HrHubPage(),
+      ),
+    ),
+    GoRoute(
+      path: '/hr',
+      pageBuilder: (context, state) => _buildPageWithTransition(
+        context,
+        state,
+        const HrHubPage(),
+      ),
+    ),
+    GoRoute(
+      path: '/hr/face-approvals',
+      pageBuilder: (context, state) => _buildPageWithTransition(
+        context,
+        state,
+        const FaceProfileApprovalPage(),
+      ),
+    ),
+    GoRoute(
+      path: '/hr/employees',
+      pageBuilder: (context, state) => _buildPageWithTransition(
+        context,
+        state,
+        const EmployeeListPage(),
+      ),
+    ),
+    GoRoute(
+      path: '/hr/attendance-history',
+      pageBuilder: (context, state) => _buildPageWithTransition(
+        context,
+        state,
+        const AttendanceHistoryPage(),
+      ),
+    ),
+    GoRoute(
+      path: '/hr/schedules',
+      pageBuilder: (context, state) => _buildPageWithTransition(
+        context,
+        state,
+        const HrSchedulePage(),
+      ),
+    ),
+    GoRoute(
+      path: '/hr/approved-leaves',
+      pageBuilder: (context, state) => _buildPageWithTransition(
+        context,
+        state,
+        const ApprovedLeavePage(),
+      ),
+    ),
+    GoRoute(
+      path: '/hr/pending-explanations',
+      pageBuilder: (context, state) => _buildPageWithTransition(
+        context,
+        state,
+        const PendingExplanationsPage(),
       ),
     ),
   ],

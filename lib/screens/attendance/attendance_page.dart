@@ -116,8 +116,33 @@ class _AttendancePageState extends State<AttendancePage> with SingleTickerProvid
 
   // Hàm xử lý check-in/out dành cho nhân viên và bác sĩ, ưu tiên chọn ca đối với bác sĩ
   Future<void> _handleCheckInOut(bool isClockIn) async {
-    if (_user == null) return;
-    final userId = _user!['userId'] ?? _user!['id'];
+    if (_user == null) {
+      Fluttertoast.showToast(msg: 'User information not found. Please login again.');
+      return;
+    }
+    
+    // Validate và lấy userId từ user object
+    final userIdRaw = _user!['userId'] ?? _user!['id'];
+    if (userIdRaw == null) {
+      Fluttertoast.showToast(msg: 'User ID not found. Please login again.');
+      return;
+    }
+    
+    // Đảm bảo userId là số nguyên hợp lệ
+    int? userId;
+    if (userIdRaw is int) {
+      userId = userIdRaw;
+    } else if (userIdRaw is String) {
+      userId = int.tryParse(userIdRaw);
+    } else {
+      userId = int.tryParse(userIdRaw.toString());
+    }
+    
+    if (userId == null) {
+      Fluttertoast.showToast(msg: 'Invalid user ID. Please login again.');
+      return;
+    }
+    
     final provider = context.read<AttendanceProvider>();
 
     if (!isClockIn && _isDoctor) {
@@ -149,6 +174,7 @@ class _AttendancePageState extends State<AttendancePage> with SingleTickerProvid
             _selectedAttendanceForCheckOut = selected;
           });
           await provider.handleAttendanceAction(
+            context: context,
             isClockIn: false,
             userId: userId,
             isDoctor: _isDoctor,
@@ -161,6 +187,7 @@ class _AttendancePageState extends State<AttendancePage> with SingleTickerProvid
           _selectedAttendanceForCheckOut = provider.todayAttendanceList[0];
         });
         await provider.handleAttendanceAction(
+          context: context,
           isClockIn: false,
           userId: userId,
           isDoctor: _isDoctor,
@@ -212,6 +239,7 @@ class _AttendancePageState extends State<AttendancePage> with SingleTickerProvid
         return;
       }
       await provider.handleAttendanceAction(
+        context: context,
         isClockIn: false,
         userId: userId,
         isDoctor: _isDoctor,
@@ -221,6 +249,7 @@ class _AttendancePageState extends State<AttendancePage> with SingleTickerProvid
     }
 
     await provider.handleAttendanceAction(
+      context: context,
       isClockIn: true,
       userId: userId,
       isDoctor: _isDoctor,
@@ -434,6 +463,47 @@ class _AttendancePageState extends State<AttendancePage> with SingleTickerProvid
   }
 
   Widget _buildActionButtons(AttendanceProvider provider) {
+    // Kiểm tra trạng thái check-in/check-out để disable button tương ứng
+    bool hasCheckedIn = false;
+    bool hasCheckedOut = false;
+    bool canCheckIn = true;
+    bool canCheckOut = false;
+
+    if (_isDoctor) {
+      // Bác sĩ: kiểm tra tất cả các ca hôm nay
+      if (provider.todayAttendanceList.isNotEmpty) {
+        // Kiểm tra xem có ca nào đã check-in chưa
+        hasCheckedIn = provider.todayAttendanceList.any((att) => 
+          att['checkInTime'] != null
+        );
+        // Kiểm tra xem có ca nào đã check-out chưa
+        hasCheckedOut = provider.todayAttendanceList.any((att) => 
+          att['checkOutTime'] != null
+        );
+        // Kiểm tra xem có ca nào đã check-in nhưng chưa check-out
+        final hasIncompleteShift = provider.todayAttendanceList.any((att) => 
+          att['checkInTime'] != null && att['checkOutTime'] == null
+        );
+        
+        // Có thể check-in nếu chưa có ca nào check-in, hoặc tất cả ca đã check-out
+        canCheckIn = !hasCheckedIn || (hasCheckedOut && !hasIncompleteShift);
+        // Có thể check-out nếu có ít nhất 1 ca đã check-in nhưng chưa check-out
+        canCheckOut = hasIncompleteShift;
+      }
+    } else {
+      // Nhân viên: kiểm tra attendance hôm nay
+      final todayAtt = provider.todayAttendance;
+      if (todayAtt != null) {
+        hasCheckedIn = todayAtt['checkInTime'] != null;
+        hasCheckedOut = todayAtt['checkOutTime'] != null;
+        
+        // Có thể check-in nếu chưa check-in, hoặc đã check-out (ca mới)
+        canCheckIn = !hasCheckedIn || hasCheckedOut;
+        // Có thể check-out nếu đã check-in nhưng chưa check-out
+        canCheckOut = hasCheckedIn && !hasCheckedOut;
+      }
+    }
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
@@ -442,8 +512,10 @@ class _AttendancePageState extends State<AttendancePage> with SingleTickerProvid
             child: _buildActionButton(
               label: 'Check In'.tr(),
               icon: Icons.login_rounded,
-              color: const Color(0xFF2E7D32),
-              onPressed: provider.isSubmitting ? null : () => _handleCheckInOut(true),
+              color: const Color(0xFF047857),
+              onPressed: (provider.isSubmitting || !canCheckIn) 
+                  ? null 
+                  : () => _handleCheckInOut(true),
               isLoading: provider.isSubmitting,
               isOutlined: false,
             ),
@@ -453,8 +525,10 @@ class _AttendancePageState extends State<AttendancePage> with SingleTickerProvid
             child: _buildActionButton(
               label: 'Check Out'.tr(),
               icon: Icons.logout_rounded,
-              color: const Color(0xFFEF6C00),
-              onPressed: provider.isSubmitting ? null : () => _handleCheckInOut(false),
+              color: const Color(0xFFD97706),
+              onPressed: (provider.isSubmitting || !canCheckOut) 
+                  ? null 
+                  : () => _handleCheckInOut(false),
               isLoading: provider.isSubmitting,
               isOutlined: true,
             ),
@@ -472,19 +546,105 @@ class _AttendancePageState extends State<AttendancePage> with SingleTickerProvid
     required bool isLoading,
     required bool isOutlined,
   }) {
+    final isDisabled = onPressed == null;
+    final effectiveColor = isDisabled ? color.withOpacity(0.4) : color;
+    
     if (isOutlined) {
-      return Container(
+      return Opacity(
+        opacity: isDisabled ? 0.5 : 1.0,
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: effectiveColor.withOpacity(0.6),
+              width: 2,
+            ),
+            boxShadow: isDisabled ? [] : [
+              BoxShadow(
+                color: effectiveColor.withOpacity(0.15),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+                spreadRadius: 0,
+              ),
+            ],
+          ),
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: onPressed,
+              borderRadius: BorderRadius.circular(20),
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (isLoading)
+                      SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2.5,
+                          valueColor: AlwaysStoppedAnimation<Color>(effectiveColor),
+                        ),
+                      )
+                    else
+                      Container(
+                        padding: const EdgeInsets.all(5),
+                        decoration: BoxDecoration(
+                          color: effectiveColor.withOpacity(0.15),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Icon(icon, color: effectiveColor, size: 18),
+                      ),
+                    const SizedBox(width: 8),
+                    Flexible(
+                      child: Text(
+                        label,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 14,
+                          color: effectiveColor,
+                          letterSpacing: 0.2,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Opacity(
+      opacity: isDisabled ? 0.5 : 1.0,
+      child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: color.withOpacity(0.6),
-            width: 2,
+          gradient: LinearGradient(
+            colors: [
+              effectiveColor,
+              effectiveColor.withOpacity(0.85),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
           ),
-          boxShadow: [
+          boxShadow: isDisabled ? [] : [
             BoxShadow(
-              color: color.withOpacity(0.15),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
+              color: effectiveColor.withOpacity(0.4),
+              blurRadius: 16,
+              offset: const Offset(0, 6),
+              spreadRadius: 0,
+            ),
+            BoxShadow(
+              color: effectiveColor.withOpacity(0.2),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
               spreadRadius: 0,
             ),
           ],
@@ -501,31 +661,31 @@ class _AttendancePageState extends State<AttendancePage> with SingleTickerProvid
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   if (isLoading)
-                    SizedBox(
+                    const SizedBox(
                       width: 18,
                       height: 18,
                       child: CircularProgressIndicator(
                         strokeWidth: 2.5,
-                        valueColor: AlwaysStoppedAnimation<Color>(color),
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                       ),
                     )
                   else
                     Container(
                       padding: const EdgeInsets.all(5),
                       decoration: BoxDecoration(
-                        color: color.withOpacity(0.15),
+                        color: Colors.white.withOpacity(0.25),
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: Icon(icon, color: color, size: 18),
+                      child: Icon(icon, color: Colors.white, size: 18),
                     ),
                   const SizedBox(width: 8),
                   Flexible(
                     child: Text(
                       label,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontWeight: FontWeight.w700,
                         fontSize: 14,
-                        color: color,
+                        color: Colors.white,
                         letterSpacing: 0.2,
                       ),
                       overflow: TextOverflow.ellipsis,
@@ -535,83 +695,6 @@ class _AttendancePageState extends State<AttendancePage> with SingleTickerProvid
                   ),
                 ],
               ),
-            ),
-          ),
-        ),
-      );
-    }
-
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        gradient: LinearGradient(
-          colors: [
-            color,
-            color.withOpacity(0.85),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: color.withOpacity(0.4),
-            blurRadius: 16,
-            offset: const Offset(0, 6),
-            spreadRadius: 0,
-          ),
-          BoxShadow(
-            color: color.withOpacity(0.2),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-            spreadRadius: 0,
-          ),
-        ],
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onPressed,
-          borderRadius: BorderRadius.circular(20),
-          child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (isLoading)
-                  const SizedBox(
-                    width: 18,
-                    height: 18,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2.5,
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                    ),
-                  )
-                else
-                  Container(
-                    padding: const EdgeInsets.all(5),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.25),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Icon(icon, color: Colors.white, size: 18),
-                  ),
-                const SizedBox(width: 8),
-                Flexible(
-                  child: Text(
-                    label,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 14,
-                      color: Colors.white,
-                      letterSpacing: 0.2,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ],
             ),
           ),
         ),
@@ -731,11 +814,46 @@ class _AttendancePageState extends State<AttendancePage> with SingleTickerProvid
 
               if (reason != null && mounted) {
                 final userId = _user!['userId'] ?? _user!['id'];
+                final attendanceId = item['attendanceId'];
+                
+                // Lấy thông tin cần thiết cho trường hợp attendanceId = 0
+                int? clinicId;
+                String? workDate;
+                String? shiftType;
+                
+                if (attendanceId == null || attendanceId == 0) {
+                  clinicId = item['clinicId'] as int?;
+                  final dateRaw = item['workDate'];
+                  if (dateRaw != null) {
+                    if (dateRaw is List && dateRaw.length >= 3) {
+                      // Chuyển đổi từ List [year, month, day] sang String yyyy-MM-dd
+                      final y = dateRaw[0].toString();
+                      final m = dateRaw[1].toString().padLeft(2, '0');
+                      final d = dateRaw[2].toString().padLeft(2, '0');
+                      workDate = '$y-$m-$d';
+                    } else if (dateRaw is String) {
+                      // Nếu là string, kiểm tra format và chuẩn hóa về yyyy-MM-dd
+                      try {
+                        final parsed = DateTime.parse(dateRaw);
+                        workDate = DateFormat('yyyy-MM-dd').format(parsed);
+                      } catch (_) {
+                        workDate = dateRaw;
+                      }
+                    } else {
+                      workDate = dateRaw.toString();
+                    }
+                  }
+                  shiftType = item['shiftType']?.toString();
+                }
+                
                 await provider.submitExplanation(
-                  item['attendanceId'],
+                  attendanceId ?? 0,
                   type,
                   reason,
                   userId,
+                  clinicId: clinicId,
+                  workDate: workDate,
+                  shiftType: shiftType,
                 );
               }
             },

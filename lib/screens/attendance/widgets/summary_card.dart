@@ -51,22 +51,29 @@ class SummaryCard extends StatelessWidget {
     final checkOut = _formatTime(attendance!['checkOutTime']);
 
     // Validate và định dạng số giờ đã làm (rất quan trọng cho tính lương)
-    final workedHoursRaw = attendance!['workedHours'];
-    String workedHours = '0';
-    if (workedHoursRaw != null) {
+    // Sử dụng actualWorkHours từ backend (đã trừ lunch break, late, early)
+    final actualWorkHoursRaw = attendance!['actualWorkHours'];
+    String actualWorkHours = '0';
+    if (actualWorkHoursRaw != null) {
       try {
-        final hours = workedHoursRaw is num
-            ? workedHoursRaw.toDouble()
-            : double.tryParse(workedHoursRaw.toString());
+        final hours = actualWorkHoursRaw is num
+            ? actualWorkHoursRaw.toDouble()
+            : double.tryParse(actualWorkHoursRaw.toString());
         if (hours != null && hours >= 0) {
-          workedHours = hours % 1 == 0
+          actualWorkHours = hours % 1 == 0
               ? hours.toInt().toString()
               : hours.toStringAsFixed(2);
         }
       } catch (_) {
-        workedHours = '0';
+        actualWorkHours = '0';
       }
     }
+    
+    // Lấy thông tin chi tiết
+    final expectedWorkHoursRaw = attendance!['expectedWorkHours'];
+    final lateMinutes = attendance!['lateMinutes'] as int?;
+    final earlyMinutes = attendance!['earlyMinutes'] as int?;
+    final lunchBreakMinutes = attendance!['lunchBreakMinutes'] as int?;
     // Lấy trạng thái ca làm từ backend, fallback cho các API cũ
     final status = attendance!['attendanceStatus']?.toString() ??
         attendance!['status']?.toString() ??
@@ -124,7 +131,7 @@ class SummaryCard extends StatelessWidget {
                   'Check-in',
                   checkIn,
                   Icons.login_rounded,
-                  const Color(0xFF2E7D32),
+                  const Color(0xFF047857),
                 ),
               ),
               Container(
@@ -138,19 +145,22 @@ class SummaryCard extends StatelessWidget {
                   'Check-out',
                   checkOut,
                   Icons.logout_rounded,
-                  const Color(0xFFEF6C00),
+                  const Color(0xFFD97706),
                 ),
               ),
             ],
           ),
           const SizedBox(height: 24),
+          // Hiển thị giờ làm việc thực tế
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: colorScheme.surfaceContainerHighest.withOpacity(0.3),
               borderRadius: BorderRadius.circular(16),
             ),
-            child: Row(
+            child: Column(
+              children: [
+                Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
@@ -160,14 +170,62 @@ class SummaryCard extends StatelessWidget {
                     color: colorScheme.onSurface,
                   ),
                 ),
+                    Row(
+                      children: [
                 Text(
-                  '$workedHours hrs',
+                          '$actualWorkHours hrs',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 18,
                     color: colorScheme.primary,
                   ),
                 ),
+                        if (expectedWorkHoursRaw != null) ...[
+                          const SizedBox(width: 8),
+                          Text(
+                            '/ ${_formatHours(expectedWorkHoursRaw)} hrs',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ],
+                ),
+                // Hiển thị thông tin chi tiết nếu có
+                if (lateMinutes != null && lateMinutes > 0 || 
+                    earlyMinutes != null && earlyMinutes > 0 ||
+                    lunchBreakMinutes != null && lunchBreakMinutes > 0) ...[
+                  const SizedBox(height: 12),
+                  Divider(color: colorScheme.outline.withOpacity(0.1)),
+                  const SizedBox(height: 8),
+                  Wrap(
+                    spacing: 12,
+                    runSpacing: 8,
+                    children: [
+                      if (lateMinutes != null && lateMinutes > 0)
+                        _buildDetailChip(
+                          context,
+                          'Late: ${lateMinutes}m',
+                          const Color(0xFFD97706),
+                        ),
+                      if (earlyMinutes != null && earlyMinutes > 0)
+                        _buildDetailChip(
+                          context,
+                          'Early: ${earlyMinutes}m',
+                          const Color(0xFFB45309),
+                        ),
+                      if (lunchBreakMinutes != null && lunchBreakMinutes > 0)
+                        _buildDetailChip(
+                          context,
+                          'Lunch: ${lunchBreakMinutes}m',
+                          colorScheme.onSurfaceVariant,
+                        ),
+                    ],
+                  ),
+                ],
               ],
             ),
           ),
@@ -195,17 +253,17 @@ class SummaryCard extends StatelessWidget {
       case 'ON_TIME':
       case 'APPROVED_PRESENT':
       case 'PRESENT':
-        color = const Color(0xFF2E7D32);
+        color = const Color(0xFF047857);
         label = 'Present';
         break;
       case 'ABSENT':
       case 'APPROVED_ABSENCE':
-        color = const Color(0xFFC62828);
+        color = const Color(0xFFB91C1C);
         label = 'Absent';
         break;
       case 'LATE':
       case 'APPROVED_LATE':
-        color = const Color(0xFFEF6C00);
+        color = const Color(0xFFD97706);
         label = 'Late';
         break;
       default:
@@ -281,7 +339,7 @@ class SummaryCard extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     List<Widget> items = [];
 
-    Color faceColor = verificationStatus == 'SUCCESS' ? const Color(0xFF00C853) : colorScheme.error;
+    Color faceColor = verificationStatus == 'SUCCESS' ? const Color(0xFF059669) : colorScheme.error;
     IconData faceIcon = verificationStatus == 'SUCCESS' ? Icons.face_retouching_natural_rounded : Icons.error_outline_rounded;
 
     items.add(Row(
@@ -297,7 +355,7 @@ class SummaryCard extends StatelessWidget {
     ));
 
     if (wifiValid != null) {
-      Color wifiColor = wifiValid ? const Color(0xFF00C853) : colorScheme.error;
+      Color wifiColor = wifiValid ? const Color(0xFF059669) : colorScheme.error;
       IconData wifiIcon = wifiValid ? Icons.wifi_rounded : Icons.wifi_off_rounded;
       items.add(const SizedBox(width: 16));
       items.add(Row(
@@ -328,5 +386,41 @@ class SummaryCard extends StatelessWidget {
     } catch (_) {
       return '--:--';
     }
+  }
+
+  // Định dạng số giờ từ BigDecimal hoặc số
+  String _formatHours(dynamic value) {
+    if (value == null) return '0';
+    try {
+      final hours = value is num
+          ? value.toDouble()
+          : double.tryParse(value.toString());
+      if (hours != null && hours >= 0) {
+        return hours % 1 == 0
+            ? hours.toInt().toString()
+            : hours.toStringAsFixed(2);
+      }
+    } catch (_) {}
+    return '0';
+  }
+
+  // Tạo chip hiển thị thông tin chi tiết
+  Widget _buildDetailChip(BuildContext context, String label, Color color) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: color.withOpacity(0.2)),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+          color: color,
+        ),
+      ),
+    );
   }
 }

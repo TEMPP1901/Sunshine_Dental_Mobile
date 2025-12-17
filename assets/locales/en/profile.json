@@ -11,6 +11,10 @@
     "title": "Change Password",
     "subtitle": "Update your account password"
   },
+  "updateFaceProfile": {
+    "title": "Update Attendance Face",
+    "subtitle": "Update face image for attendance system"
+  },
   "actions": {
     "signIn": "Sign In",
     "openAttendance": "Open Attendance",

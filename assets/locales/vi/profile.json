@@ -11,6 +11,10 @@
     "title": "Đổi mật khẩu",
     "subtitle": "Cập nhật mật khẩu tài khoản"
   },
+  "updateFaceProfile": {
+    "title": "Cập nhật khuôn mặt chấm công",
+    "subtitle": "Cập nhật ảnh khuôn mặt cho hệ thống chấm công"
+  },
   "actions": {
     "signIn": "Đăng nhập",
     "openAttendance": "Mở chấm công",

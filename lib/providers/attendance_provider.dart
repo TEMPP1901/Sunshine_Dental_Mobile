@@ -31,7 +31,7 @@ class AttendanceProvider extends ChangeNotifier {
   bool get isLoadingMonthly => _isLoadingMonthly;
   bool get hasMoreMonthlyData => _hasMoreMonthlyData;
 
-  // Hàm lấy dữ liệu điểm danh hôm nay
+  // Lấy dữ liệu điểm danh hôm nay
   Future<void> loadTodayAttendance(dynamic userId, bool isDoctor) async {
     if (userId == null) return;
     _isLoading = true;
@@ -51,7 +51,6 @@ class AttendanceProvider extends ChangeNotifier {
       final errorMessage = e.toString().replaceFirst('Exception: ', '');
       _error = errorMessage;
 
-      // Hiển thị thông báo lỗi xác thực
       if (errorMessage.toLowerCase().contains('unauthorized') ||
           errorMessage.toLowerCase().contains('authentication')) {
         Fluttertoast.showToast(
@@ -65,7 +64,7 @@ class AttendanceProvider extends ChangeNotifier {
     }
   }
 
-  // Hàm lấy danh sách explanation cần xử lý
+  // Lấy danh sách giải trình cần xử lý cho user
   Future<void> loadExplanationsNeeding(dynamic userId) async {
     if (userId == null) return;
     _isLoadingExplanations = true;
@@ -76,6 +75,12 @@ class AttendanceProvider extends ChangeNotifier {
       final today = DateFormat('yyyy-MM-dd').format(DateTime.now());
 
       _explanationsNeeding = explanations.where((ex) {
+        // Đảm bảo chỉ lấy explanations của user hiện tại 
+        final exUserId = ex['userId'];
+        if (exUserId == null || exUserId != userId) {
+          return false;
+        }
+        
         final status = ex['explanationStatus']?.toString().toUpperCase();
         if (status != 'PENDING') return false;
         final reason = ex['employeeReason']?.toString();
@@ -83,7 +88,7 @@ class AttendanceProvider extends ChangeNotifier {
         final dateRaw = ex['workDate'];
         String? dateStr;
         if (dateRaw is List) {
-          // Xử lý trường hợp [yyyy, MM, dd]
+          // Chuyển đổi dữ liệu ngày từ dạng List về String yyyy-MM-dd
           if (dateRaw.length >= 3) {
             final y = dateRaw[0];
             final m = dateRaw[1].toString().padLeft(2, '0');
@@ -100,9 +105,17 @@ class AttendanceProvider extends ChangeNotifier {
           final workDate = DateFormat('yyyy-MM-dd').format(parsed);
           final explanationType = ex['explanationType']?.toString().toUpperCase();
 
-          // Loại trừ giải trình MISSING_CHECK_OUT cho ngày hôm nay
-          if (workDate == today && explanationType == 'MISSING_CHECK_OUT') {
-            return false;
+          
+          // oại bỏ MISSING_CHECK_OUT cho ngày hôm nay nếu ĐANG TRONG GIỜ LÀM VIỆC (8:00 - 18:00)
+          
+          final isToday = workDate == today;
+          final currentHour = DateTime.now().hour;
+          
+          if (isToday && explanationType == 'MISSING_CHECK_OUT') {
+            // Nếu đang trong giờ làm việc (8:00 - 18:00) thì filter out
+            if (currentHour >= 8 && currentHour < 18) {
+              return false;
+            }
           }
 
           return true;
@@ -118,8 +131,16 @@ class AttendanceProvider extends ChangeNotifier {
     }
   }
 
-  // Hàm gửi giải trình vắng mặt, đi muộn
-  Future<bool> submitExplanation(int attendanceId, String explanationType, String reason, dynamic userId) async {
+  // Gửi giải trình vắng mặt hoặc đi muộn
+  Future<bool> submitExplanation(
+    int attendanceId,
+    String explanationType,
+    String reason,
+    dynamic userId, {
+    int? clinicId,
+    String? workDate,
+    String? shiftType,
+  }) async {
     _isSubmitting = true;
     notifyListeners();
 
@@ -128,6 +149,9 @@ class AttendanceProvider extends ChangeNotifier {
         attendanceId,
         explanationType,
         reason,
+        clinicId: clinicId,
+        workDate: workDate,
+        shiftType: shiftType,
       );
       Fluttertoast.showToast(msg: 'attendance.explanation.submitSuccess'.tr());
 
@@ -143,8 +167,9 @@ class AttendanceProvider extends ChangeNotifier {
     }
   }
 
-  // Hàm điểm danh: check-in/check-out bằng wifi & nhận diện khuôn mặt
+  // Xử lý logic điểm danh (check-in, check-out)
   Future<bool> handleAttendanceAction({
+    required BuildContext context,
     required bool isClockIn,
     required dynamic userId,
     required bool isDoctor,
@@ -158,11 +183,8 @@ class AttendanceProvider extends ChangeNotifier {
     try {
       int? clinicId;
       if (isDoctor) {
+        // Thử lấy clinicId từ schedule (không bắt buộc, backend tự xử lý)
         clinicId = await _attendanceService.resolveDoctorClinicId(userId);
-        if (clinicId == null) {
-          Fluttertoast.showToast(msg: 'attendance.toast.clinicNotFound'.tr());
-          return false;
-        }
       }
 
       final permissionGranted = await _attendanceService.ensureWifiPermissions();
@@ -171,17 +193,57 @@ class AttendanceProvider extends ChangeNotifier {
         return false;
       }
 
+      // Kiểm tra userId hợp lệ
+      if (userId == null) {
+        Fluttertoast.showToast(msg: 'User ID is required');
+        return false;
+      }
+
+      // Ép kiểu userId về int
+      int? validUserId;
+      if (userId is int) {
+        validUserId = userId;
+      } else if (userId is String) {
+        validUserId = int.tryParse(userId);
+      } else {
+        validUserId = int.tryParse(userId.toString());
+      }
+
+      if (validUserId == null) {
+        Fluttertoast.showToast(msg: 'Invalid user ID');
+        return false;
+      }
+
       final wifiInfo = await _attendanceService.collectWifiInfo();
-      final embedding = await _attendanceService.captureEmbedding();
-      if (embedding == null) {
-        Fluttertoast.showToast(msg: 'attendance.toast.captureCancelled'.tr());
+
+      // Chụp khuôn mặt và lấy embedding
+      String? embedding;
+      try {
+        embedding = await _attendanceService.captureEmbedding(context);
+        if (embedding == null || embedding.trim().isEmpty) {
+          Fluttertoast.showToast(
+            msg: 'Bạn đã hủy chụp ảnh khuôn mặt. Vui lòng chụp lại để chấm công.',
+            toastLength: Toast.LENGTH_LONG,
+          );
+          return false;
+        }
+      } catch (e) {
+        // Bắn ra lỗi khi chụp ảnh khuôn mặt thất bại
+        String errorMsg = e.toString().replaceFirst('Exception: ', '');
+        Fluttertoast.showToast(
+          msg: errorMsg.isNotEmpty ? errorMsg : 'Lỗi khi chụp ảnh khuôn mặt. Vui lòng thử lại.',
+          toastLength: Toast.LENGTH_LONG,
+          backgroundColor: Colors.orange,
+          textColor: Colors.white,
+        );
         return false;
       }
 
       Map<String, dynamic> result;
       if (isClockIn) {
+        // Check-in
         result = await _attendanceService.checkIn(
-          userId: userId,
+          userId: validUserId,
           faceEmbedding: embedding,
           ssid: wifiInfo['ssid'],
           bssid: wifiInfo['bssid'],
@@ -189,12 +251,13 @@ class AttendanceProvider extends ChangeNotifier {
         );
         Fluttertoast.showToast(msg: 'attendance.toast.checkInSuccess'.tr());
       } else {
+        // Check-out
         final attendanceIdRaw = selectedAttendanceForCheckOut?['id'];
         if (attendanceIdRaw == null) {
           Fluttertoast.showToast(msg: 'attendance.toast.noAttendance'.tr());
           return false;
         }
-        // Kiểm tra attendanceId đảm bảo là kiểu int
+        // Đảm bảo attendanceId là số nguyên
         int? attendanceId;
         if (attendanceIdRaw is int) {
           attendanceId = attendanceIdRaw;
@@ -218,7 +281,7 @@ class AttendanceProvider extends ChangeNotifier {
         Fluttertoast.showToast(msg: 'attendance.toast.checkOutSuccess'.tr());
       }
 
-      // Kiểm tra các cảnh báo xác thực wifi/face
+      // Kiểm tra cảnh báo xác thực wifi/face (báo đỏ cho người dùng các lỗi khi xác thực)
       final data = result['data'];
       final responseData = (data is Map<String, dynamic>) ? data : null;
       if (responseData != null) {
@@ -244,11 +307,25 @@ class AttendanceProvider extends ChangeNotifier {
       await loadExplanationsNeeding(userId);
       return true;
     } catch (e) {
-      final errorMessage = e.toString().replaceFirst('Exception: ', '');
-      Fluttertoast.showToast(
-        msg: errorMessage.isNotEmpty ? errorMessage : 'attendance.toast.loadFailed'.tr(),
-        toastLength: Toast.LENGTH_LONG,
-      );
+      // Bắt lỗi và cảnh báo chi tiết (gồm cảnh báo đối chiếu khuôn mặt)
+      String errorMessage = e.toString().replaceFirst('Exception: ', '');
+
+      if (errorMessage.contains('Khuôn mặt không khớp') ||
+          errorMessage.contains('Face verification failed') ||
+          errorMessage.contains('face does not match') ||
+          errorMessage.contains('khuôn mặt')) {
+        Fluttertoast.showToast(
+          msg: errorMessage,
+          toastLength: Toast.LENGTH_LONG,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+        );
+      } else {
+        Fluttertoast.showToast(
+          msg: errorMessage.isNotEmpty ? errorMessage : 'attendance.toast.loadFailed'.tr(),
+          toastLength: Toast.LENGTH_LONG,
+        );
+      }
       return false;
     } finally {
       _isSubmitting = false;
@@ -256,7 +333,7 @@ class AttendanceProvider extends ChangeNotifier {
     }
   }
 
-  // Hàm lấy dữ liệu điểm danh theo tháng
+  // Lấy dữ liệu điểm danh theo tháng
   Future<void> loadMonthlyAttendance(dynamic userId, {bool reset = false}) async {
     if (userId == null || _isLoadingMonthly) return;
 
@@ -302,10 +379,11 @@ class AttendanceProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
-  // Helper để lấy explanation cho ngày cụ thể (dùng cho UI tự động popup)
+
+  // Lấy giải trình cho ngày cụ thể từ explanationsNeeding
   Map<String, dynamic>? getExplanationForDate(DateTime date) {
     final targetDateStr = DateFormat('yyyy-MM-dd').format(date);
-    
+
     try {
       return _explanationsNeeding.firstWhere((ex) {
         final dateRaw = ex['workDate'];
@@ -320,10 +398,10 @@ class AttendanceProvider extends ChangeNotifier {
         } else {
           dateStr = dateRaw?.toString();
         }
-        
+
         if (dateStr == null) return false;
-        
-        // So sánh ngày (chỉ lấy phần yyyy-MM-dd)
+
+        // So sánh ngày (bỏ giờ nếu có)
         return dateStr.startsWith(targetDateStr);
       });
     } catch (_) {

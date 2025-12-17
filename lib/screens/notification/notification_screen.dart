@@ -37,8 +37,15 @@ class _NotificationScreenState extends State<NotificationScreen> {
       final data = response.data;
 
       if (data != null && data['content'] is List) {
+     
+        final allNotifications = List<dynamic>.from(data['content']);
+        final filteredNotifications = allNotifications.where((n) {
+          final type = n['type']?.toString().toUpperCase();
+          return type != 'AUDIT'; // Loại bỏ audit logs
+        }).toList();
+        
         setState(() {
-          _notifications = data['content'];
+          _notifications = filteredNotifications;
           _isLoading = false;
         });
       } else {
@@ -97,14 +104,63 @@ class _NotificationScreenState extends State<NotificationScreen> {
 
     if (relatedEntityType == null) return;
 
+    final actionUrl = notification['actionUrl']?.toString();
+    
+    // Nếu có actionUrl, ưu tiên dùng actionUrl
+    if (actionUrl != null && actionUrl.isNotEmpty) {
+      if (actionUrl.contains('/leave-request')) {
+        context.go('/leave-request');
+        return;
+      } else if (actionUrl.contains('/attendance')) {
+        context.go('/attendance');
+        return;
+      } else if (actionUrl.contains('/schedule')) {
+        context.go('/schedule');
+        return;
+      } else if (actionUrl.contains('/hr/schedules')) {
+        context.go('/hr/schedules');
+        return;
+      } else if (actionUrl.contains('/hr/face-approval') || actionUrl.contains('/face-profile-approval')) {
+        context.go('/hr/face-approvals');
+        return;
+      } else if (actionUrl.contains('/profile')) {
+        context.go('/profile');
+        return;
+      }
+    }
+
     switch (relatedEntityType.toUpperCase()) {
       case 'LEAVE_REQUEST':
-        if (relatedEntityId != null) {
-          context.go('/leave-request');
-        }
+        context.go('/leave-request');
         break;
       case 'ATTENDANCE':
+        // ATTENDANCE_CHECKIN, ATTENDANCE_CHECKOUT, ATTENDANCE_ABSENT, EXPLANATION_SUBMITTED, EXPLANATION_APPROVED, EXPLANATION_REJECTED
         context.go('/attendance');
+        break;
+      case 'DOCTOR_SCHEDULE':
+        // DOCTOR_MISSING_CHECKIN, DOCTOR_LATE_CHECKIN - điều hướng đến attendance
+        context.go('/attendance');
+        break;
+      case 'APPOINTMENT':
+        // Thông báo về lịch hẹn (CREATED, CONFIRMED, CANCELLED, COMPLETED, IN_PROGRESS, STATUS_UPDATED, REMINDER)
+        // Mobile chưa có màn appointment, điều hướng về home
+        context.go('/home');
+        break;
+      case 'MEDICAL_RECORD':
+        // Thông báo về bệnh án - mobile chưa có màn medical record, điều hướng về home
+        context.go('/home');
+        break;
+      case 'SCHEDULE':
+        // Thông báo về lịch làm việc bị hủy hoặc khôi phục
+        context.go('/schedule');
+        break;
+      case 'HOLIDAY':
+        // Thông báo về ngày nghỉ lễ
+        context.go('/home');
+        break;
+      case 'FACEPROFILEUPDATEREQUEST':
+        // Thông báo về yêu cầu duyệt cập nhật khuôn mặt
+        context.go('/hr/face-approvals');
         break;
       default:
         break;
@@ -126,6 +182,38 @@ class _NotificationScreenState extends State<NotificationScreen> {
       case 'ATTENDANCE_CHECKIN':
       case 'ATTENDANCE_CHECKOUT':
         return Icons.access_time;
+      case 'ATTENDANCE_ABSENT':
+        return Icons.person_off;
+      case 'EXPLANATION_SUBMITTED':
+      case 'EXPLANATION_APPROVED':
+      case 'EXPLANATION_REJECTED':
+        return Icons.description;
+      case 'DOCTOR_MISSING_CHECKIN':
+      case 'DOCTOR_LATE_CHECKIN':
+        return Icons.warning_amber_rounded;
+      case 'APPOINTMENT_CREATED':
+      case 'APPOINTMENT_CONFIRMED':
+      case 'APPOINTMENT_COMPLETED':
+      case 'APPOINTMENT_IN_PROGRESS':
+        return Icons.calendar_today;
+      case 'APPOINTMENT_CANCELLED':
+      case 'APPOINTMENT_STATUS_UPDATED':
+        return Icons.event_busy;
+      case 'APPOINTMENT_REMINDER':
+        return Icons.notifications_active;
+      case 'MEDICAL_RECORD_COMPLETED':
+      case 'MEDICAL_RECORD_UPDATED':
+        return Icons.medical_services;
+      case 'SCHEDULE_CANCELLED':
+        return Icons.cancel_schedule_send;
+      case 'SCHEDULE_RESTORED':
+        return Icons.restore;
+      case 'HOLIDAY_CREATED':
+        return Icons.celebration;
+      case 'FACE_PROFILE_UPDATE_REQUEST':
+      case 'FACE_PROFILE_APPROVED':
+      case 'FACE_PROFILE_REJECTED':
+        return Icons.face;
       default:
         return Icons.notifications;
     }
@@ -146,6 +234,42 @@ class _NotificationScreenState extends State<NotificationScreen> {
       case 'ATTENDANCE_CHECKIN':
       case 'ATTENDANCE_CHECKOUT':
         return Colors.blue;
+      case 'ATTENDANCE_ABSENT':
+        return Colors.red;
+      case 'EXPLANATION_SUBMITTED':
+        return Colors.orange;
+      case 'EXPLANATION_APPROVED':
+        return Colors.green;
+      case 'EXPLANATION_REJECTED':
+        return Colors.red;
+      case 'DOCTOR_MISSING_CHECKIN':
+      case 'DOCTOR_LATE_CHECKIN':
+        return Colors.redAccent;
+      case 'APPOINTMENT_CREATED':
+      case 'APPOINTMENT_CONFIRMED':
+      case 'APPOINTMENT_COMPLETED':
+      case 'APPOINTMENT_IN_PROGRESS':
+        return Colors.green;
+      case 'APPOINTMENT_CANCELLED':
+        return Colors.red;
+      case 'APPOINTMENT_STATUS_UPDATED':
+      case 'APPOINTMENT_REMINDER':
+        return Colors.blue;
+      case 'MEDICAL_RECORD_COMPLETED':
+      case 'MEDICAL_RECORD_UPDATED':
+        return Colors.teal;
+      case 'SCHEDULE_CANCELLED':
+        return Colors.red;
+      case 'SCHEDULE_RESTORED':
+        return Colors.green;
+      case 'HOLIDAY_CREATED':
+        return Colors.purple;
+      case 'FACE_PROFILE_UPDATE_REQUEST':
+        return Colors.orange;
+      case 'FACE_PROFILE_APPROVED':
+        return Colors.green;
+      case 'FACE_PROFILE_REJECTED':
+        return Colors.red;
       default:
         return colorScheme.primary;
     }

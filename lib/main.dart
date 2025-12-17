@@ -182,34 +182,34 @@ class MyApp extends StatelessWidget {
             ),
             darkTheme: ThemeData(
               primaryColor: const Color(0xFF5C6BC0),
-              scaffoldBackgroundColor: const Color(0xFF121212),
+              scaffoldBackgroundColor: const Color(0xFF0F1419), // Cải thiện background
               colorScheme: ColorScheme.fromSeed(
                 seedColor: const Color(0xFF5C6BC0),
                 brightness: Brightness.dark,
               ).copyWith(
                 primary: const Color(0xFF5C6BC0),
-                surface: const Color(0xFF1E1E1E),
-                surfaceContainerLow: const Color(0xFF1E1E1E),
-                surfaceContainerHighest: const Color(0xFF2C2C2C),
-                onSurface: const Color(0xFFEEEEEE),
-                onBackground: const Color(0xFFEEEEEE),
-                onSurfaceVariant: const Color(0xFFB0BEC5),
-                outline: const Color(0xFF424242),
+                surface: const Color(0xFF1A2332), // Đồng bộ với card color
+                surfaceContainerLow: const Color(0xFF1A2332),
+                surfaceContainerHighest: const Color(0xFF2A3441),
+                onSurface: const Color(0xFFE8EAED), // Cải thiện contrast
+                onBackground: const Color(0xFFE8EAED),
+                onSurfaceVariant: const Color(0xFFB4B9C4), // Softer variant color
+                outline: const Color(0xFF2A3441),
               ),
               appBarTheme: const AppBarTheme(
-                backgroundColor: Color(0xFF0B0F19),
-                foregroundColor: Color(0xFFE0E0E0),
+                backgroundColor: Color(0xFF151B24), // Đồng bộ với hr_hub_page
+                foregroundColor: Color(0xFFE8EAED),
                 elevation: 0,
                 surfaceTintColor: Colors.transparent,
               ),
-              cardColor: const Color(0xFF202836),
+              cardColor: const Color(0xFF1A2332), // Đồng bộ với hr_hub_page
               cardTheme: CardThemeData(
-                color: const Color(0xFF202836),
+                color: const Color(0xFF1A2332),
                 elevation: 0,
                 shadowColor: Colors.black,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
-                  side: const BorderSide(color: Color(0xFF3E4756), width: 1),
+                  side: const BorderSide(color: Color(0xFF2A3441), width: 1),
                 ),
               ),
               inputDecorationTheme: InputDecorationTheme(

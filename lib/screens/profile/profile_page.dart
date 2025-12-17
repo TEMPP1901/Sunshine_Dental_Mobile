@@ -11,6 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../services/api_service.dart';
 import '../../providers/theme_provider.dart';
 import '../../providers/language_provider.dart';
+import 'widgets/admin_hr_shortcuts.dart';
 
 // Trang Profile người dùng
 class ProfilePage extends StatefulWidget {
@@ -228,6 +229,13 @@ class _ProfilePageState extends State<ProfilePage> {
       return false;
     }
   }
+
+  List<String> get _roles => _extractNormalizedRoles(_user?['roles']);
+  bool get _isAdmin => _roles.contains('ADMIN');
+  bool get _isHr => _roles.contains('HR');
+
+  // --- UI helpers ---
+  Color _blend(Color a, Color b) => Color.alphaBlend(b.withOpacity(0.12), a);
 
   @override
   Widget build(BuildContext context) {
@@ -485,6 +493,41 @@ class _ProfilePageState extends State<ProfilePage> {
                     subtitle: 'leaveRequest.subtitle'.tr(),
                     onTap: () => context.go('/leave-request'),
                   ),
+                // Cập nhật khuôn mặt chấm công (chỉ cho nhân viên)
+                if (_canCheckAttendance)
+                  _buildMenuListItem(
+                    context,
+                    icon: Icons.face_retouching_natural_rounded,
+                    title: 'profile.updateFaceProfile.title'.tr(),
+                    subtitle: 'profile.updateFaceProfile.subtitle'.tr(),
+                    onTap: () => context.push('/update-face-profile'),
+                  ),
+                if (_isHr || _isAdmin) ...[
+                  const SizedBox(height: 24),
+                  _buildSectionHeader(context, 'Quản trị'),
+                  const SizedBox(height: 8),
+                  if (_isHr)
+                    _buildMenuListItem(
+                      context,
+                      icon: Icons.badge_outlined,
+                      title: 'HR Dashboard',
+                      subtitle: 'Chấm công, giải trình',
+                      onTap: () => context.go('/hr'),
+                      isFirst: true,
+                      isLast: !_isAdmin,
+                    ),
+                  if (_isAdmin)
+                    _buildMenuListItem(
+                      context,
+                      icon: Icons.verified_user_outlined,
+                      title: 'Admin Dashboard',
+                      subtitle: 'Duyệt đơn nghỉ pha Admin',
+                      onTap: () => context.go('/admin'),
+                      isFirst: !_isHr,
+                      isLast: true,
+                    ),
+                ],
+                if (_isHr || _isAdmin) const SizedBox(height: 12),
                 _buildMenuListItem(
                   context,
                   icon: Icons.key_outlined,

@@ -49,6 +49,8 @@ dependencies:
   
   # Image picker
   image_picker: ^1.1.2
+  # Camera for custom preview with overlay
+  camera: ^0.11.0+2
   
   # State management
   provider: ^6.1.2

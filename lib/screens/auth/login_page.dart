@@ -40,7 +40,7 @@ class _LoginPageState extends State<LoginPage> {
     _loadRememberedEmail();
   }
 
-  // Lấy lại email đã lưu nếu user chọn Remember me
+  // Lấy lại email nếu đã tick "Ghi nhớ đăng nhập"
   Future<void> _loadRememberedEmail() async {
     final prefs = await SharedPreferences.getInstance();
     final savedEmail = prefs.getString(_rememberedEmailKey);
@@ -52,7 +52,7 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  // Xử lý đăng nhập
+  // Hàm xử lý đăng nhập
   Future<void> _handleLogin() async {
     if (!_formKey.currentState!.validate()) {
       return;
@@ -72,12 +72,12 @@ class _LoginPageState extends State<LoginPage> {
       final data = response.data;
       final prefs = await SharedPreferences.getInstance();
 
-      // Chuẩn hóa role
+      // Chuẩn hóa danh sách vai trò
       final roles = (data['roles'] as List<dynamic>? ?? [])
           .map((r) => r.toString().replaceAll(RegExp(r'^ROLE_', caseSensitive: false), '').toUpperCase())
           .toList();
 
-      // Chuẩn bị thông tin user
+      // Lưu thông tin người dùng
       final userData = {
         'userId': data['userId'],
         'fullName': data['fullName'],
@@ -90,25 +90,25 @@ class _LoginPageState extends State<LoginPage> {
       await prefs.setString('roles', roles.toString());
       await prefs.setString('user', jsonEncode(userData));
 
-      // Cập nhật UserProvider
+      // Đẩy thông tin user lên provider
       if (mounted) {
         final userProvider = Provider.of<UserProvider>(context, listen: false);
         await userProvider.setUser(userData);
       }
 
+      // Ghi nhớ email nếu người dùng chọn "Nhớ đăng nhập"
       if (_rememberMe) {
         await prefs.setString(_rememberedEmailKey, _emailController.text.trim());
       } else {
         await prefs.remove(_rememberedEmailKey);
       }
 
-      // Đăng ký thiết bị cho notification
+      // Đăng ký thiết bị nhận thông báo và lấy số thông báo chưa đọc
       try {
         await NotificationService().registerDevice();
-        // Cập nhật số lượng thông báo chưa đọc sau khi đăng nhập
         await NotificationService().fetchUnreadCount();
       } catch (e) {
-        debugPrint('Failed to register device after login: $e');
+        debugPrint('Lỗi khi đăng ký device sau đăng nhập: $e');
       }
 
       final successMsg = tr('login.loginSuccess');
@@ -119,18 +119,45 @@ class _LoginPageState extends State<LoginPage> {
         );
       }
 
-      // Chuyển sang màn hình home ngay lập tức sau khi đăng nhập
+      // Kiểm tra nghĩa vụ đăng ký khuôn mặt cho các vai trò nhân sự
+      final attendanceRoles = ['DOCTOR', 'HR', 'RECEPTION', 'ACCOUNTANT'];
+      final isEmployeeForAttendance = roles.any((role) => attendanceRoles.contains(role));
+      final isAdmin = roles.contains('ADMIN');
+      final isHr = roles.contains('HR');
+      
+      if (isEmployeeForAttendance && mounted) {
+        try {
+          // Nếu chưa đăng ký khuôn mặt thì yêu cầu đăng ký
+          final faceCheckResponse = await ApiService().get('/api/hr/face-profile/check');
+          final requiresRegistration = faceCheckResponse.data['requiresRegistration'] as bool? ?? false;
+          
+          if (requiresRegistration && mounted) {
+            await Future.delayed(const Duration(milliseconds: 300));
+            if (mounted) {
+              context.go('/face-registration');
+              return;
+            }
+          }
+        } catch (e) {
+          // Nếu check lỗi vẫn vào home bình thường
+          debugPrint('Lỗi kiểm tra face profile: $e');
+        }
+      }
+
+      // Điều hướng về màn hình phù hợp role (ưu tiên Admin, sau đó HR, còn lại Home)
       if (mounted) {
         await Future.delayed(const Duration(milliseconds: 300));
         if (mounted) {
-          context.go('/home');
+          if (isAdmin) return context.go('/admin');
+          if (isHr) return context.go('/hr');
+          return context.go('/home');
         }
       }
     } catch (e) {
       String errorMsg = tr('login.loginFailed');
       
       if (e is DioException) {
-        // Kiểm tra lỗi kết nối và lỗi server
+        // Xử lý thông báo lỗi kết nối và backend
         if (e.type == DioExceptionType.connectionTimeout ||
             e.type == DioExceptionType.receiveTimeout ||
             e.type == DioExceptionType.sendTimeout) {
@@ -168,7 +195,7 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  // Tạo style cho input
+  // Tạo style input chung cho TextField
   InputDecoration _inputDecoration(String label, IconData icon) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
@@ -218,6 +245,7 @@ class _LoginPageState extends State<LoginPage> {
     
     return PopScope(
       canPop: context.canPop(),
+      // Xử lý pop về onboarding nếu không back được nữa
       onPopInvokedWithResult: (didPop, result) {
         if (!didPop && !context.canPop()) {
           context.go('/onboarding');
@@ -497,7 +525,7 @@ class _LoginPageState extends State<LoginPage> {
                                                   height: 56,
                                                   child: OutlinedButton.icon(
                                                     onPressed: () {
-                                                      // TODO: Google OAuth
+                                                      // TODO: OAuth Google
                                                     },
                                                     style: OutlinedButton.styleFrom(
                                                       padding: const EdgeInsets.symmetric(

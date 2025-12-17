@@ -32,6 +32,25 @@ class _MyAccountPageState extends State<MyAccountPage> {
   static const String defaultAvatar =
       'https://res.cloudinary.com/dchzko3lj/image/upload/v1762616672/default-avatar_brvdfn.png';
 
+  // Kiểm tra xem user có phải là nhân viên cần chấm công không
+  // Nhân viên chấm công: DOCTOR, HR, RECEPTION, ACCOUNTANT
+  bool _isEmployeeForAttendance() {
+    if (_user == null) return false;
+    final roles = _user!['roles'];
+    if (roles == null) return false;
+    
+    List<String> normalizedRoles = [];
+    if (roles is List) {
+      normalizedRoles = roles.map((role) => role.toString().toUpperCase()).toList();
+    } else if (roles is String) {
+      normalizedRoles = roles.split(',').map((role) => role.trim().toUpperCase()).toList();
+    }
+    
+    // Các role cần chấm công: DOCTOR, HR, RECEPTION, ACCOUNTANT
+    final attendanceRoles = ['DOCTOR', 'HR', 'RECEPTION', 'ACCOUNTANT'];
+    return normalizedRoles.any((role) => attendanceRoles.contains(role));
+  }
+
   @override
   void initState() {
     super.initState();
@@ -76,7 +95,7 @@ class _MyAccountPageState extends State<MyAccountPage> {
     }
   }
 
-  // Hàm cho phép chọn hình đại diện mới từ thư viện ảnh
+  // Hàm cho phép chọn hình đại diện mới từ thư viện ảnh hoặc camera
   Future<void> _pickImage() async {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
@@ -85,6 +104,26 @@ class _MyAccountPageState extends State<MyAccountPage> {
         _newAvatar = image;
         _previewUrl = image.path;
       });
+    }
+  }
+
+  // Hàm chụp ảnh khuôn mặt bằng camera mới (để đăng ký face profile chuẩn)
+  Future<void> _captureFaceForRegistration() async {
+    try {
+      // Mở màn hình camera với overlay hướng dẫn
+      final XFile? image = await context.push<XFile>('/face-camera');
+      if (image != null) {
+        setState(() {
+          _newAvatar = image;
+          _previewUrl = image.path;
+        });
+        // Chỉ preview, không tự động upload - người dùng sẽ tự quyết định upload
+      }
+    } catch (e) {
+      Fluttertoast.showToast(
+        msg: 'Không thể mở camera. Vui lòng thử lại.',
+        backgroundColor: Colors.red,
+      );
     }
   }
 
@@ -374,6 +413,11 @@ class _MyAccountPageState extends State<MyAccountPage> {
                   ],
                 ],
               ),
+              // Button cập nhật khuôn mặt chấm công (chỉ cho nhân viên)
+              if (_buildUpdateFaceProfileButton(context) != null) ...[
+                const SizedBox(height: 16),
+                _buildUpdateFaceProfileButton(context)!,
+              ],
             ],
           ),
         ),
@@ -421,13 +465,27 @@ class _MyAccountPageState extends State<MyAccountPage> {
               ),
             ),
             const SizedBox(height: 20),
+            // Button chụp ảnh khuôn mặt để đăng ký (ưu tiên)
             FilledButton.icon(
-              onPressed: _pickImage,
-              icon: const Icon(Icons.photo_library_outlined),
-              label: Text('account.myAccount.chooseAvatar'.tr()),
+              onPressed: _captureFaceForRegistration,
+              icon: const Icon(Icons.camera_alt_rounded),
+              label: const Text('Chụp ảnh đăng ký khuôn mặt'),
               style: FilledButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                backgroundColor: colorScheme.primary,
+              ),
+            ),
+            const SizedBox(height: 12),
+            // Button chọn từ thư viện
+            OutlinedButton.icon(
+              onPressed: _pickImage,
+              icon: const Icon(Icons.photo_library_outlined),
+              label: Text('account.myAccount.chooseAvatar'.tr()),
+              style: OutlinedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                side: BorderSide(color: colorScheme.primary),
               ),
             ),
             if (_newAvatar != null) ...[
@@ -445,6 +503,24 @@ class _MyAccountPageState extends State<MyAccountPage> {
             ],
           ],
         ),
+      ),
+    );
+  }
+
+  // Button để navigate đến màn hình cập nhật khuôn mặt chấm công (chỉ cho nhân viên)
+  Widget? _buildUpdateFaceProfileButton(BuildContext context) {
+    if (!_isEmployeeForAttendance()) return null;
+    
+    final colorScheme = Theme.of(context).colorScheme;
+    
+    return OutlinedButton.icon(
+      onPressed: () => context.push('/update-face-profile'),
+      icon: const Icon(Icons.face_retouching_natural_rounded),
+      label: const Text('Cập nhật khuôn mặt chấm công'),
+      style: OutlinedButton.styleFrom(
+        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+        side: BorderSide(color: colorScheme.primary),
       ),
     );
   }

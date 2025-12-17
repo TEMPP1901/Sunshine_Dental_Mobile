@@ -43,6 +43,9 @@
     "title": "Chấm công theo tháng",
     "noData": "Không có dữ liệu chấm công trong tháng này."
   },
+  "Check In": "Chấm công vào",
+  "Check Out": "Chấm công ra",
+  "No attendance data for this month": "Không có dữ liệu chấm công trong tháng này",
   "status": {
     "verified": "Đã xác thực khuôn mặt",
     "faceFailed": "Xác thực khuôn mặt thất bại",
@@ -53,6 +56,10 @@
     "absent": "Vắng mặt",
     "late": "Đi trễ",
     "leaveEarly": "Về sớm"
+  },
+  "shiftType": {
+    "morning": "Ca sáng",
+    "afternoon": "Ca chiều"
   },
   "actions": {
     "signIn": "Đăng nhập",

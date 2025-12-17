@@ -262,8 +262,36 @@ class NotificationService {
               appRouter.go('/leave-request');
               return;
             case 'ATTENDANCE':
-              // Trường hợp EXPLANATION_SUBMITTED, EXPLANATION_APPROVED, EXPLANATION_REJECTED
+              // Trường hợp ATTENDANCE_CHECKIN, ATTENDANCE_CHECKOUT, ATTENDANCE_ABSENT, EXPLANATION_SUBMITTED, EXPLANATION_APPROVED, EXPLANATION_REJECTED
               appRouter.go('/attendance');
+              return;
+            case 'DOCTOR_SCHEDULE':
+              // Trường hợp DOCTOR_MISSING_CHECKIN, DOCTOR_LATE_CHECKIN - điều hướng đến attendance để check
+              appRouter.go('/attendance');
+              return;
+            case 'APPOINTMENT':
+              // Thông báo về lịch hẹn (CREATED, CONFIRMED, CANCELLED, COMPLETED, IN_PROGRESS, STATUS_UPDATED, REMINDER)
+              // Mobile chưa có màn appointment, điều hướng về home
+              appRouter.go('/home');
+              return;
+            case 'MEDICAL_RECORD':
+              // Thông báo về bệnh án (COMPLETED, UPDATED)
+              // Mobile chưa có màn medical record, điều hướng về home
+              appRouter.go('/home');
+              return;
+            case 'SCHEDULE':
+              // Thông báo về lịch làm việc bị hủy hoặc khôi phục (CANCELLED, RESTORED)
+              appRouter.go('/schedule');
+              return;
+            case 'HOLIDAY':
+              // Thông báo về ngày nghỉ lễ (CREATED)
+              appRouter.go('/home');
+              return;
+            case 'FACEPROFILEUPDATEREQUEST':
+              // Thông báo về yêu cầu duyệt cập nhật khuôn mặt (REQUEST, APPROVED, REJECTED)
+              // HR/Admin: điều hướng đến trang duyệt face profile
+              // User: điều hướng đến profile
+              appRouter.go('/hr/face-approvals');
               return;
             default:
               break;
@@ -271,14 +299,25 @@ class NotificationService {
         }
 
         if (actionUrl != null && actionUrl.isNotEmpty) {
+          // Parse actionUrl và điều hướng tương ứng
           if (actionUrl.contains('/leave-request')) {
             appRouter.go('/leave-request');
           } else if (actionUrl.contains('/attendance')) {
             appRouter.go('/attendance');
+          } else if (actionUrl.contains('/schedule')) {
+            appRouter.go('/schedule');
+          } else if (actionUrl.contains('/hr/schedules')) {
+            appRouter.go('/hr/schedules');
+          } else if (actionUrl.contains('/hr/face-approval') || actionUrl.contains('/face-profile-approval')) {
+            appRouter.go('/hr/face-approvals');
+          } else if (actionUrl.contains('/profile')) {
+            appRouter.go('/profile');
           } else {
+            // Fallback: điều hướng đến notifications
             appRouter.go('/notifications');
           }
         } else {
+          // Nếu không có actionUrl và relatedEntityType, điều hướng đến notifications
           appRouter.go('/notifications');
         }
       } catch (e) {
