@@ -1,4 +1,3 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -21,7 +20,9 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
   bool _isLoading = false;
 
   // Biểu thức kiểm tra quy tắc password
-  final _passwordRule = RegExp(r'^(?=\S+$)(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,100}$');
+  final _passwordRule = RegExp(
+    r'^(?=\S+$)(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,100}$',
+  );
 
   @override
   void dispose() {
@@ -37,14 +38,17 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
 
     // Kiểm tra mật khẩu cũ và mới không được giống nhau
     if (_oldPasswordController.text == _newPasswordController.text) {
-      Fluttertoast.showToast(msg: 'Current and new password must be different.');
+      Fluttertoast.showToast(
+        msg: 'Current and new password must be different.',
+      );
       return;
     }
 
     // Kiểm tra mật khẩu mới có hợp lệ không
     if (!_passwordRule.hasMatch(_newPasswordController.text)) {
       Fluttertoast.showToast(
-        msg: 'Password must be at least 8 characters and include upper, lower case, number, and special character.',
+        msg:
+            'Password must be at least 8 characters and include upper, lower case, number, and special character.',
       );
       return;
     }
@@ -120,9 +124,9 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
     return PopScope(
       canPop: context.canPop(),
       child: Scaffold(
-        backgroundColor: colorScheme.background,
+        backgroundColor: colorScheme.surface,
         appBar: AppBar(
-          backgroundColor: colorScheme.background,
+          backgroundColor: colorScheme.surface,
           elevation: 0,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_ios_new_rounded),
@@ -146,7 +150,9 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                 children: [
                   Card(
                     elevation: 4,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(24),
+                    ),
                     child: Padding(
                       padding: const EdgeInsets.all(24),
                       child: Column(
@@ -160,7 +166,10 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                                   color: colorScheme.primary.withOpacity(0.1),
                                   borderRadius: BorderRadius.circular(12),
                                 ),
-                                child: Icon(Icons.lock_reset_rounded, color: colorScheme.primary),
+                                child: Icon(
+                                  Icons.lock_reset_rounded,
+                                  color: colorScheme.primary,
+                                ),
                               ),
                               const SizedBox(width: 16),
                               Expanded(
@@ -169,7 +178,10 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                                   children: [
                                     Text(
                                       'Change Password',
-                                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleLarge
+                                          ?.copyWith(
                                             fontWeight: FontWeight.w700,
                                             color: colorScheme.onSurface,
                                           ),
@@ -177,7 +189,10 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                                     const SizedBox(height: 4),
                                     Text(
                                       'Update your password to secure your account.',
-                                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium
+                                          ?.copyWith(
                                             color: colorScheme.onSurfaceVariant,
                                           ),
                                     ),
@@ -211,9 +226,13 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                                 ),
                                 const SizedBox(height: 24),
                                 FilledButton(
-                                  onPressed: _isLoading ? null : _handleChangePassword,
+                                  onPressed: _isLoading
+                                      ? null
+                                      : _handleChangePassword,
                                   style: FilledButton.styleFrom(
-                                    padding: const EdgeInsets.symmetric(vertical: 16),
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 16,
+                                    ),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(16),
                                     ),
@@ -224,7 +243,10 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                                           width: 20,
                                           child: CircularProgressIndicator(
                                             strokeWidth: 2,
-                                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                            valueColor:
+                                                AlwaysStoppedAnimation<Color>(
+                                                  Colors.white,
+                                                ),
                                           ),
                                         )
                                       : const Text('Update Password'),
@@ -265,17 +287,18 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
         labelText: label,
         prefixIcon: Icon(Icons.lock_outline, color: colorScheme.primary),
         filled: true,
-        fillColor: colorScheme.surfaceVariant.withOpacity(0.4),
+        fillColor: colorScheme.surfaceContainerHighest.withOpacity(0.4),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide(color: colorScheme.outlineVariant),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: colorScheme.outlineVariant.withOpacity(0.6)),
+          borderSide: BorderSide(
+            color: colorScheme.outlineVariant.withOpacity(0.6),
+          ),
         ),
       ),
     );
   }
 }
-

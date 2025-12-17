@@ -429,20 +429,21 @@ class _EmployeeListPageState extends State<EmployeeListPage> {
         ),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
-          color: const Color(0xFF6D28D9).withOpacity(isDark ? 0.2 : 0.12),
-          width: 1,
+          color: const Color(0xFF6D28D9).withOpacity(isDark ? 0.3 : 0.2),
+          width: 1.5,
         ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF6D28D9).withOpacity(isDark ? 0.1 : 0.05),
-            blurRadius: 16,
-            offset: const Offset(0, 3),
+            color: const Color(0xFF6D28D9).withOpacity(isDark ? 0.2 : 0.1),
+            blurRadius: 24,
+            offset: const Offset(0, 6),
             spreadRadius: 0,
           ),
           BoxShadow(
-            color: Colors.black.withOpacity(isDark ? 0.3 : 0.04),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
+            color: Colors.black.withOpacity(isDark ? 0.5 : 0.08),
+            blurRadius: 16,
+            offset: const Offset(0, 4),
+            spreadRadius: -4,
           ),
         ],
       ),
@@ -451,7 +452,7 @@ class _EmployeeListPageState extends State<EmployeeListPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Search Bar with modern design
+            // Search Bar with enhanced design
             Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -459,83 +460,96 @@ class _EmployeeListPageState extends State<EmployeeListPage> {
                   end: Alignment.bottomRight,
                   colors: isDark
                       ? [
-                          const Color(0xFF334155),
-                          const Color(0xFF1E293B),
+                          const Color(0xFF334155).withOpacity(0.9),
+                          const Color(0xFF1E293B).withOpacity(0.95),
                         ]
                       : [
                           Colors.white,
-                          const Color(0xFFF1F5F9),
+                          const Color(0xFFF8FAFC),
                         ],
                 ),
                 borderRadius: BorderRadius.circular(18),
                 border: Border.all(
                   color: isDark 
-                    ? const Color(0xFF6366F1).withOpacity(0.3)
+                    ? const Color(0xFF6366F1).withOpacity(0.5)
                     : const Color(0xFFE2E8F0),
-                  width: 1.5,
+                  width: 2,
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(isDark ? 0.2 : 0.03),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
+                    color: const Color(0xFF6D28D9).withOpacity(isDark ? 0.2 : 0.08),
+                    blurRadius: 16,
+                    offset: const Offset(0, 4),
+                    spreadRadius: -2,
                   ),
                 ],
               ),
               child: TextField(
                 controller: _searchCtrl,
                 style: TextStyle(
-                  fontSize: 15, 
-                  fontWeight: FontWeight.w500, 
+                  fontSize: 16, 
+                  fontWeight: FontWeight.w600, 
                   color: isDark ? Colors.white : const Color(0xFF1E293B),
+                  letterSpacing: 0.3,
                 ),
                 decoration: InputDecoration(
                   hintText: 'Tìm kiếm tên/mã',
                   hintStyle: TextStyle(
                     color: isDark ? Colors.grey[400] : Colors.grey[500], 
                     fontSize: 15, 
-                    fontWeight: FontWeight.w400,
+                    fontWeight: FontWeight.w500,
+                    letterSpacing: 0.2,
                   ),
                   prefixIcon: Container(
-                    margin: const EdgeInsets.all(8),
-                    padding: const EdgeInsets.all(8),
+                    margin: const EdgeInsets.all(12),
+                    padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
                       gradient: const LinearGradient(
                         colors: [Color(0xFF6D28D9), Color(0xFF7C3AED)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
                       ),
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(14),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFF6D28D9).withOpacity(0.4),
+                          blurRadius: 12,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
                     ),
-                    child: const Icon(Icons.search_rounded, color: Colors.white, size: 18),
+                    child: const Icon(Icons.search_rounded, color: Colors.white, size: 22),
                   ),
                   suffixIcon: _searchCtrl.text.isNotEmpty
                       ? IconButton(
                           icon: Container(
-                            padding: const EdgeInsets.all(4),
+                            padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
-                              color: isDark ? Colors.grey[700] : Colors.grey[200],
+                              color: isDark ? Colors.grey[700]!.withOpacity(0.7) : Colors.grey[200]!.withOpacity(0.9),
                               shape: BoxShape.circle,
                             ),
                             child: Icon(
                               Icons.close_rounded, 
                               color: isDark ? Colors.grey[300] : Colors.grey[700], 
-                              size: 16,
+                              size: 18,
                             ),
                           ),
                           onPressed: () {
                             _searchCtrl.clear();
+                            setState(() {});
                             _load(page: 0);
                           },
                         )
                       : null,
                   border: InputBorder.none,
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                 ),
                 onChanged: (_) => setState(() {}),
                 onSubmitted: (_) => _load(page: 0),
               ),
             ),
-            const SizedBox(height: 16),
-            // Filter Dropdowns in Grid
+            const SizedBox(height: 20),
+            // Filter Dropdowns in Grid with improved spacing
             Row(
               children: [
                 Expanded(
@@ -546,7 +560,7 @@ class _EmployeeListPageState extends State<EmployeeListPage> {
                     onChanged: (v) => setState(() => _clinicId = v),
                   ),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: 14),
                 Expanded(
                   child: EmployeeFilterDropdown(
                     label: 'Dept',
@@ -557,7 +571,7 @@ class _EmployeeListPageState extends State<EmployeeListPage> {
                 ),
               ],
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 14),
             Row(
               children: [
                 Expanded(
@@ -566,132 +580,146 @@ class _EmployeeListPageState extends State<EmployeeListPage> {
                     value: _roleId,
                     data: _roles,
                     onChanged: (v) {
-                  setState(() {
-                    _roleId = v;
-                    _page = 0; // Reset page when filter changes
-                  });
-                  _load(page: 0);
+                      setState(() {
+                        _roleId = v;
+                        _page = 0;
+                      });
+                      _load(page: 0);
                     },
                   ),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: 14),
                 Expanded(
-                  child: DropdownButtonFormField<String>(
-                    value: _statusFilter,
-                    isExpanded: true,
-                    decoration: InputDecoration(
-                      labelText: 'Trạng thái',
-                      labelStyle: TextStyle(
-                        color: isDark ? Colors.grey[300] : Colors.grey[700], 
-                        fontSize: 13,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: isDark ? const Color(0xFF334155) : const Color(0xFFF8FAFC),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: isDark ? Colors.grey[700]! : Colors.grey[300]!,
+                        width: 1.5,
                       ),
-                      filled: true,
-                      fillColor: isDark ? const Color(0xFF334155) : const Color(0xFFF8FAFC),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(
-                          color: isDark ? Colors.grey[700]! : Colors.grey[300]!,
-                        ),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(
-                          color: isDark ? Colors.grey[700]! : Colors.grey[300]!,
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: Color(0xFF6D28D9), width: 2),
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
                     ),
-                    style: TextStyle(
-                      fontSize: 13, 
-                      color: isDark ? Colors.white : const Color(0xFF1E293B),
+                    child: DropdownButtonFormField<String>(
+                      value: _statusFilter,
+                      isExpanded: true,
+                      decoration: InputDecoration(
+                        labelText: 'Trạng thái',
+                        labelStyle: TextStyle(
+                          color: isDark ? Colors.grey[300] : Colors.grey[700], 
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        filled: false,
+                        border: InputBorder.none,
+                        enabledBorder: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                      ),
+                      style: TextStyle(
+                        fontSize: 14, 
+                        fontWeight: FontWeight.w600,
+                        color: isDark ? Colors.white : const Color(0xFF1E293B),
+                      ),
+                      dropdownColor: isDark ? const Color(0xFF1E293B) : Colors.white,
+                      icon: Icon(
+                        Icons.keyboard_arrow_down_rounded,
+                        color: isDark ? Colors.grey[400] : Colors.grey[600],
+                        size: 22,
+                      ),
+                      items: const [
+                        DropdownMenuItem(
+                          value: "all",
+                          child: Text('Tất cả', overflow: TextOverflow.ellipsis, maxLines: 1, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+                        ),
+                        DropdownMenuItem(
+                          value: "active",
+                          child: Text('Hoạt động', overflow: TextOverflow.ellipsis, maxLines: 1, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+                        ),
+                        DropdownMenuItem(
+                          value: "inactive",
+                          child: Text('Đã khóa', overflow: TextOverflow.ellipsis, maxLines: 1, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+                        ),
+                        DropdownMenuItem(
+                          value: "resignation",
+                          child: Text('Nghỉ việc', overflow: TextOverflow.ellipsis, maxLines: 1, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+                        ),
+                      ],
+                      selectedItemBuilder: (context) => const [
+                        Text('Tất cả', overflow: TextOverflow.ellipsis, maxLines: 1, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+                        Text('Hoạt động', overflow: TextOverflow.ellipsis, maxLines: 1, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+                        Text('Đã khóa', overflow: TextOverflow.ellipsis, maxLines: 1, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+                        Text('Nghỉ việc', overflow: TextOverflow.ellipsis, maxLines: 1, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+                      ],
+                      onChanged: (v) {
+                        if (v != null) {
+                          setState(() {
+                            _statusFilter = v;
+                            _page = 0;
+                          });
+                          _load(page: 0);
+                        }
+                      },
                     ),
-                    dropdownColor: isDark ? const Color(0xFF1E293B) : Colors.white,
-                    items: const [
-                      DropdownMenuItem(
-                        value: "all",
-                        child: Text('Tất cả', overflow: TextOverflow.ellipsis, maxLines: 1, style: TextStyle(fontSize: 13)),
-                      ),
-                      DropdownMenuItem(
-                        value: "active",
-                        child: Text('Hoạt động', overflow: TextOverflow.ellipsis, maxLines: 1, style: TextStyle(fontSize: 13)),
-                      ),
-                      DropdownMenuItem(
-                        value: "inactive",
-                        child: Text('Đã khóa', overflow: TextOverflow.ellipsis, maxLines: 1, style: TextStyle(fontSize: 13)),
-                      ),
-                      DropdownMenuItem(
-                        value: "resignation",
-                        child: Text('Nghỉ việc', overflow: TextOverflow.ellipsis, maxLines: 1, style: TextStyle(fontSize: 13)),
-                      ),
-                    ],
-                    selectedItemBuilder: (context) => const [
-                      Text('Tất cả', overflow: TextOverflow.ellipsis, maxLines: 1, style: TextStyle(fontSize: 13)),
-                      Text('Hoạt động', overflow: TextOverflow.ellipsis, maxLines: 1, style: TextStyle(fontSize: 13)),
-                      Text('Đã khóa', overflow: TextOverflow.ellipsis, maxLines: 1, style: TextStyle(fontSize: 13)),
-                      Text('Nghỉ việc', overflow: TextOverflow.ellipsis, maxLines: 1, style: TextStyle(fontSize: 13)),
-                    ],
-                    onChanged: (v) {
-                      if (v != null) {
-                        setState(() {
-                          _statusFilter = v;
-                          _page = 0; // Reset page when filter changes
-                        });
-                        _load(page: 0);
-                      }
-                    },
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 20),
-            // Action Buttons
+            // Action Buttons with improved design
             Row(
               children: [
                 Expanded(
                   child: Container(
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(14),
+                      borderRadius: BorderRadius.circular(16),
                       border: Border.all(
                         color: isDark ? Colors.grey[700]! : Colors.grey[300]!, 
-                        width: 1.5,
+                        width: 2,
                       ),
                     ),
                     child: Material(
                       color: Colors.transparent,
                       child: InkWell(
-                        borderRadius: BorderRadius.circular(14),
+                        borderRadius: BorderRadius.circular(16),
                         onTap: () {
                           _searchCtrl.clear();
                           setState(() {
                             _clinicId = null;
                             _departmentId = null;
                             _roleId = null;
-                            _statusFilter = "active"; // Reset về active như web
+                            _statusFilter = "active";
                             _page = 0;
                           });
                           _load(page: 0);
                         },
                         child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          padding: const EdgeInsets.symmetric(vertical: 16),
                           alignment: Alignment.center,
-                          child: Text(
-                            'Reset',
-                            style: TextStyle(
-                              fontSize: 15, 
-                              fontWeight: FontWeight.w700, 
-                              color: isDark ? Colors.grey[300] : const Color(0xFF64748B),
-                            ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.refresh_rounded,
+                                size: 18,
+                                color: isDark ? Colors.grey[300] : const Color(0xFF64748B),
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                'Reset',
+                                style: TextStyle(
+                                  fontSize: 15, 
+                                  fontWeight: FontWeight.w700, 
+                                  color: isDark ? Colors.grey[300] : const Color(0xFF64748B),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
                     ),
                   ),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: 14),
                 Expanded(
                   flex: 2,
                   child: Container(
@@ -701,31 +729,31 @@ class _EmployeeListPageState extends State<EmployeeListPage> {
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
-                      borderRadius: BorderRadius.circular(14),
+                      borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFF6D28D9).withOpacity(0.25),
-                          blurRadius: 10,
-                          offset: const Offset(0, 3),
+                          color: const Color(0xFF6D28D9).withOpacity(0.3),
+                          blurRadius: 12,
+                          offset: const Offset(0, 4),
                         ),
                       ],
                     ),
                     child: Material(
                       color: Colors.transparent,
                       child: InkWell(
-                        borderRadius: BorderRadius.circular(14),
+                        borderRadius: BorderRadius.circular(16),
                         onTap: () => _load(page: 0),
                         child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          padding: const EdgeInsets.symmetric(vertical: 16),
                           alignment: Alignment.center,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: const [
-                              Icon(Icons.filter_alt_rounded, size: 18, color: Colors.white),
-                              SizedBox(width: 6),
+                              Icon(Icons.filter_alt_rounded, size: 20, color: Colors.white),
+                              SizedBox(width: 8),
                               Text(
                                 'Lọc',
-                                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: Colors.white),
+                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: Colors.white, letterSpacing: 0.5),
                               ),
                             ],
                           ),

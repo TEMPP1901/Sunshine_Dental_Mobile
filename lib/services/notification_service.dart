@@ -4,7 +4,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'api_service.dart';
@@ -27,14 +26,17 @@ class NotificationService {
   NotificationService._internal();
 
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
-  final FlutterLocalNotificationsPlugin _localNotifications = FlutterLocalNotificationsPlugin();
+  final FlutterLocalNotificationsPlugin _localNotifications =
+      FlutterLocalNotificationsPlugin();
   final ApiService _apiService = ApiService();
-  
+
   bool _isInitialized = false;
 
   // Luồng notification để UI nhận dữ liệu realtime
-  final _notificationStreamController = StreamController<Map<String, dynamic>>.broadcast();
-  Stream<Map<String, dynamic>> get onNotificationReceived => _notificationStreamController.stream;
+  final _notificationStreamController =
+      StreamController<Map<String, dynamic>>.broadcast();
+  Stream<Map<String, dynamic>> get onNotificationReceived =>
+      _notificationStreamController.stream;
 
   // ValueNotifier lưu trữ số lượng notification chưa đọc
   final ValueNotifier<int> unreadCount = ValueNotifier<int>(0);
@@ -67,7 +69,9 @@ class NotificationService {
       debugPrint('[FCM] App opened from notification');
       debugPrint('[FCM] Message ID: ${message.messageId}');
       debugPrint('[FCM] Message data: ${message.data}');
-      debugPrint('[FCM] RelatedEntityType: ${message.data['relatedEntityType']}');
+      debugPrint(
+        '[FCM] RelatedEntityType: ${message.data['relatedEntityType']}',
+      );
       debugPrint('[FCM] RelatedEntityId: ${message.data['relatedEntityId']}');
       // Cập nhật số lượng thông báo chưa đọc khi mở app từ notification
       fetchUnreadCount();
@@ -92,7 +96,9 @@ class NotificationService {
     final prefs = await SharedPreferences.getInstance();
     final accessToken = prefs.getString('accessToken');
     if (accessToken != null && accessToken.isNotEmpty) {
-      debugPrint('[NotificationService] User already logged in, registering device...');
+      debugPrint(
+        '[NotificationService] User already logged in, registering device...',
+      );
       await _registerDevice();
       fetchUnreadCount();
     }
@@ -111,7 +117,9 @@ class NotificationService {
         } else {
           unreadCount.value = int.tryParse(count.toString()) ?? 0;
         }
-        debugPrint('[NotificationService] Unread count updated: ${unreadCount.value}');
+        debugPrint(
+          '[NotificationService] Unread count updated: ${unreadCount.value}',
+        );
       }
     } catch (e) {
       debugPrint('[NotificationService] Failed to fetch unread count: $e');
@@ -124,7 +132,7 @@ class NotificationService {
     debugPrint('Disposed NotificationService');
   }
 
-  // Xin quyền nhận notification từ user 
+  // Xin quyền nhận notification từ user
   Future<void> _requestPermissions() async {
     NotificationSettings settings = await _firebaseMessaging.requestPermission(
       alert: true,
@@ -144,24 +152,28 @@ class NotificationService {
         AndroidInitializationSettings('@mipmap/ic_launcher');
     final DarwinInitializationSettings initializationSettingsDarwin =
         DarwinInitializationSettings(
-      requestAlertPermission: false,
-      requestBadgePermission: false,
-      requestSoundPermission: false,
-    );
+          requestAlertPermission: false,
+          requestBadgePermission: false,
+          requestSoundPermission: false,
+        );
 
-    final InitializationSettings initializationSettings = InitializationSettings(
-      android: initializationSettingsAndroid,
-      iOS: initializationSettingsDarwin,
-    );
+    final InitializationSettings initializationSettings =
+        InitializationSettings(
+          android: initializationSettingsAndroid,
+          iOS: initializationSettingsDarwin,
+        );
 
     await _localNotifications.initialize(
       initializationSettings,
-      onDidReceiveNotificationResponse: (NotificationResponse notificationResponse) {
-        debugPrint('Notification clicked: ${notificationResponse.payload}');
-        if (notificationResponse.payload != null) {
-          _handleNotificationNavigation({'actionUrl': notificationResponse.payload});
-        }
-      },
+      onDidReceiveNotificationResponse:
+          (NotificationResponse notificationResponse) {
+            debugPrint('Notification clicked: ${notificationResponse.payload}');
+            if (notificationResponse.payload != null) {
+              _handleNotificationNavigation({
+                'actionUrl': notificationResponse.payload,
+              });
+            }
+          },
     );
   }
 
@@ -171,7 +183,9 @@ class NotificationService {
     AndroidNotification? android = message.notification?.android;
 
     if (notification != null) {
-      debugPrint('[LocalNotification] Showing notification: ${notification.title}');
+      debugPrint(
+        '[LocalNotification] Showing notification: ${notification.title}',
+      );
       debugPrint('[LocalNotification] Body: ${notification.body}');
       if (android != null) {
         await _localNotifications.show(
@@ -180,16 +194,18 @@ class NotificationService {
           notification.body,
           const NotificationDetails(
             android: AndroidNotificationDetails(
-              'high_importance_channel', 
-              'High Importance Notifications', 
-              channelDescription: 'This channel is used for important notifications.',
+              'high_importance_channel',
+              'High Importance Notifications',
+              channelDescription:
+                  'This channel is used for important notifications.',
               importance: Importance.max,
               priority: Priority.high,
               icon: '@mipmap/ic_launcher',
             ),
             iOS: DarwinNotificationDetails(),
           ),
-          payload: message.data['actionUrl'] ?? message.data['relatedEntityType'],
+          payload:
+              message.data['actionUrl'] ?? message.data['relatedEntityType'],
         );
         debugPrint('[LocalNotification] Android notification shown');
       } else {
@@ -201,14 +217,16 @@ class NotificationService {
             android: AndroidNotificationDetails(
               'high_importance_channel',
               'High Importance Notifications',
-              channelDescription: 'This channel is used for important notifications.',
+              channelDescription:
+                  'This channel is used for important notifications.',
               importance: Importance.max,
               priority: Priority.high,
               icon: '@mipmap/ic_launcher',
             ),
             iOS: DarwinNotificationDetails(),
           ),
-          payload: message.data['actionUrl'] ?? message.data['relatedEntityType'],
+          payload:
+              message.data['actionUrl'] ?? message.data['relatedEntityType'],
         );
         debugPrint('[LocalNotification] iOS notification shown');
       }
@@ -239,10 +257,10 @@ class NotificationService {
       String deviceType = Platform.isAndroid ? 'ANDROID' : 'IOS';
       if (kIsWeb) deviceType = 'WEB';
 
-      await _apiService.post('/api/notifications/device', queryParameters: {
-        'token': fcmToken,
-        'deviceType': deviceType,
-      });
+      await _apiService.post(
+        '/api/notifications/device',
+        queryParameters: {'token': fcmToken, 'deviceType': deviceType},
+      );
       debugPrint('Device registered successfully');
     } catch (e) {
       debugPrint('Failed to register device: $e');

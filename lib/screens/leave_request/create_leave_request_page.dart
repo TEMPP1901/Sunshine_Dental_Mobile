@@ -2,7 +2,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 import '../../services/leave_request_service.dart';
 import '../../services/api_service.dart';
 
@@ -36,7 +35,8 @@ class _CreateLeaveRequestPageState extends State<CreateLeaveRequestPage> {
           .map((r) => r.toString().toUpperCase())
           .toList();
 
-      final isDoctorRole = jobTitle.contains('DOCTOR') ||
+      final isDoctorRole =
+          jobTitle.contains('DOCTOR') ||
           jobTitle.contains('BÁC SĨ') ||
           roles.any((r) => r.contains('DOCTOR'));
 
@@ -74,7 +74,9 @@ class _CreateLeaveRequestPageState extends State<CreateLeaveRequestPage> {
 
     final picked = await showDatePicker(
       context: context,
-      initialDate: isStartDate ? (_startDate ?? now) : (_endDate ?? _startDate ?? now),
+      initialDate: isStartDate
+          ? (_startDate ?? now)
+          : (_endDate ?? _startDate ?? now),
       firstDate: isStartDate ? now : (_startDate ?? now),
       lastDate: DateTime(now.year + 1),
     );
@@ -125,9 +127,7 @@ class _CreateLeaveRequestPageState extends State<CreateLeaveRequestPage> {
         context.pop(true);
       }
     } catch (e) {
-      Fluttertoast.showToast(
-        msg: e.toString().replaceFirst('Exception: ', ''),
-      );
+      Fluttertoast.showToast(msg: e.toString().replaceFirst('Exception: ', ''));
     } finally {
       if (mounted) {
         setState(() {
@@ -220,7 +220,7 @@ class _CreateLeaveRequestPageState extends State<CreateLeaveRequestPage> {
 
             // Chọn loại nghỉ
             DropdownButtonFormField<String>(
-              value: _selectedType,
+              initialValue: _selectedType,
               decoration: InputDecoration(
                 labelText: 'leaveRequest.type'.tr(),
                 border: const OutlineInputBorder(),
@@ -243,7 +243,7 @@ class _CreateLeaveRequestPageState extends State<CreateLeaveRequestPage> {
             // Chọn ca làm việc (chỉ hiển thị nếu là bác sĩ)
             if (_isDoctor)
               DropdownButtonFormField<String>(
-                value: _selectedShiftType,
+                initialValue: _selectedShiftType,
                 decoration: InputDecoration(
                   labelText: 'leaveRequest.shiftType'.tr(),
                   border: const OutlineInputBorder(),

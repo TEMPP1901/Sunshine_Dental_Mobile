@@ -16,12 +16,12 @@ class LeaveRequestService {
       return [];
     } on DioException catch (e) {
       throw Exception(
-        e.response?.data?['message']?.toString() ?? 'Failed to load leave requests',
+        e.response?.data?['message']?.toString() ??
+            'Failed to load leave requests',
       );
     }
   }
 
- 
   Future<List<Map<String, dynamic>>> getMyLeaveRequests() async {
     return fetchMyLeaveRequests();
   }
@@ -29,11 +29,14 @@ class LeaveRequestService {
   // Lấy chi tiết đơn nghỉ bằng id
   Future<Map<String, dynamic>> fetchLeaveRequestById(int leaveRequestId) async {
     try {
-      final response = await _apiService.get('/api/hr/leave-requests/$leaveRequestId');
+      final response = await _apiService.get(
+        '/api/hr/leave-requests/$leaveRequestId',
+      );
       return Map<String, dynamic>.from(response.data as Map);
     } on DioException catch (e) {
       throw Exception(
-        e.response?.data?['message']?.toString() ?? 'Failed to load leave request',
+        e.response?.data?['message']?.toString() ??
+            'Failed to load leave request',
       );
     }
   }
@@ -64,7 +67,8 @@ class LeaveRequestService {
       return Map<String, dynamic>.from(response.data as Map);
     } on DioException catch (e) {
       throw Exception(
-        e.response?.data?['message']?.toString() ?? 'Failed to create leave request',
+        e.response?.data?['message']?.toString() ??
+            'Failed to create leave request',
       );
     }
   }
@@ -75,7 +79,8 @@ class LeaveRequestService {
       await _apiService.delete('/api/hr/leave-requests/$leaveRequestId');
     } on DioException catch (e) {
       throw Exception(
-        e.response?.data?['message']?.toString() ?? 'Failed to cancel leave request',
+        e.response?.data?['message']?.toString() ??
+            'Failed to cancel leave request',
       );
     }
   }
@@ -90,7 +95,7 @@ class LeaveRequestService {
             .toList();
       }
       return [];
-    } on DioException catch (e) {
+    } on DioException {
       // Nếu không có quyền, trả về danh sách rỗng
       return [];
     }

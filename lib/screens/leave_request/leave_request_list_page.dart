@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import '../../services/leave_request_service.dart';
-import 'create_leave_request_page.dart';
 
 class LeaveRequestListPage extends StatefulWidget {
   const LeaveRequestListPage({super.key});
@@ -72,9 +71,7 @@ class _LeaveRequestListPageState extends State<LeaveRequestListPage> {
       Fluttertoast.showToast(msg: 'leaveRequest.cancelSuccess'.tr());
       _loadLeaveRequests();
     } catch (e) {
-      Fluttertoast.showToast(
-        msg: e.toString().replaceFirst('Exception: ', ''),
-      );
+      Fluttertoast.showToast(msg: e.toString().replaceFirst('Exception: ', ''));
     }
   }
 
@@ -128,7 +125,9 @@ class _LeaveRequestListPageState extends State<LeaveRequestListPage> {
 
   // Lấy ca làm việc tiếng Anh
   String _getShiftTypeLabel(String? shiftType) {
-    if (shiftType == null || shiftType.isEmpty || shiftType.toUpperCase() == 'FULL_DAY') {
+    if (shiftType == null ||
+        shiftType.isEmpty ||
+        shiftType.toUpperCase() == 'FULL_DAY') {
       return 'leaveRequest.shiftTypes.fullDay'.tr();
     }
     switch (shiftType.toUpperCase()) {
@@ -187,262 +186,268 @@ class _LeaveRequestListPageState extends State<LeaveRequestListPage> {
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _error != null
-              ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(_error!),
-                      const SizedBox(height: 16),
-                      ElevatedButton(
-                        onPressed: _loadLeaveRequests,
-                        child: Text('Retry'),
-                      ),
-                    ],
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(_error!),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: _loadLeaveRequests,
+                    child: Text('Retry'),
                   ),
-                )
-              : _leaveRequests.isEmpty
-                  ? Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(24),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.calendar_today_outlined,
-                              size: 80,
-                              color: colorScheme.onSurfaceVariant.withOpacity(0.5),
-                            ),
-                            const SizedBox(height: 24),
-                            Text(
-                              'No leave requests available yet.',
-                              style: theme.textTheme.titleMedium?.copyWith(
+                ],
+              ),
+            )
+          : _leaveRequests.isEmpty
+          ? Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.calendar_today_outlined,
+                      size: 80,
+                      color: colorScheme.onSurfaceVariant.withOpacity(0.5),
+                    ),
+                    const SizedBox(height: 24),
+                    Text(
+                      'No leave requests available yet.',
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        color: colorScheme.onSurfaceVariant,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 32),
+                    FilledButton.icon(
+                      onPressed: () async {
+                        final result = await context.push(
+                          '/leave-request/create',
+                        );
+                        if (result == true) {
+                          _loadLeaveRequests();
+                        }
+                      },
+                      icon: const Icon(Icons.add),
+                      label: Text('Create new request'),
+                      style: FilledButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 24,
+                          vertical: 12,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            )
+          : RefreshIndicator(
+              onRefresh: _loadLeaveRequests,
+              child: ListView.builder(
+                padding: const EdgeInsets.all(16),
+                itemCount: _leaveRequests.length,
+                itemBuilder: (context, index) {
+                  final request = _leaveRequests[index];
+                  final status = request['status']?.toString();
+                  final statusColor = _getStatusColor(status);
+
+                  return Card(
+                    margin: const EdgeInsets.only(bottom: 12),
+                    elevation: 2,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  _getTypeLabel(request['type']?.toString()),
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: colorScheme.onSurface,
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 6,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: statusColor.withOpacity(0.15),
+                                  borderRadius: BorderRadius.circular(16),
+                                  border: Border.all(
+                                    color: statusColor,
+                                    width: 1.5,
+                                  ),
+                                ),
+                                child: Text(
+                                  _getStatusLabel(status),
+                                  style: TextStyle(
+                                    color: statusColor,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.calendar_today_outlined,
+                                size: 18,
                                 color: colorScheme.onSurfaceVariant,
                               ),
-                              textAlign: TextAlign.center,
+                              const SizedBox(width: 8),
+                              Text(
+                                '${_formatDate(request['startDate']?.toString())} - ${_formatDate(request['endDate']?.toString())}',
+                                style: TextStyle(
+                                  color: colorScheme.onSurfaceVariant,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
+                          ),
+                          if (request['shiftType'] != null &&
+                              request['shiftType'].toString().toUpperCase() !=
+                                  'FULL_DAY') ...[
+                            const SizedBox(height: 12),
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.access_time,
+                                  size: 18,
+                                  color: colorScheme.onSurfaceVariant,
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  'Shift type: ${_getShiftTypeLabel(request['shiftType']?.toString())}',
+                                  style: TextStyle(
+                                    color: colorScheme.onSurfaceVariant,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
                             ),
-                            const SizedBox(height: 32),
-                            FilledButton.icon(
-                              onPressed: () async {
-                                final result = await context.push('/leave-request/create');
-                                if (result == true) {
-                                  _loadLeaveRequests();
-                                }
-                              },
-                              icon: const Icon(Icons.add),
-                              label: Text('Create new request'),
-                              style: FilledButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 24,
-                                  vertical: 12,
+                          ],
+                          if (request['clinicName'] != null) ...[
+                            const SizedBox(height: 12),
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.business_outlined,
+                                  size: 18,
+                                  color: colorScheme.onSurfaceVariant,
+                                ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    request['clinicName'].toString(),
+                                    style: TextStyle(
+                                      color: colorScheme.onSurfaceVariant,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                          if (request['reason'] != null &&
+                              request['reason'].toString().isNotEmpty) ...[
+                            const SizedBox(height: 12),
+                            Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: colorScheme.surfaceContainerHighest,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Icon(
+                                    Icons.note_outlined,
+                                    size: 18,
+                                    color: colorScheme.onSurfaceVariant,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Text(
+                                      request['reason'].toString(),
+                                      style: TextStyle(
+                                        color: colorScheme.onSurface,
+                                        fontSize: 14,
+                                        height: 1.4,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                          if (request['approvedByName'] != null) ...[
+                            const SizedBox(height: 12),
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.person_outline,
+                                  size: 18,
+                                  color: colorScheme.onSurfaceVariant,
+                                ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    'Approved by: ${request['approvedByName']}',
+                                    style: TextStyle(
+                                      color: colorScheme.onSurfaceVariant,
+                                      fontSize: 13,
+                                      fontStyle: FontStyle.italic,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                          if (status == 'PENDING') ...[
+                            const SizedBox(height: 16),
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: OutlinedButton.icon(
+                                onPressed: () =>
+                                    _handleCancel(request['id'] as int),
+                                icon: const Icon(
+                                  Icons.cancel_outlined,
+                                  size: 18,
+                                ),
+                                label: Text('Cancel request'),
+                                style: OutlinedButton.styleFrom(
+                                  foregroundColor: Colors.red,
+                                  side: const BorderSide(color: Colors.red),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 8,
+                                  ),
                                 ),
                               ),
                             ),
                           ],
-                        ),
-                      ),
-                    )
-                  : RefreshIndicator(
-                      onRefresh: _loadLeaveRequests,
-                      child: ListView.builder(
-                        padding: const EdgeInsets.all(16),
-                        itemCount: _leaveRequests.length,
-                        itemBuilder: (context, index) {
-                          final request = _leaveRequests[index];
-                          final status = request['status']?.toString();
-                          final statusColor = _getStatusColor(status);
-
-                          return Card(
-                            margin: const EdgeInsets.only(bottom: 12),
-                            elevation: 2,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(16),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Expanded(
-                                        child: Text(
-                                          _getTypeLabel(request['type']?.toString()),
-                                          style: TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold,
-                                            color: colorScheme.onSurface,
-                                          ),
-                                        ),
-                                      ),
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 12,
-                                          vertical: 6,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: statusColor.withOpacity(0.15),
-                                          borderRadius: BorderRadius.circular(16),
-                                          border: Border.all(
-                                            color: statusColor,
-                                            width: 1.5,
-                                          ),
-                                        ),
-                                        child: Text(
-                                          _getStatusLabel(status),
-                                          style: TextStyle(
-                                            color: statusColor,
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 12,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 16),
-                                  Row(
-                                    children: [
-                                      Icon(
-                                        Icons.calendar_today_outlined,
-                                        size: 18,
-                                        color: colorScheme.onSurfaceVariant,
-                                      ),
-                                      const SizedBox(width: 8),
-                                      Text(
-                                        '${_formatDate(request['startDate']?.toString())} - ${_formatDate(request['endDate']?.toString())}',
-                                        style: TextStyle(
-                                          color: colorScheme.onSurfaceVariant,
-                                          fontSize: 14,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  if (request['shiftType'] != null &&
-                                      request['shiftType'].toString().toUpperCase() != 'FULL_DAY') ...[
-                                    const SizedBox(height: 12),
-                                    Row(
-                                      children: [
-                                        Icon(
-                                          Icons.access_time,
-                                          size: 18,
-                                          color: colorScheme.onSurfaceVariant,
-                                        ),
-                                        const SizedBox(width: 8),
-                                        Text(
-                                          'Shift type: ${_getShiftTypeLabel(request['shiftType']?.toString())}',
-                                          style: TextStyle(
-                                            color: colorScheme.onSurfaceVariant,
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                  if (request['clinicName'] != null) ...[
-                                    const SizedBox(height: 12),
-                                    Row(
-                                      children: [
-                                        Icon(
-                                          Icons.business_outlined,
-                                          size: 18,
-                                          color: colorScheme.onSurfaceVariant,
-                                        ),
-                                        const SizedBox(width: 8),
-                                        Expanded(
-                                          child: Text(
-                                            request['clinicName'].toString(),
-                                            style: TextStyle(
-                                              color: colorScheme.onSurfaceVariant,
-                                              fontSize: 14,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                  if (request['reason'] != null && request['reason'].toString().isNotEmpty) ...[
-                                    const SizedBox(height: 12),
-                                    Container(
-                                      padding: const EdgeInsets.all(12),
-                                      decoration: BoxDecoration(
-                                        color: colorScheme.surfaceContainerHighest,
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      child: Row(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Icon(
-                                            Icons.note_outlined,
-                                            size: 18,
-                                            color: colorScheme.onSurfaceVariant,
-                                          ),
-                                          const SizedBox(width: 8),
-                                          Expanded(
-                                            child: Text(
-                                              request['reason'].toString(),
-                                              style: TextStyle(
-                                                color: colorScheme.onSurface,
-                                                fontSize: 14,
-                                                height: 1.4,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                  if (request['approvedByName'] != null) ...[
-                                    const SizedBox(height: 12),
-                                    Row(
-                                      children: [
-                                        Icon(
-                                          Icons.person_outline,
-                                          size: 18,
-                                          color: colorScheme.onSurfaceVariant,
-                                        ),
-                                        const SizedBox(width: 8),
-                                        Expanded(
-                                          child: Text(
-                                            'Approved by: ${request['approvedByName']}',
-                                            style: TextStyle(
-                                              color: colorScheme.onSurfaceVariant,
-                                              fontSize: 13,
-                                              fontStyle: FontStyle.italic,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                  if (status == 'PENDING') ...[
-                                    const SizedBox(height: 16),
-                                    Align(
-                                      alignment: Alignment.centerRight,
-                                      child: OutlinedButton.icon(
-                                        onPressed: () => _handleCancel(
-                                          request['id'] as int,
-                                        ),
-                                        icon: const Icon(Icons.cancel_outlined, size: 18),
-                                        label: Text('Cancel request'),
-                                        style: OutlinedButton.styleFrom(
-                                          foregroundColor: Colors.red,
-                                          side: const BorderSide(color: Colors.red),
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 16,
-                                            vertical: 8,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ],
-                              ),
-                            ),
-                          );
-                        },
+                        ],
                       ),
                     ),
+                  );
+                },
+              ),
+            ),
     );
   }
 }

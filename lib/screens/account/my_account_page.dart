@@ -8,8 +8,13 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:dio/dio.dart';
+
 import '../../services/api_service.dart';
 import '../../providers/user_provider.dart';
+
+// Import các Widget con
+import 'widgets/account_form.dart';
+import 'widgets/avatar_uploader.dart';
 
 class MyAccountPage extends StatefulWidget {
   const MyAccountPage({super.key});
@@ -29,8 +34,6 @@ class _MyAccountPageState extends State<MyAccountPage> {
   XFile? _newAvatar;
   String? _previewUrl;
   Map<String, dynamic>? _user;
-  static const String defaultAvatar =
-      'https://res.cloudinary.com/dchzko3lj/image/upload/v1762616672/default-avatar_brvdfn.png';
 
   // Kiểm tra xem user có phải là nhân viên cần chấm công không
   // Nhân viên chấm công: DOCTOR, HR, RECEPTION, ACCOUNTANT
@@ -54,25 +57,30 @@ class _MyAccountPageState extends State<MyAccountPage> {
   @override
   void initState() {
     super.initState();
-    // Hàm load user và dữ liệu user từ API, đồng thời kiểm tra đăng nhập
     _loadUser();
   }
 
-  // Lấy dữ liệu user từ API và kiểm tra token đăng nhập.
+  @override
+  void dispose() {
+    _fullNameController.dispose();
+    _emailController.dispose();
+    _phoneController.dispose();
+    super.dispose();
+  }
+
   Future<void> _loadUser() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('accessToken');
 
     if (token == null) {
-      if (mounted) {
-        context.go('/login');
-      }
+      if (mounted) context.go('/login');
       return;
     }
 
     try {
       final response = await ApiService().get('/api/users/me');
       final userData = response.data;
+
       setState(() {
         _user = userData;
         _fullNameController.text = userData['fullName'] ?? '';
@@ -85,13 +93,9 @@ class _MyAccountPageState extends State<MyAccountPage> {
         context.read<UserProvider>().setUser(userData);
       }
     } catch (e) {
-      if (mounted) {
-        context.go('/login');
-      }
+      if (mounted) context.go('/login');
     } finally {
-      if (mounted) {
-        setState(() => _isLoadingUser = false);
-      }
+      if (mounted) setState(() => _isLoadingUser = false);
     }
   }
 
@@ -164,22 +168,16 @@ class _MyAccountPageState extends State<MyAccountPage> {
         context.read<UserProvider>().updateUser(updatedUser);
       }
 
-      Fluttertoast.showToast(msg: 'account.myAccount.uploadAvatar.success'.tr());
+      Fluttertoast.showToast(
+        msg: 'account.myAccount.uploadAvatar.success'.tr(),
+      );
     } catch (e) {
       Fluttertoast.showToast(msg: 'account.myAccount.uploadAvatar.failed'.tr());
     }
   }
 
-  // Hàm lưu thay đổi thông tin user
   Future<void> _saveChanges() async {
     if (!_formKey.currentState!.validate() || _user == null) return;
-
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('accessToken');
-    if (token == null) {
-      Fluttertoast.showToast(msg: 'common.signInRequired'.tr());
-      return;
-    }
 
     setState(() => _isLoading = true);
 
@@ -196,6 +194,7 @@ class _MyAccountPageState extends State<MyAccountPage> {
       final updatedUser = response.data;
       setState(() => _user = updatedUser);
 
+      final prefs = await SharedPreferences.getInstance();
       await prefs.setString('user', jsonEncode(updatedUser));
       if (mounted) {
         context.read<UserProvider>().setUser(updatedUser);
@@ -205,18 +204,8 @@ class _MyAccountPageState extends State<MyAccountPage> {
     } catch (e) {
       Fluttertoast.showToast(msg: 'account.myAccount.failed'.tr());
     } finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
+      if (mounted) setState(() => _isLoading = false);
     }
-  }
-
-  @override
-  void dispose() {
-    _fullNameController.dispose();
-    _emailController.dispose();
-    _phoneController.dispose();
-    super.dispose();
   }
 
   @override
@@ -224,203 +213,124 @@ class _MyAccountPageState extends State<MyAccountPage> {
     final colorScheme = Theme.of(context).colorScheme;
 
     if (_isLoadingUser) {
-      return PopScope(
-        canPop: context.canPop(),
-        child: Scaffold(
-          backgroundColor: colorScheme.background,
-          body: const Center(child: CircularProgressIndicator()),
-        ),
+      return Scaffold(
+        backgroundColor: colorScheme.surface,
+        body: const Center(child: CircularProgressIndicator()),
       );
     }
 
-    final avatarSrc = _previewUrl != null
-        ? File(_previewUrl!)
-        : (_user?['avatarUrl'] != null &&
-                _user!['avatarUrl'].toString().trim().isNotEmpty
-            ? _user!['avatarUrl']
-            : defaultAvatar);
-
-    return PopScope(
-      canPop: context.canPop(),
-      child: Scaffold(
-        backgroundColor: colorScheme.background,
-        appBar: AppBar(
-          backgroundColor: colorScheme.background,
-          elevation: 0,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new_rounded),
-            onPressed: () {
-              if (context.canPop()) {
-                context.pop();
-              } else {
-                context.go('/home');
-              }
-            },
-          ),
-          title: Text('account.myAccount.title'.tr()),
-        ),
-        body: LayoutBuilder(
-          builder: (context, constraints) {
-            final isWide = constraints.maxWidth > 960;
-
-            Widget formSection = _buildFormCard(context);
-            Widget avatarSection = _buildAvatarCard(context, avatarSrc);
-
-            return SingleChildScrollView(
-              padding: EdgeInsets.all(isWide ? 32 : 20),
-              child: Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 1100),
-                  child: isWide
-                      ? Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(flex: 3, child: formSection),
-                            const SizedBox(width: 24),
-                            Expanded(flex: 2, child: avatarSection),
-                          ],
-                        )
-                      : Column(
-                          children: [
-                            avatarSection,
-                            const SizedBox(height: 24),
-                            formSection,
-                          ],
-                        ),
-                ),
-              ),
-            );
+    return Scaffold(
+      backgroundColor: colorScheme.surface,
+      appBar: AppBar(
+        backgroundColor: colorScheme.surface,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_rounded),
+          onPressed: () {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go('/profile');
+            }
           },
         ),
+        title: Text('account.myAccount.title'.tr()),
       ),
-    );
-  }
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final isWide = constraints.maxWidth > 960;
 
-  // Render thông tin form tài khoản
-  Widget _buildFormCard(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+          // Khởi tạo các widget con
+          final avatarSection = AvatarUploader(
+            currentAvatarUrl: _user?['avatarUrl'],
+            previewPath: _previewUrl,
+            onPickImage: _pickImage,
+            onUpload: _uploadAvatar,
+          );
 
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'account.myAccount.title'.tr(),
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.w700,
-                      color: colorScheme.onSurface,
-                    ),
-              ),
-              const SizedBox(height: 24),
-              _buildTextField(
-                context,
-                controller: _fullNameController,
-                label: 'account.myAccount.fullName'.tr(),
-                icon: Icons.badge_outlined,
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'account.myAccount.validation.fullName'.tr();
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-              _buildTextField(
-                context,
-                controller: _emailController,
-                label: 'account.myAccount.email'.tr(),
-                icon: Icons.email_outlined,
-                keyboardType: TextInputType.emailAddress,
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'account.myAccount.validation.email'.tr();
-                  }
-                  if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value.trim())) {
-                    return 'account.myAccount.validation.emailFormat'.tr();
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-              _buildTextField(
-                context,
-                controller: _phoneController,
-                label: 'account.myAccount.phone'.tr(),
-                icon: Icons.phone_outlined,
-                keyboardType: TextInputType.phone,
-              ),
-              const SizedBox(height: 16),
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: colorScheme.surfaceVariant.withOpacity(0.4),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Row(
+          final formSection = AccountForm(
+            formKey: _formKey,
+            fullNameController: _fullNameController,
+            emailController: _emailController,
+            phoneController: _phoneController,
+            username: _user?['username'] ?? '-',
+            hasPassword: _user?['hasPassword'] == true,
+            isLoading: _isLoading,
+            onSave: _saveChanges,
+          );
+
+          return SingleChildScrollView(
+            padding: EdgeInsets.all(isWide ? 32 : 20),
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 1100),
+                child: Column(
                   children: [
-                    Icon(Icons.person_outline, color: colorScheme.primary),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        '${'account.myAccount.username'.tr()}: ${_user?['username'] ?? '-'}',
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
+                    isWide
+                        ? Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(flex: 3, child: formSection),
+                              const SizedBox(width: 24),
+                              Expanded(flex: 2, child: avatarSection),
+                            ],
+                          )
+                        : Column(
+                            children: [
+                              avatarSection,
+                              const SizedBox(height: 24),
+                              formSection,
+                            ],
+                          ),
+                    const SizedBox(height: 24),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: FilledButton(
+                            onPressed: _isLoading ? null : _saveChanges,
+                            style: FilledButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(14),
+                              ),
+                            ),
+                            child: _isLoading
+                                ? const SizedBox(
+                                    width: 18,
+                                    height: 18,
+                                    child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                                  )
+                                : Text('account.myAccount.saveChanges'.tr()),
+                          ),
+                        ),
+                        if (_user?['hasPassword'] == true) ...[
+                          const SizedBox(width: 16),
+                          OutlinedButton.icon(
+                            onPressed: () => context.go('/change-password'),
+                            icon: const Icon(Icons.lock_reset_rounded),
+                            label: Text('account.changePassword.title'.tr()),
+                            style: OutlinedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(14),
+                              ),
+                              side: BorderSide(color: colorScheme.primary),
+                            ),
+                          ),
+                        ],
+                      ],
                     ),
+                    // Button cập nhật khuôn mặt chấm công (chỉ cho nhân viên)
+                    if (_buildUpdateFaceProfileButton(context) != null) ...[
+                      const SizedBox(height: 16),
+                      _buildUpdateFaceProfileButton(context)!,
+                    ],
                   ],
                 ),
               ),
-              const SizedBox(height: 24),
-              Row(
-                children: [
-                  Expanded(
-                    child: FilledButton(
-                      onPressed: _isLoading ? null : _saveChanges,
-                      style: FilledButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                      ),
-                      child: _isLoading
-                          ? const SizedBox(
-                              width: 18,
-                              height: 18,
-                              child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-                            )
-                          : Text('account.myAccount.saveChanges'.tr()),
-                    ),
-                  ),
-                  if (_user?['hasPassword'] == true) ...[
-                    const SizedBox(width: 16),
-                    OutlinedButton.icon(
-                      onPressed: () => context.go('/change-password'),
-                      icon: const Icon(Icons.lock_reset_rounded),
-                      label: Text('account.changePassword.title'.tr()),
-                      style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        side: BorderSide(color: colorScheme.primary),
-                      ),
-                    ),
-                  ],
-                ],
-              ),
-              // Button cập nhật khuôn mặt chấm công (chỉ cho nhân viên)
-              if (_buildUpdateFaceProfileButton(context) != null) ...[
-                const SizedBox(height: 16),
-                _buildUpdateFaceProfileButton(context)!,
-              ],
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -551,6 +461,10 @@ class _MyAccountPageState extends State<MyAccountPage> {
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide(color: colorScheme.outlineVariant.withOpacity(0.6)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide(color: colorScheme.primary, width: 2),
         ),
       ),
     );
