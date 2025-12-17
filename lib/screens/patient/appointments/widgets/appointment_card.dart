@@ -4,9 +4,9 @@ import '../../../../models/patient/patient_models.dart';
 
 class AppointmentCard extends StatelessWidget {
   final PatientAppointment appointment;
-  final VoidCallback? onCancel; // Truyền hàm nếu muốn hiện nút hủy
+  // Đã bỏ final VoidCallback? onCancel;
 
-  const AppointmentCard({super.key, required this.appointment, this.onCancel});
+  const AppointmentCard({super.key, required this.appointment});
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +66,7 @@ class AppointmentCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 16),
-              // Info
+              // Info Content
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -85,9 +85,23 @@ class AppointmentCard extends StatelessWidget {
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
+                        const SizedBox(width: 8),
                         _buildStatusBadge(appointment.status),
                       ],
                     ),
+                    if (appointment.variantName != null &&
+                        appointment.variantName!.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 4.0),
+                        child: Text(
+                          appointment.variantName!,
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Colors.grey[600],
+                            fontStyle: FontStyle.italic,
+                          ),
+                        ),
+                      ),
                     const SizedBox(height: 8),
                     _infoRow(Icons.access_time_rounded, timeStr),
                     const SizedBox(height: 4),
@@ -102,36 +116,8 @@ class AppointmentCard extends StatelessWidget {
               ),
             ],
           ),
-          if (appointment.canCancel && onCancel != null) ...[
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 12),
-              child: Divider(),
-            ),
-            SizedBox(
-              width: double.infinity,
-              child: TextButton.icon(
-                onPressed: onCancel,
-                icon: const Icon(
-                  Icons.cancel_outlined,
-                  size: 18,
-                  color: Colors.red,
-                ),
-                label: const Text(
-                  "Hủy lịch hẹn",
-                  style: TextStyle(
-                    color: Colors.red,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                style: TextButton.styleFrom(
-                  backgroundColor: Colors.red.shade50,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-              ),
-            ),
-          ],
+
+          // --- [ĐÃ XÓA PHẦN NÚT HỦY TẠI ĐÂY ĐỂ GIỐNG WEB] ---
         ],
       ),
     );
@@ -158,39 +144,55 @@ class AppointmentCard extends StatelessWidget {
     Color bg;
     Color text;
     String label;
+    final s = status.toUpperCase();
 
-    switch (status) {
+    switch (s) {
+      case 'PENDING':
+        bg = Colors.orange.shade50;
+        text = Colors.orange.shade800;
+        label = "Chờ xác nhận";
+        break;
+      case 'SCHEDULED':
       case 'CONFIRMED':
         bg = Colors.blue.shade50;
-        text = Colors.blue;
-        label = "Đã xác nhận";
+        text = Colors.blue.shade800;
+        label = "Đã lên lịch";
+        break;
+      case 'IN_PROGRESS':
+      case 'PROCESSING':
+        bg = Colors.purple.shade50;
+        text = Colors.purple.shade800;
+        label = "Đang khám";
         break;
       case 'COMPLETED':
         bg = Colors.green.shade50;
-        text = Colors.green;
+        text = Colors.green.shade800;
         label = "Hoàn thành";
         break;
       case 'CANCELLED':
+      case 'CANCELED':
         bg = Colors.red.shade50;
-        text = Colors.red;
+        text = Colors.red.shade800;
         label = "Đã hủy";
         break;
       case 'NOSHOW':
+      case 'NO_SHOW':
         bg = Colors.grey.shade200;
-        text = Colors.grey;
+        text = Colors.grey.shade700;
         label = "Vắng mặt";
         break;
       default:
-        bg = Colors.orange.shade50;
-        text = Colors.orange;
-        label = "Chờ duyệt";
+        bg = Colors.grey.shade100;
+        text = Colors.grey.shade800;
+        label = s;
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
         color: bg,
         borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: bg.withOpacity(0.5)),
       ),
       child: Text(
         label,

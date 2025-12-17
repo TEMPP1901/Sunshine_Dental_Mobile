@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../models/patient/patient_models.dart';
 import '../../../../services/patient/patient_service.dart';
-import 'widgets/appointment_card.dart'; // Đảm bảo bạn đã tạo widget này
+import 'widgets/appointment_card.dart';
 
 class MyAppointmentsScreen extends StatefulWidget {
   const MyAppointmentsScreen({super.key});
@@ -43,46 +42,17 @@ class _MyAppointmentsScreenState extends State<MyAppointmentsScreen>
     }
   }
 
-  Future<void> _confirmCancel(int id) async {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text("Xác nhận hủy"),
-        content: const Text(
-          "Bạn có chắc muốn hủy lịch hẹn này? Hành động này không thể hoàn tác.",
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text("Đóng"),
-          ),
-          FilledButton(
-            onPressed: () async {
-              Navigator.pop(ctx);
-              try {
-                await _service.cancelAppointment(id, "Bận việc đột xuất");
-                Fluttertoast.showToast(msg: "Đã hủy lịch thành công");
-                _fetchData(); // Load lại danh sách
-              } catch (e) {
-                Fluttertoast.showToast(
-                  msg: "Lỗi: ${e.toString()}",
-                  backgroundColor: Colors.red,
-                );
-              }
-            },
-            style: FilledButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text("Hủy lịch"),
-          ),
-        ],
-      ),
-    );
-  }
+  // Đã xóa hàm _confirmCancel vì không dùng nữa
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[50],
       appBar: AppBar(
         title: const Text("Quản Lý Lịch Hẹn"),
+        centerTitle: true,
+        backgroundColor: Colors.white,
+        elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new_rounded),
           onPressed: () => context.pop(),
@@ -104,9 +74,15 @@ class _MyAppointmentsScreenState extends State<MyAppointmentsScreen>
           : TabBarView(
               controller: _tabController,
               children: [
-                _buildList(['PENDING', 'CONFIRMED']),
+                _buildList([
+                  'PENDING',
+                  'SCHEDULED',
+                  'CONFIRMED',
+                  'IN_PROGRESS',
+                  'PROCESSING',
+                ]),
                 _buildList(['COMPLETED']),
-                _buildList(['CANCELLED', 'NOSHOW']),
+                _buildList(['CANCELLED', 'CANCELED', 'NOSHOW', 'NO_SHOW']),
               ],
             ),
     );
@@ -114,7 +90,7 @@ class _MyAppointmentsScreenState extends State<MyAppointmentsScreen>
 
   Widget _buildList(List<String> statusFilter) {
     final list = _appointments
-        .where((a) => statusFilter.contains(a.status))
+        .where((a) => statusFilter.contains(a.status.toUpperCase()))
         .toList();
 
     if (list.isEmpty) {
@@ -141,10 +117,8 @@ class _MyAppointmentsScreenState extends State<MyAppointmentsScreen>
         separatorBuilder: (_, __) => const SizedBox(height: 12),
         itemBuilder: (ctx, i) {
           final item = list[i];
-          return AppointmentCard(
-            appointment: item,
-            onCancel: item.canCancel ? () => _confirmCancel(item.id) : null,
-          );
+          // Không còn truyền onCancel nữa
+          return AppointmentCard(appointment: item);
         },
       ),
     );

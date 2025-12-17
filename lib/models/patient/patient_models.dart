@@ -9,8 +9,10 @@ class PatientAppointment {
   final String clinicName;
   final String clinicAddress;
   final DateTime startDateTime;
-  final String status; // PENDING, CONFIRMED, COMPLETED, CANCELLED, NOSHOW
+  final String
+  status; // PENDING, CONFIRMED, IN_PROGRESS, PROCESSING, COMPLETED, CANCELLED, NOSHOW...
   final bool canCancel;
+  final String? note; // Ghi chú thêm nếu có
 
   PatientAppointment({
     required this.id,
@@ -23,9 +25,11 @@ class PatientAppointment {
     required this.startDateTime,
     required this.status,
     required this.canCancel,
+    this.note,
   });
 
   factory PatientAppointment.fromJson(Map<String, dynamic> json) {
+    // Xử lý avatar bác sĩ tùy theo cấu trúc trả về
     String? avatar;
     if (json['doctor'] != null && json['doctor']['avatarUrl'] != null) {
       avatar = json['doctor']['avatarUrl'];
@@ -35,9 +39,9 @@ class PatientAppointment {
 
     return PatientAppointment(
       id: json['appointmentId'] ?? 0,
-      serviceName: json['serviceName'] ?? 'General Checkup',
+      serviceName: json['serviceName'] ?? 'Dịch vụ nha khoa',
       variantName: json['variantName'],
-      doctorName: json['doctorName'] ?? 'Doctor',
+      doctorName: json['doctorName'] ?? 'Đang sắp xếp',
       doctorAvatar: avatar,
       clinicName: json['clinicName'] ?? '',
       clinicAddress: json['clinicAddress'] ?? '',
@@ -45,6 +49,7 @@ class PatientAppointment {
           DateTime.tryParse(json['startDateTime'] ?? '') ?? DateTime.now(),
       status: json['status'] ?? 'PENDING',
       canCancel: json['canCancel'] ?? false,
+      note: json['note'],
     );
   }
 }
@@ -55,7 +60,6 @@ class MedicalRecord {
   final String diagnosis;
   final String treatment;
   final String visitDate;
-  // [MỚI] Thêm các trường này
   final String? note;
   final String? prescriptionNote;
   final String? imageUrl;
@@ -74,7 +78,7 @@ class MedicalRecord {
   factory MedicalRecord.fromJson(Map<String, dynamic> json) {
     return MedicalRecord(
       id: json['recordId'] ?? 0,
-      doctorName: json['doctorName'] ?? '',
+      doctorName: json['doctorName'] ?? 'Nha sĩ',
       diagnosis: json['diagnosis'] ?? '',
       treatment: json['treatment'] ?? '',
       visitDate: json['visitDate'] ?? '',
@@ -89,7 +93,7 @@ class PatientDashboardDTO {
   final String fullName;
   final String patientCode;
   final String? avatarUrl;
-  final String memberTier; // SILVER, GOLD, DIAMOND
+  final String memberTier;
   final double totalSpent;
   final double nextTierGoal;
   final String healthStatus;
@@ -119,13 +123,13 @@ class PatientDashboardDTO {
       fullName: json['fullName'] ?? '',
       patientCode: json['patientCode'] ?? '',
       avatarUrl: json['avatarUrl'],
-      memberTier: json['memberTier'] ?? 'SILVER',
+      memberTier: json['memberTier'] ?? 'MEMBER',
       totalSpent: (json['totalSpent'] ?? 0).toDouble(),
       nextTierGoal: (json['nextTierGoal'] ?? 0).toDouble(),
-      healthStatus: json['healthStatus'] ?? 'Unknown',
+      healthStatus: json['healthStatus'] ?? 'New',
       healthMessage: json['healthMessage'] ?? '',
-      daysSinceLastVisit: json['daysSinceLastVisit'] ?? 0,
-      latestAiTip: json['latestAiTip'] ?? 'Luôn giữ nụ cười tươi!',
+      daysSinceLastVisit: json['daysSinceLastVisit'] ?? -1,
+      latestAiTip: json['latestAiTip'] ?? 'Chăm sóc răng miệng thật tốt nhé!',
       nextAppointment: json['nextAppointment'] != null
           ? PatientAppointment.fromJson(json['nextAppointment'])
           : null,
