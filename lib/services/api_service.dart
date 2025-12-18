@@ -29,7 +29,7 @@ class ApiService {
       // - 10.0.2.2: Là địa chỉ localhost của máy tính (Host) khi nhìn từ Máy ảo (Emulator).
       // - Nếu bạn chạy trên ĐIỆN THOẠI THẬT: Bạn phải đổi lại thành IP LAN (ví dụ: 192.168.1.x)
       // IP này phải khớp với IP của máy chạy backend (kiểm tra bằng ipconfig trên Windows)
-      final baseUrl = 'http://192.168.1.122:8080';
+      final baseUrl = 'http://10.0.2.2:8080';
       if (enableLogging) {
         debugPrint(' [ApiService] Platform: Android, using: $baseUrl');
         debugPrint(' [ApiService] For emulator, use: flutter run --dart-define=API_URL=http://10.0.2.2:8080');

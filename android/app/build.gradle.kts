@@ -22,9 +22,9 @@ android {
     }
 
     defaultConfig {
-       
+
         applicationId = "com.SDC_Mobile.sunshine_denttal_mobile"
-        
+
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
@@ -33,7 +33,7 @@ android {
 
     buildTypes {
         release {
-           
+
             signingConfig = signingConfigs.getByName("debug")
         }
     }

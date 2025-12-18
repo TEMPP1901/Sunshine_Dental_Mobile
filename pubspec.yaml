@@ -78,6 +78,7 @@ dependencies:
   # QR & Permissions (Đã sửa lại gọn gàng)
   permission_handler: ^12.0.1
   mobile_scanner: ^5.1.1
+  webview_flutter: ^4.13.0
 
 dev_dependencies:
   flutter_test:

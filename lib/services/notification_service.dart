@@ -249,10 +249,9 @@ class NotificationService {
       }
 
       String? fcmToken = token ?? await _firebaseMessaging.getToken();
-      if (fcmToken == null) return;
 
       debugPrint('FCM Token: $fcmToken');
-      await prefs.setString('fcmToken', fcmToken);
+      await prefs.setString('fcmToken', fcmToken!);
 
       String deviceType = Platform.isAndroid ? 'ANDROID' : 'IOS';
       if (kIsWeb) deviceType = 'WEB';
