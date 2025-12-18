@@ -5,6 +5,9 @@ import 'package:flutter/services.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sunshine_denttal_mobile/providers/huybro_cart/cart_provider.dart';
+import 'package:sunshine_denttal_mobile/providers/huybro_checkout/checkout_provider.dart';
+import 'package:sunshine_denttal_mobile/providers/huybro_products/product_provider.dart';
 import 'app/router.dart';
 import 'providers/user_provider.dart';
 import 'providers/theme_provider.dart';
@@ -119,6 +122,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => LanguageProvider()),
         ChangeNotifierProvider(create: (_) => AttendanceProvider()),
+        ChangeNotifierProvider(create: (_) => ProductProvider()),
+        ChangeNotifierProvider(create: (_) => CartProvider()),
+        ChangeNotifierProvider(create: (_) => CheckoutProvider()),
       ],
       child: Consumer2<ThemeProvider, LanguageProvider>(
         builder: (context, themeProvider, languageProvider, _) {

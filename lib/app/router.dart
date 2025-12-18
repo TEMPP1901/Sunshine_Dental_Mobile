@@ -4,6 +4,10 @@ import 'package:go_router/go_router.dart';
 // --- Auth & Onboarding ---
 import '../screens/auth/login_page.dart';
 import '../screens/auth/sign_up_page.dart';
+import '../screens/huybro_cart/cart_screen.dart';
+import '../screens/huybro_checkout/checkout_screen.dart';
+import '../screens/huybro_products/product_detail_screen.dart';
+import '../screens/huybro_products/product_list_screen.dart';
 import '../screens/splash/splash_page.dart';
 import '../screens/onboarding/onboarding_page.dart';
 
@@ -152,6 +156,47 @@ final appRouter = GoRouter(
         state,
         const PatientDashboardScreen(),
       ),
+    ),
+    // --- 7. Product Routes (THÊM MỚI VÀO ĐÂY) ---
+    GoRoute(
+      path: '/products',
+      pageBuilder: (context, state) => _buildPageWithTransition(
+        context,
+        state,
+        const ProductListScreen(),
+      ),
+    ),
+    GoRoute(
+      path: '/products/:id', // Dùng tham số động :id
+      pageBuilder: (context, state) {
+        // Lấy id từ URL (VD: /products/123 -> id = 123)
+        final id = int.parse(state.pathParameters['id']!);
+        return _buildPageWithTransition(
+          context,
+          state,
+          ProductDetailScreen(productId: id),
+        );
+      },
+    ),
+    GoRoute(
+      path: '/cart',
+      pageBuilder: (context, state) => _buildPageWithTransition(
+        context,
+        state,
+        const CartScreen(),
+      ),
+    ),
+    GoRoute(
+      path: '/checkout',
+      pageBuilder: (context, state) => _buildPageWithTransition(
+          context,
+          state,
+          const CheckoutScreen()
+      ),
+    ),
+    GoRoute(
+      path: '/order-success',
+      builder: (context, state) => const Scaffold(body: Center(child: Text("Đặt hàng thành công!"))), // Làm đẹp sau
     ),
     GoRoute(
       path: '/my-appointments',
