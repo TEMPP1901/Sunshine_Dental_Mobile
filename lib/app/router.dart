@@ -30,6 +30,11 @@ import '../screens/camera/face_camera_screen.dart';
 import '../screens/face_registration/face_registration_page.dart';
 import '../screens/face_registration/update_face_profile_page.dart';
 import '../screens/admin/admin_dashboard_page.dart';
+import '../screens/admin/admin_hub_page.dart';
+import '../screens/admin/reports/admin_reports_page.dart';
+import '../screens/admin/attendance/admin_attendance_page.dart';
+import '../screens/admin/staff/admin_staff_page.dart';
+import '../screens/admin/system_logs/admin_system_logs_page.dart';
 import '../screens/hr/face_profile_approval_page.dart';
 import '../screens/hr/employee_list_page.dart';
 import '../screens/hr/attendance_history_page.dart';
@@ -185,7 +190,47 @@ final appRouter = GoRouter(
       pageBuilder: (context, state) => _buildPageWithTransition(
         context,
         state,
+        const AdminHubPage(),
+      ),
+    ),
+    GoRoute(
+      path: '/admin/leave-requests',
+      pageBuilder: (context, state) => _buildPageWithTransition(
+        context,
+        state,
         const AdminDashboardPage(),
+      ),
+    ),
+    GoRoute(
+      path: '/admin/reports',
+      pageBuilder: (context, state) => _buildPageWithTransition(
+        context,
+        state,
+        const AdminReportsPage(),
+      ),
+    ),
+    GoRoute(
+      path: '/admin/attendance',
+      pageBuilder: (context, state) => _buildPageWithTransition(
+        context,
+        state,
+        const AdminAttendancePage(),
+      ),
+    ),
+    GoRoute(
+      path: '/admin/staff',
+      pageBuilder: (context, state) => _buildPageWithTransition(
+        context,
+        state,
+        const AdminStaffPage(),
+      ),
+    ),
+    GoRoute(
+      path: '/admin/system-logs',
+      pageBuilder: (context, state) => _buildPageWithTransition(
+        context,
+        state,
+        const AdminSystemLogsPage(),
       ),
     ),
     GoRoute(

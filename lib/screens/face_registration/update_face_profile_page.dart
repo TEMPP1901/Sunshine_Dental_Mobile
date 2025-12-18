@@ -86,12 +86,49 @@ class _UpdateFaceProfilePageState extends State<UpdateFaceProfilePage> {
       }
     } catch (e) {
       String errorMsg = 'Lỗi khi gửi yêu cầu cập nhật khuôn mặt. Vui lòng thử lại.';
-      if (e is DioException && e.response != null) {
-        final message = e.response?.data?['message'];
-        if (message != null) {
-          errorMsg = message.toString();
+      
+      if (e is DioException) {
+        if (e.response != null) {
+          final statusCode = e.response?.statusCode;
+          final data = e.response?.data;
+          
+          // Parse error message từ response
+          if (data is Map<String, dynamic>) {
+            final message = data['message']?.toString();
+            final error = data['error']?.toString();
+            
+            if (message != null && message.isNotEmpty) {
+              errorMsg = message;
+            } else if (error != null && error.isNotEmpty) {
+              errorMsg = error;
+            } else if (statusCode == 500) {
+              errorMsg = 'Lỗi máy chủ. Vui lòng thử lại sau.\nNếu bạn chưa đăng ký khuôn mặt, vui lòng đăng ký trước.';
+            }
+          }
+          
+          // Xử lý các lỗi cụ thể
+          if (statusCode == 400) {
+            if (errorMsg.contains('does not have a face profile') || 
+                errorMsg.contains('register first')) {
+              errorMsg = 'Bạn chưa đăng ký khuôn mặt. Vui lòng đăng ký khuôn mặt trước khi cập nhật.';
+            } else if (errorMsg.contains('pending')) {
+              errorMsg = 'Bạn đã có yêu cầu cập nhật đang chờ duyệt. Vui lòng chờ HR duyệt trước khi gửi yêu cầu mới.';
+            } else if (errorMsg.contains('embedding') || errorMsg.contains('face')) {
+              errorMsg = 'Không thể nhận diện khuôn mặt từ ảnh. Vui lòng:\n- Đảm bảo khuôn mặt rõ ràng\n- Nhìn thẳng vào camera\n- Ánh sáng đủ';
+            }
+          } else if (statusCode == 500) {
+            if (errorMsg.contains('extract') || errorMsg.contains('embedding')) {
+              errorMsg = 'Không thể xử lý ảnh khuôn mặt. Vui lòng:\n- Chụp lại ảnh với khuôn mặt rõ ràng\n- Đảm bảo ánh sáng đủ\n- Nhìn thẳng vào camera';
+            }
+          }
+        } else if (e.type == DioExceptionType.connectionTimeout || 
+                   e.type == DioExceptionType.receiveTimeout) {
+          errorMsg = 'Kết nối quá lâu. Vui lòng kiểm tra kết nối mạng và thử lại.';
+        } else if (e.type == DioExceptionType.connectionError) {
+          errorMsg = 'Không thể kết nối đến máy chủ. Vui lòng kiểm tra kết nối mạng.';
         }
       }
+      
       Fluttertoast.showToast(
         msg: errorMsg,
         toastLength: Toast.LENGTH_LONG,

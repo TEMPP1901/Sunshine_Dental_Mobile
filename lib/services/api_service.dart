@@ -29,7 +29,7 @@ class ApiService {
       // - 10.0.2.2: Là địa chỉ localhost của máy tính (Host) khi nhìn từ Máy ảo (Emulator).
       // - Nếu bạn chạy trên ĐIỆN THOẠI THẬT: Bạn phải đổi lại thành IP LAN (ví dụ: 192.168.1.x)
       // IP này phải khớp với IP của máy chạy backend (kiểm tra bằng ipconfig trên Windows)
-      final baseUrl = 'http://192.168.1.5:8080';
+      final baseUrl = 'http://192.168.1.122:8080';
       if (enableLogging) {
         debugPrint(' [ApiService] Platform: Android, using: $baseUrl');
         debugPrint(' [ApiService] For emulator, use: flutter run --dart-define=API_URL=http://10.0.2.2:8080');
@@ -148,26 +148,25 @@ class ApiService {
       return AssetImage(assetPath);
     }
 
-    if (trimmed.startsWith('http') && _isCloudinaryUrl(trimmed)) {
-      if (enableLogging) {
-        debugPrint(' [ApiService] Using Cloudinary URL (no headers): $trimmed');
-      }
-      return NetworkImage(trimmed);
-    }
-
-    if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
-      // Nếu là cloudinary URL thì không cần headers
-      final headers = _isCloudinaryUrl(trimmed) ? null : authHeaders();
-      return NetworkImage(trimmed, headers: headers);
-    }
-
-    // Luôn gọi resolveUrl để tránh lỗi khi dùng localhost trên mobile
+    // QUAN TRỌNG: Luôn gọi resolveUrl trước để thay thế localhost bằng IP thực tế
     final resolvedUrl = resolveUrl(trimmed);
     if (resolvedUrl.isEmpty) {
       return AssetImage(defaultAsset);
     }
 
-    final headers = _isCloudinaryUrl(resolvedUrl) ? null : authHeaders();
+    // Kiểm tra cloudinary sau khi đã resolve
+    if (_isCloudinaryUrl(resolvedUrl)) {
+      if (enableLogging) {
+        debugPrint(' [ApiService] Using Cloudinary URL (no headers): $resolvedUrl');
+      }
+      return NetworkImage(resolvedUrl);
+    }
+
+    // URL từ server nội bộ, cần headers để xác thực
+    final headers = authHeaders();
+    if (enableLogging) {
+      debugPrint(' [ApiService] Resolved avatar URL: $trimmed -> $resolvedUrl');
+    }
     return NetworkImage(
       resolvedUrl,
       headers: headers,

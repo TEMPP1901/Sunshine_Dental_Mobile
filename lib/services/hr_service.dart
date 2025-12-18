@@ -29,6 +29,12 @@ class HrService {
 
   // ===== Face Profile Approval =====
 
+  /// Kiểm tra user đã đăng ký face profile chưa
+  Future<Map<String, dynamic>> checkFaceProfile() async {
+    final response = await _api.get('/api/hr/face-profile/check');
+    return response.data;
+  }
+
   Future<List<Map<String, dynamic>>> fetchPendingFaceProfiles() async {
     final response = await _api.get('/api/hr/face-profile/pending-requests');
     final data = response.data;

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../models/ai/ai_chat_models.dart';
+import '../../../services/api_service.dart';
 
 class DoctorSuggestionCard extends StatelessWidget {
   final DoctorSuggestion doctor;
@@ -28,7 +29,7 @@ class DoctorSuggestionCard extends StatelessWidget {
               radius: 24,
               backgroundColor: Colors.grey[200],
               backgroundImage: doctor.avatarUrl.isNotEmpty
-                  ? NetworkImage(doctor.avatarUrl)
+                  ? ApiService.resolveAvatarImage(doctor.avatarUrl)
                   : null,
               child: doctor.avatarUrl.isEmpty
                   ? const Icon(Icons.person, color: Colors.grey)

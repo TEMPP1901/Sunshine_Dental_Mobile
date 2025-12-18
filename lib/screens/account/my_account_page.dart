@@ -282,49 +282,105 @@ class _MyAccountPageState extends State<MyAccountPage> {
                               formSection,
                             ],
                           ),
-                    const SizedBox(height: 24),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: FilledButton(
-                            onPressed: _isLoading ? null : _saveChanges,
-                            style: FilledButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(vertical: 16),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(14),
-                              ),
-                            ),
-                            child: _isLoading
-                                ? const SizedBox(
-                                    width: 18,
-                                    height: 18,
-                                    child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-                                  )
-                                : Text('account.myAccount.saveChanges'.tr()),
+                    const SizedBox(height: 28),
+                    // Action buttons section with improved styling
+                    Card(
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        side: BorderSide(
+                          color: colorScheme.outlineVariant.withOpacity(0.3),
+                          width: 1,
+                        ),
+                      ),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [
+                              colorScheme.surface,
+                              colorScheme.surfaceContainerHighest.withOpacity(0.3),
+                            ],
                           ),
                         ),
-                        if (_user?['hasPassword'] == true) ...[
-                          const SizedBox(width: 16),
-                          OutlinedButton.icon(
-                            onPressed: () => context.go('/change-password'),
-                            icon: const Icon(Icons.lock_reset_rounded),
-                            label: Text('account.changePassword.title'.tr()),
-                            style: OutlinedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(14),
-                              ),
-                              side: BorderSide(color: colorScheme.primary),
+                        padding: const EdgeInsets.all(20),
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: FilledButton(
+                                    onPressed: _isLoading ? null : _saveChanges,
+                                    style: FilledButton.styleFrom(
+                                      padding: const EdgeInsets.symmetric(vertical: 18),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(16),
+                                      ),
+                                      elevation: 2,
+                                    ),
+                                    child: _isLoading
+                                        ? const SizedBox(
+                                            width: 20,
+                                            height: 20,
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                              color: Colors.white,
+                                            ),
+                                          )
+                                        : Text(
+                                            'account.myAccount.saveChanges'.tr(),
+                                            style: const TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.w600,
+                                              letterSpacing: 0.2,
+                                            ),
+                                          ),
+                                  ),
+                                ),
+                                if (_user?['hasPassword'] == true) ...[
+                                  const SizedBox(width: 16),
+                                  OutlinedButton.icon(
+                                    onPressed: () => context.go('/change-password'),
+                                    icon: const Icon(Icons.lock_reset_rounded, size: 20),
+                                    label: Text(
+                                      'account.changePassword.title'.tr(),
+                                      style: const TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w600,
+                                        letterSpacing: 0.2,
+                                      ),
+                                    ),
+                                    style: OutlinedButton.styleFrom(
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 18,
+                                        horizontal: 20,
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(16),
+                                      ),
+                                      side: BorderSide(
+                                        color: colorScheme.primary,
+                                        width: 1.5,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ],
                             ),
-                          ),
-                        ],
-                      ],
+                            // Button cập nhật khuôn mặt chấm công (chỉ cho nhân viên)
+                            if (_buildUpdateFaceProfileButton(context) != null) ...[
+                              const SizedBox(height: 16),
+                              SizedBox(
+                                width: double.infinity,
+                                child: _buildUpdateFaceProfileButton(context)!,
+                              ),
+                            ],
+                          ],
+                        ),
+                      ),
                     ),
-                    // Button cập nhật khuôn mặt chấm công (chỉ cho nhân viên)
-                    if (_buildUpdateFaceProfileButton(context) != null) ...[
-                      const SizedBox(height: 16),
-                      _buildUpdateFaceProfileButton(context)!,
-                    ],
                   ],
                 ),
               ),
@@ -425,12 +481,24 @@ class _MyAccountPageState extends State<MyAccountPage> {
     
     return OutlinedButton.icon(
       onPressed: () => context.push('/update-face-profile'),
-      icon: const Icon(Icons.face_retouching_natural_rounded),
-      label: const Text('Cập nhật khuôn mặt chấm công'),
+      icon: const Icon(Icons.face_retouching_natural_rounded, size: 20),
+      label: const Text(
+        'Cập nhật khuôn mặt chấm công',
+        style: TextStyle(
+          fontSize: 15,
+          fontWeight: FontWeight.w600,
+          letterSpacing: 0.2,
+        ),
+      ),
       style: OutlinedButton.styleFrom(
-        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-        side: BorderSide(color: colorScheme.primary),
+        padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 20),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        side: BorderSide(
+          color: colorScheme.primary,
+          width: 1.5,
+        ),
       ),
     );
   }

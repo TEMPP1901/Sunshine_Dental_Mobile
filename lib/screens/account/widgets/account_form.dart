@@ -30,129 +30,154 @@ class AccountForm extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Form(
-          key: formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'account.myAccount.title'.tr(),
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.w700,
-                  color: colorScheme.onSurface,
-                ),
-              ),
-              const SizedBox(height: 24),
-
-              // Full Name
-              AccountTextField(
-                controller: fullNameController,
-                label: 'account.myAccount.fullName'.tr(),
-                icon: Icons.badge_outlined,
-                validator: (value) => (value == null || value.trim().isEmpty)
-                    ? 'account.myAccount.validation.fullName'.tr()
-                    : null,
-              ),
-              const SizedBox(height: 16),
-
-              // Email
-              AccountTextField(
-                controller: emailController,
-                label: 'account.myAccount.email'.tr(),
-                icon: Icons.email_outlined,
-                keyboardType: TextInputType.emailAddress,
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'account.myAccount.validation.email'.tr();
-                  }
-                  if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value.trim())) {
-                    return 'account.myAccount.validation.emailFormat'.tr();
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-
-              // Phone
-              AccountTextField(
-                controller: phoneController,
-                label: 'account.myAccount.phone'.tr(),
-                icon: Icons.phone_outlined,
-                keyboardType: TextInputType.phone,
-              ),
-              const SizedBox(height: 16),
-
-              // Username (Read-only)
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: colorScheme.surfaceContainerHighest.withOpacity(0.4),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Row(
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+        side: BorderSide(
+          color: colorScheme.outlineVariant.withOpacity(0.3),
+          width: 1,
+        ),
+      ),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              colorScheme.surface,
+              colorScheme.surfaceContainerHighest.withOpacity(0.3),
+            ],
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(28),
+          child: Form(
+            key: formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Title with improved styling
+                Row(
                   children: [
-                    Icon(Icons.person_outline, color: colorScheme.primary),
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: colorScheme.primary.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Icon(
+                        Icons.person_outline,
+                        color: colorScheme.primary,
+                        size: 24,
+                      ),
+                    ),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
-                        '${'account.myAccount.username'.tr()}: $username',
-                        style: Theme.of(context).textTheme.bodyMedium,
+                        'account.myAccount.title'.tr(),
+                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                          fontWeight: FontWeight.w700,
+                          color: colorScheme.onSurface,
+                          letterSpacing: -0.5,
+                        ),
                       ),
                     ),
                   ],
                 ),
-              ),
-              const SizedBox(height: 24),
+                const SizedBox(height: 28),
 
-              // Action Buttons
-              Row(
-                children: [
-                  Expanded(
-                    child: FilledButton(
-                      onPressed: isLoading ? null : onSave,
-                      style: FilledButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                      ),
-                      child: isLoading
-                          ? const SizedBox(
-                              width: 18,
-                              height: 18,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                color: Colors.white,
-                              ),
-                            )
-                          : Text('account.myAccount.saveChanges'.tr()),
+                // Full Name
+                AccountTextField(
+                  controller: fullNameController,
+                  label: 'account.myAccount.fullName'.tr(),
+                  icon: Icons.badge_outlined,
+                  validator: (value) => (value == null || value.trim().isEmpty)
+                      ? 'account.myAccount.validation.fullName'.tr()
+                      : null,
+                ),
+                const SizedBox(height: 18),
+
+                // Email
+                AccountTextField(
+                  controller: emailController,
+                  label: 'account.myAccount.email'.tr(),
+                  icon: Icons.email_outlined,
+                  keyboardType: TextInputType.emailAddress,
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'account.myAccount.validation.email'.tr();
+                    }
+                    if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value.trim())) {
+                      return 'account.myAccount.validation.emailFormat'.tr();
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 18),
+
+                // Phone
+                AccountTextField(
+                  controller: phoneController,
+                  label: 'account.myAccount.phone'.tr(),
+                  icon: Icons.phone_outlined,
+                  keyboardType: TextInputType.phone,
+                ),
+                const SizedBox(height: 18),
+
+                // Username (Read-only) with improved styling
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: colorScheme.surfaceContainerHighest.withOpacity(0.5),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: colorScheme.outlineVariant.withOpacity(0.3),
+                      width: 1,
                     ),
                   ),
-                  if (hasPassword) ...[
-                    const SizedBox(width: 16),
-                    OutlinedButton.icon(
-                      onPressed: () => context.push('/change-password'),
-                      icon: const Icon(Icons.lock_reset_rounded),
-                      label: Text('account.changePassword.title'.tr()),
-                      style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 16,
-                          horizontal: 20,
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: colorScheme.primary.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(10),
                         ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
+                        child: Icon(
+                          Icons.person_outline,
+                          color: colorScheme.primary,
+                          size: 20,
                         ),
-                        side: BorderSide(color: colorScheme.primary),
                       ),
-                    ),
-                  ],
-                ],
-              ),
-            ],
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'account.myAccount.username'.tr(),
+                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                color: colorScheme.onSurface.withOpacity(0.6),
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              username,
+                              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                fontWeight: FontWeight.w600,
+                                color: colorScheme.onSurface,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

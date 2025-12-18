@@ -267,9 +267,68 @@ class NotificationService {
     }
   }
 
+  // Lấy user roles từ API
+  Future<List<String>> _getUserRoles() async {
+    try {
+      final response = await _apiService.get('/api/users/me');
+      if (response.statusCode == 200) {
+        final userData = response.data as Map<String, dynamic>;
+        final roles = (userData['roles'] as List<dynamic>? ?? [])
+            .map((r) => r.toString().toUpperCase())
+            .toList();
+        return roles;
+      }
+    } catch (e) {
+      debugPrint('[NotificationService] Failed to get user roles: $e');
+    }
+    return [];
+  }
+
+  // Kiểm tra xem user có role ADMIN không (xử lý cả ROLE_ADMIN và ADMIN)
+  bool _hasAdminRole(List<String> roles) {
+    return roles.any((role) => 
+      role == 'ADMIN' || 
+      role == 'ROLE_ADMIN' || 
+      role.contains('ADMIN')
+    );
+  }
+
+  // Kiểm tra xem user có role HR không (xử lý cả ROLE_HR và HR)
+  bool _hasHrRole(List<String> roles) {
+    return roles.any((role) => 
+      role == 'HR' || 
+      role == 'ROLE_HR' || 
+      role.contains('HR')
+    );
+  }
+
+  // Điều hướng đến trang duyệt đơn nghỉ dựa trên role
+  // HR và Admin luôn được điều hướng đến trang duyệt của họ
+  Future<void> _navigateToLeaveRequestPage() async {
+    try {
+      final roles = await _getUserRoles();
+      debugPrint('[NotificationService] User roles: $roles');
+      
+      if (_hasAdminRole(roles)) {
+        debugPrint('[NotificationService] Navigating ADMIN to /admin/leave-requests');
+        appRouter.go('/admin/leave-requests');
+      } else if (_hasHrRole(roles)) {
+        debugPrint('[NotificationService] Navigating HR to /hr/approved-leaves');
+        appRouter.go('/hr/approved-leaves');
+      } else {
+        debugPrint('[NotificationService] Navigating user to /leave-request');
+        appRouter.go('/leave-request');
+      }
+    } catch (e) {
+      debugPrint('[NotificationService] Error navigating to leave request page: $e');
+      // Fallback: điều hướng đến trang chung
+      appRouter.go('/leave-request');
+    }
+  }
+
   // Điều hướng khi user nhấn vào notification (bao gồm cả logic cho loại liên quan)
   void _handleNotificationNavigation(Map<String, dynamic> data) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       try {
         final relatedEntityType = data['relatedEntityType']?.toString();
         final actionUrl = data['actionUrl']?.toString();
@@ -277,7 +336,9 @@ class NotificationService {
         if (relatedEntityType != null) {
           switch (relatedEntityType.toUpperCase()) {
             case 'LEAVE_REQUEST':
-              appRouter.go('/leave-request');
+              // HR và Admin sẽ được điều hướng đến trang duyệt của họ
+              // User thường sẽ được điều hướng đến trang xem đơn nghỉ của mình
+              await _navigateToLeaveRequestPage();
               return;
             case 'ATTENDANCE':
               // Trường hợp ATTENDANCE_CHECKIN, ATTENDANCE_CHECKOUT, ATTENDANCE_ABSENT, EXPLANATION_SUBMITTED, EXPLANATION_APPROVED, EXPLANATION_REJECTED
@@ -319,7 +380,7 @@ class NotificationService {
         if (actionUrl != null && actionUrl.isNotEmpty) {
           // Parse actionUrl và điều hướng tương ứng
           if (actionUrl.contains('/leave-request')) {
-            appRouter.go('/leave-request');
+            await _navigateToLeaveRequestPage();
           } else if (actionUrl.contains('/attendance')) {
             appRouter.go('/attendance');
           } else if (actionUrl.contains('/schedule')) {

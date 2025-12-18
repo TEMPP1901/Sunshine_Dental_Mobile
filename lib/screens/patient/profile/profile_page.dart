@@ -47,9 +47,9 @@ class _ProfilePageState extends State<ProfilePage> {
     'DOCTOR',
     'RECEPTION',
     'ACCOUNTANT',
-    'ADMIN',
+    // ADMIN không có quyền xin nghỉ
   };
-  static const _leaveRequestForbidden = {'USER', 'PATIENT'};
+  static const _leaveRequestForbidden = {'USER', 'PATIENT', 'ADMIN'};
 
   Map<String, dynamic>? _user;
   bool _isLoading = true;
@@ -181,12 +181,30 @@ class _ProfilePageState extends State<ProfilePage> {
   bool get _canViewLeaveRequest {
     final roles = _extractRoles(_user?['roles']);
     if (roles.isEmpty) return false;
+    // Loại trừ ADMIN
+    if (roles.contains('ADMIN')) return false;
     return roles.any((r) => _leaveRequestRoles.contains(r));
   }
 
   bool get _isHR {
     final roles = _extractRoles(_user?['roles']);
     return roles.contains('HR');
+  }
+
+  bool get _isAdmin {
+    final roles = _extractRoles(_user?['roles']);
+    return roles.contains('ADMIN');
+  }
+
+  // Kiểm tra xem có thể cập nhật face profile không (chỉ cho nhân viên, không bao gồm ADMIN)
+  bool get _canUpdateFaceProfile {
+    final roles = _extractRoles(_user?['roles']);
+    if (roles.isEmpty) return false;
+    // Loại trừ ADMIN
+    if (roles.contains('ADMIN')) return false;
+    // Chỉ cho phép các role nhân viên: HR, DOCTOR, RECEPTION, ACCOUNTANT
+    final faceProfileRoles = {'HR', 'DOCTOR', 'RECEPTION', 'ACCOUNTANT'};
+    return roles.any((r) => faceProfileRoles.contains(r));
   }
 
   @override
@@ -305,6 +323,22 @@ class _ProfilePageState extends State<ProfilePage> {
                   const SizedBox(height: 24),
                 ],
 
+                // === SECTION ADMIN (Chỉ hiện cho ADMIN) ===
+                if (_isAdmin) ...[
+                  _buildSectionTitle("Admin Management"),
+                  const SizedBox(height: 8),
+                  ProfileMenuItem(
+                    icon: Icons.admin_panel_settings_rounded,
+                    title: "Admin Hub",
+                    subtitle: "Quản lý hệ thống & báo cáo",
+                    onTap: () => context.go('/admin'),
+                    isFirst: true,
+                    isLast: true,
+                    customIconColor: const Color(0xFFDC2626),
+                  ),
+                  const SizedBox(height: 24),
+                ],
+
                 // === SECTION HR (Chỉ hiện cho HR) ===
                 if (_isHR) ...[
                   _buildSectionTitle("HR Management"),
@@ -339,6 +373,16 @@ class _ProfilePageState extends State<ProfilePage> {
                     title: 'leaveRequest.title'.tr(),
                     subtitle: 'leaveRequest.subtitle'.tr(),
                     onTap: () => context.go('/leave-request'),
+                  ),
+
+                // Cập nhật khuôn mặt chấm công (chỉ cho nhân viên, không bao gồm ADMIN)
+                if (_canUpdateFaceProfile)
+                  ProfileMenuItem(
+                    icon: Icons.face_retouching_natural_rounded,
+                    title: 'Cập nhật khuôn mặt chấm công',
+                    subtitle: 'Cập nhật ảnh khuôn mặt để chấm công',
+                    onTap: () => context.push('/update-face-profile'),
+                    customIconColor: Colors.purple,
                   ),
 
                 ProfileMenuItem(

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -6,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../providers/user_provider.dart';
+import '../../services/hr_service.dart';
 import 'widgets/login_form_email.dart';
 import 'widgets/login_form_phone.dart';
 import 'qr_scan_page.dart'; // [MỚI] Import trang Scan QR
@@ -135,18 +137,73 @@ class _LoginPageState extends State<LoginPage>
   }
 
   // Helper kiểm tra kết quả chung
-  void _checkResult(bool success, String? error) {
+  void _checkResult(bool success, String? error) async {
     if (success) {
       Fluttertoast.showToast(
         msg: tr('login.loginSuccess'),
         backgroundColor: Colors.green,
       );
-      if (mounted) context.go('/home');
+      
+      if (mounted) {
+        // Kiểm tra xem có cần đăng ký face profile không
+        await _checkAndRedirectToFaceRegistration();
+      }
     } else {
       Fluttertoast.showToast(
         msg: error ?? tr('login.loginFailed'),
         backgroundColor: Colors.red,
       );
+    }
+  }
+
+  // Kiểm tra và redirect đến màn hình đăng ký face profile nếu cần
+  Future<void> _checkAndRedirectToFaceRegistration() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final userStr = prefs.getString('user');
+      if (userStr == null) {
+        context.go('/home');
+        return;
+      }
+
+      final userData = jsonDecode(userStr) as Map<String, dynamic>;
+      final roles = (userData['roles'] as List<dynamic>?)
+          ?.map((r) => r.toString().toUpperCase())
+          .toList() ?? [];
+
+      // Chỉ check cho nhân viên cần chấm công (không bao gồm ADMIN)
+      final attendanceRoles = {'HR', 'DOCTOR', 'RECEPTION', 'ACCOUNTANT'};
+      final isStaff = roles.any((r) => attendanceRoles.contains(r));
+      
+      if (!isStaff) {
+        // Không phải nhân viên, vào app bình thường
+        context.go('/home');
+        return;
+      }
+
+      // Kiểm tra face profile
+      final hrService = HrService();
+      final checkResult = await hrService.checkFaceProfile();
+      final hasFaceProfile = checkResult['hasFaceProfile'] as bool? ?? false;
+      final requiresRegistration = checkResult['requiresRegistration'] as bool? ?? false;
+
+      if (requiresRegistration || !hasFaceProfile) {
+        // Chưa có face profile, redirect đến màn hình đăng ký
+        if (mounted) {
+          context.go('/face-registration');
+        }
+      } else {
+        // Đã có face profile, vào app bình thường
+        if (mounted) {
+          context.go('/home');
+        }
+      }
+    } catch (e) {
+      debugPrint('Error checking face profile: $e');
+      // Nếu có lỗi, vẫn cho vào app (không block user)
+      if (mounted) {
+        context.go('/home');
+      }
     }
   }
 
