@@ -45,6 +45,20 @@ class _StepServiceClinicState extends State<StepServiceClinic> {
 
     if (isLoading) return const Center(child: CircularProgressIndicator());
 
+    // Tìm clinic đã chọn trong list (so sánh bằng id để tránh lỗi reference)
+    // DropdownButton yêu cầu value phải là cùng instance với một item trong items list
+    BookingClinic? selectedClinicValue;
+    if (provider.selectedClinic != null && clinics.isNotEmpty) {
+      try {
+        selectedClinicValue = clinics.firstWhere(
+          (c) => c.id == provider.selectedClinic!.id,
+        );
+      } catch (e) {
+        // Nếu không tìm thấy, set về null để tránh lỗi
+        selectedClinicValue = null;
+      }
+    }
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -53,7 +67,7 @@ class _StepServiceClinicState extends State<StepServiceClinic> {
           const Text("1. Chọn cơ sở", style: TextStyle(fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           DropdownButtonFormField<BookingClinic>(
-            value: provider.selectedClinic,
+            value: selectedClinicValue,
             hint: const Text("Chọn phòng khám"),
             items: clinics.map((c) => DropdownMenuItem(
               value: c,

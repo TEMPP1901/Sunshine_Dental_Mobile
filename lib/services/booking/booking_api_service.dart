@@ -77,19 +77,32 @@ class BookingApiService {
   // 5. Check Time Slots (Cho VIP)
   Future<List<TimeSlot>> getSlots(int clinicId, int doctorId, int serviceId, String date) async {
     final headers = await _getHeaders();
+    // Backend expect serviceIds as List<Integer>
+    // Web app gửi: serviceIds=1,2,3 (comma-separated string)
+    // Spring có thể parse comma-separated string thành List nếu có converter
+    // Hoặc Spring tự động parse khi dùng @ModelAttribute với List
+    // Thử format giống web app: comma-separated (ngay cả khi chỉ có 1 giá trị)
     final uri = Uri.parse('$baseUrl/booking/slots').replace(queryParameters: {
       'clinicId': clinicId.toString(),
       'doctorId': doctorId.toString(),
-      'serviceIds': serviceId.toString(),
+      'serviceIds': serviceId.toString(), // Gửi một giá trị, Spring sẽ parse thành List với 1 phần tử
       'date': date,
     });
 
+    print('[BookingApiService] Fetching slots: clinicId=$clinicId, doctorId=$doctorId, serviceId=$serviceId, date=$date');
+    print('[BookingApiService] URL: ${uri.toString()}');
+
     final response = await http.get(uri, headers: headers);
+    print('[BookingApiService] Response status: ${response.statusCode}');
+    
     if (response.statusCode == 200) {
       final List data = json.decode(response.body);
+      print('[BookingApiService] Parsed ${data.length} slots');
       return data.map((e) => TimeSlot.fromJson(e)).toList();
+    } else {
+      print('[BookingApiService] Error ${response.statusCode}: ${response.body}');
+      throw Exception('Failed to load slots: ${response.statusCode} - ${response.body}');
     }
-    throw Exception('Failed to load slots');
   }
 
   // 6. TẠO LỊCH HẸN (POST)

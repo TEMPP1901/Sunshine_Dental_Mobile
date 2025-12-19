@@ -12,7 +12,7 @@ class StepSummary extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<BookingProvider>(context);
-    final patientId = 1; // TODO: Lấy từ UserProvider thực tế
+    // Không cần patientId - backend sẽ tự lấy từ JWT token (currentUser)
 
     return Padding(
       padding: const EdgeInsets.all(16),
@@ -56,7 +56,7 @@ class StepSummary extends StatelessWidget {
           // --- STANDARD: NÚT XÁC NHẬN THƯỜNG ---
             ElevatedButton(
               style: ElevatedButton.styleFrom(minimumSize: const Size.fromHeight(50), backgroundColor: Colors.blue),
-              onPressed: () => _handleStandardBooking(context, provider, patientId),
+              onPressed: () => _handleStandardBooking(context, provider),
               child: const Text("Xác nhận đặt lịch"),
             )
           else
@@ -74,7 +74,7 @@ class StepSummary extends StatelessWidget {
                   ),
                   icon: const Icon(Icons.payment),
                   label: const Text("Thanh toán qua VNPAY"),
-                  onPressed: () => _handleVipPayment(context, provider, patientId, 'VNPAY'),
+                  onPressed: () => _handleVipPayment(context, provider, 'VNPAY'),
                 ),
 
                 const SizedBox(height: 10),
@@ -87,7 +87,7 @@ class StepSummary extends StatelessWidget {
                   ),
                   icon: const Icon(Icons.paypal),
                   label: const Text("Thanh toán qua PayPal"),
-                  onPressed: () => _handleVipPayment(context, provider, patientId, 'PAYPAL'),
+                  onPressed: () => _handleVipPayment(context, provider, 'PAYPAL'),
                 ),
               ],
             )
@@ -110,9 +110,9 @@ class StepSummary extends StatelessWidget {
   }
 
   // Xử lý luồng STANDARD
-  Future<void> _handleStandardBooking(BuildContext context, BookingProvider provider, int patientId) async {
+  Future<void> _handleStandardBooking(BuildContext context, BookingProvider provider) async {
     try {
-      await provider.confirmBooking(patientId);
+      await provider.confirmBooking();
       // Thành công -> Chuyển trang Success
       if (context.mounted) {
         Navigator.pushReplacement(
@@ -126,10 +126,10 @@ class StepSummary extends StatelessWidget {
   }
 
   // Xử lý luồng VIP
-  Future<void> _handleVipPayment(BuildContext context, BookingProvider provider, int patientId, String method) async {
+  Future<void> _handleVipPayment(BuildContext context, BookingProvider provider, String method) async {
     try {
       // 1. Tạo lịch hẹn trước (Trạng thái AWAITING_PAYMENT)
-      int? appointmentId = await provider.confirmBooking(patientId);
+      int? appointmentId = await provider.confirmBooking();
 
       if (appointmentId != null && context.mounted) {
         // 2. Chuyển sang màn hình WebView để thanh toán

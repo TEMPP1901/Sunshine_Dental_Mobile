@@ -8,6 +8,17 @@ class ApiService {
   /// Bật/tắt log để tránh spam trong profile/release.
   static bool enableLogging = kDebugMode;
 
+  // === CẤU HÌNH IP CHO MÁY THỰC ===
+  // Thay đổi IP này theo IP Wi-Fi của máy chạy backend (kiểm tra bằng ipconfig trên Windows)
+  // Ví dụ: Nếu IP Wi-Fi là 192.168.1.122 thì set: '192.168.1.122'
+  static const String _realDeviceIp = '172.16.1.79';
+  static const int _serverPort = 8080;
+  
+  // Chọn chế độ: 'emulator' hoặc 'real_device'
+  // - 'emulator': Dùng cho Android Emulator (10.0.2.2)
+  // - 'real_device': Dùng cho điện thoại thật (IP LAN)
+  static const String _androidMode = 'real_device'; // Đổi thành 'emulator' nếu chạy trên emulator
+
   // Xác định baseUrl phù hợp với từng môi trường/chạy trên web, android, ios
   static String _resolveBaseUrl() {
     // 1. Ưu tiên lấy từ biến môi trường (nếu chạy lệnh flutter run --dart-define=API_URL=...)
@@ -19,28 +30,47 @@ class ApiService {
 
     // 2. Cấu hình cho Web
     if (kIsWeb) {
-      if (enableLogging) debugPrint(' [ApiService] Platform: Web, using localhost:8080');
-      return 'http://localhost:8080';
+      if (enableLogging) debugPrint(' [ApiService] Platform: Web, using localhost:$_serverPort');
+      return 'http://localhost:$_serverPort';
     }
 
     // 3. Cấu hình cho Android
     if (!kIsWeb && Platform.isAndroid) {
-      // QUAN TRỌNG:
-      // - 10.0.2.2: Là địa chỉ localhost của máy tính (Host) khi nhìn từ Máy ảo (Emulator).
-      // - Nếu bạn chạy trên ĐIỆN THOẠI THẬT: Bạn phải đổi lại thành IP LAN (ví dụ: 192.168.1.x)
-      // IP này phải khớp với IP của máy chạy backend (kiểm tra bằng ipconfig trên Windows)
-      final baseUrl = 'http://10.0.2.2:8080';
-      if (enableLogging) {
-        debugPrint(' [ApiService] Platform: Android, using: $baseUrl');
-        debugPrint(' [ApiService] For emulator, use: flutter run --dart-define=API_URL=http://10.0.2.2:8080');
-        debugPrint(' [ApiService] Note: If using real device, use --dart-define=API_URL=http://YOUR_LAN_IP:8080');
+      String baseUrl;
+      if (_androidMode == 'real_device') {
+        // Chạy trên điện thoại thật - dùng IP LAN của máy chạy backend
+        baseUrl = 'http://$_realDeviceIp:$_serverPort';
+        if (enableLogging) {
+          debugPrint(' [ApiService] Platform: Android (Real Device)');
+          debugPrint(' [ApiService] Using LAN IP: $baseUrl');
+          debugPrint(' [ApiService] Make sure backend is running on: $baseUrl');
+        }
+      } else {
+        // Chạy trên Android Emulator - dùng 10.0.2.2 (localhost của host machine)
+        baseUrl = 'http://10.0.2.2:$_serverPort';
+        if (enableLogging) {
+          debugPrint(' [ApiService] Platform: Android (Emulator)');
+          debugPrint(' [ApiService] Using: $baseUrl');
+        }
       }
       return baseUrl;
     }
 
     // 4. Mặc định cho iOS/Khác
-    if (enableLogging) debugPrint(' [ApiService] Platform: iOS/Other, using localhost:8080');
-    return 'http://localhost:8080';
+    // iOS thường chạy trên simulator (localhost) hoặc real device (cần IP LAN)
+    if (!kIsWeb && Platform.isIOS) {
+      // Nếu chạy trên iOS real device, cần dùng IP LAN
+      // Tạm thời dùng IP LAN cho iOS real device
+      final baseUrl = 'http://$_realDeviceIp:$_serverPort';
+      if (enableLogging) {
+        debugPrint(' [ApiService] Platform: iOS, using: $baseUrl');
+        debugPrint(' [ApiService] For iOS Simulator, you may need to use localhost');
+      }
+      return baseUrl;
+    }
+
+    if (enableLogging) debugPrint(' [ApiService] Platform: Other, using localhost:$_serverPort');
+    return 'http://localhost:$_serverPort';
   }
 
   static final String baseUrl = _resolveBaseUrl();

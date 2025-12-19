@@ -21,7 +21,27 @@ class _StepDateVipState extends State<StepDateVip> {
   // Khi chọn ngày xong -> Gọi API lấy Slot
   Future<void> _fetchSlots(BuildContext context) async {
     final provider = Provider.of<BookingProvider>(context, listen: false);
-    if (provider.selectedDate == null) return;
+    if (provider.selectedDate == null) {
+      print('[StepDateVip] Cannot fetch slots: selectedDate is null');
+      return;
+    }
+
+    // Kiểm tra các điều kiện cần thiết
+    if (provider.selectedClinic == null) {
+      print('[StepDateVip] Cannot fetch slots: selectedClinic is null');
+      return;
+    }
+    if (provider.selectedDoctor == null) {
+      print('[StepDateVip] Cannot fetch slots: selectedDoctor is null');
+      return;
+    }
+    if (provider.selectedServiceVariant == null) {
+      print('[StepDateVip] Cannot fetch slots: selectedServiceVariant is null');
+      return;
+    }
+
+    print('[StepDateVip] Fetching slots for date: ${provider.selectedDate}');
+    print('[StepDateVip] Clinic: ${provider.selectedClinic?.id}, Doctor: ${provider.selectedDoctor?.id}, Service: ${provider.selectedServiceVariant?.variantId}');
 
     setState(() {
       isLoading = true;
@@ -32,11 +52,14 @@ class _StepDateVipState extends State<StepDateVip> {
     try {
       // provider.fetchSlots đã được cài đặt ở bước trước
       final result = await provider.fetchSlots();
+      print('[StepDateVip] Fetched ${result.length} slots');
       setState(() {
         slots = result;
         isLoading = false;
       });
-    } catch (e) {
+    } catch (e, stackTrace) {
+      print('[StepDateVip] Error fetching slots: $e');
+      print('[StepDateVip] Stack trace: $stackTrace');
       setState(() {
         isLoading = false;
         errorMsg = "Lỗi tải khung giờ. Vui lòng chọn ngày khác.";
@@ -134,8 +157,15 @@ class _StepDateVipState extends State<StepDateVip> {
                           itemCount: slots.length,
                           itemBuilder: (context, index) {
                             final slot = slots[index];
-                            // Lấy giờ hiển thị (cắt giây: 08:00:00 -> 08:00)
-                            final displayTime = slot.time.substring(0, 5);
+                            // Lấy giờ hiển thị (xử lý nhiều format: "08:00:00" -> "08:00", "08:00" -> "08:00")
+                            String displayTime = slot.time;
+                            if (displayTime.length >= 5) {
+                              displayTime = displayTime.substring(0, 5);
+                            }
+                            // Đảm bảo format "HH:mm" (thêm số 0 nếu cần: "8:00" -> "08:00")
+                            if (displayTime.length == 4 && displayTime[1] == ':') {
+                              displayTime = '0$displayTime';
+                            }
                             final isSelected = provider.selectedTime == displayTime;
                             final isAvailable = slot.available;
 
@@ -145,7 +175,11 @@ class _StepDateVipState extends State<StepDateVip> {
                               isSelected: isSelected,
                               onTap: () {
                                 if (isAvailable) {
+                                  print("Tapping time slot: $displayTime");
                                   provider.setTime(displayTime);
+                                  print("After setTime, selectedTime: ${provider.selectedTime}");
+                                } else {
+                                  print("Time slot $displayTime is not available");
                                 }
                               },
                             );
@@ -178,10 +212,20 @@ class _StepDateVipState extends State<StepDateVip> {
           ElevatedButton(
             style: ElevatedButton.styleFrom(
               minimumSize: const Size.fromHeight(50),
-              backgroundColor: Colors.purple,
+              backgroundColor: provider.selectedTime != null ? Colors.purple : Colors.grey,
+              disabledBackgroundColor: Colors.grey,
             ),
-            onPressed: provider.selectedTime != null ? provider.nextStep : null,
-            child: const Text("Tiếp tục"),
+            onPressed: provider.selectedTime != null ? () {
+              // Debug: Kiểm tra selectedTime
+              print("Selected time: ${provider.selectedTime}");
+              provider.nextStep();
+            } : null,
+            child: Text(
+              "Tiếp tục",
+              style: TextStyle(
+                color: provider.selectedTime != null ? Colors.white : Colors.grey.shade400,
+              ),
+            ),
           )
         ],
       ),
@@ -194,8 +238,11 @@ class _StepDateVipState extends State<StepDateVip> {
     required bool isSelected,
     required VoidCallback onTap,
   }) {
-    return InkWell(
-      onTap: isAvailable ? onTap : null,
+    return GestureDetector(
+      onTap: isAvailable ? () {
+        print("GestureDetector tapped: $time, available: $isAvailable");
+        onTap();
+      } : null,
       child: Container(
         alignment: Alignment.center,
         decoration: BoxDecoration(
@@ -206,7 +253,10 @@ class _StepDateVipState extends State<StepDateVip> {
               : Colors.white, // Trống
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: isSelected ? Colors.purple : (isAvailable ? Colors.grey.shade300 : Colors.transparent),
+            color: isSelected 
+                ? Colors.purple 
+                : (isAvailable ? Colors.grey.shade300 : Colors.transparent),
+            width: isSelected ? 2 : 1,
           ),
         ),
         child: Text(
@@ -219,6 +269,7 @@ class _StepDateVipState extends State<StepDateVip> {
                 : Colors.black87,
             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
             decoration: !isAvailable ? TextDecoration.lineThrough : null,
+            fontSize: 14,
           ),
         ),
       ),

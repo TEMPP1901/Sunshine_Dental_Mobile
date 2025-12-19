@@ -92,8 +92,13 @@ class BookingProvider with ChangeNotifier {
 
   // Lấy Slot (VIP)
   Future<List<TimeSlot>> fetchSlots() async {
-    if (selectedClinic == null || selectedDoctor == null || selectedDate == null) return [];
+    if (selectedClinic == null || selectedDoctor == null || selectedDate == null || selectedServiceVariant == null) {
+      print('[BookingProvider] Cannot fetch slots: missing required data');
+      print('[BookingProvider] selectedClinic: ${selectedClinic?.id}, selectedDoctor: ${selectedDoctor?.id}, selectedDate: $selectedDate, selectedServiceVariant: ${selectedServiceVariant?.variantId}');
+      return [];
+    }
     String dateStr = DateFormat('yyyy-MM-dd').format(selectedDate!);
+    print('[BookingProvider] Fetching slots: clinicId=${selectedClinic!.id}, doctorId=${selectedDoctor!.id}, serviceId=${selectedServiceVariant!.variantId}, date=$dateStr');
     return await _apiService.getSlots(
         selectedClinic!.id,
         selectedDoctor!.id,
@@ -112,23 +117,30 @@ class BookingProvider with ChangeNotifier {
   }
 
   // CONFIRM BOOKING
-  Future<int?> confirmBooking(int patientId) async {
+  Future<int?> confirmBooking() async {
     isLoading = true;
     notifyListeners();
 
     try {
+      // Format date and time
       String dateStr = DateFormat('yyyy-MM-dd').format(selectedDate!);
       // Format time: "08:00" -> "08:00:00"
       String timeStr = (selectedTime!.length == 5) ? "$selectedTime:00" : selectedTime!;
-      String startDateTime = "${dateStr}T$timeStr"; // ISO 8601 simple
+      
+      // Format to ISO-8601 with Vietnam timezone offset (+07:00)
+      // Backend expects: "2025-12-19T08:00:00+07:00" or "2025-12-19T08:00:00Z"
+      String startDateTime = "${dateStr}T${timeStr}+07:00";
 
       final payload = {
         "clinicId": selectedClinic!.id,
-        "patientId": patientId,
+        // Không gửi patientId - backend sẽ tự lấy từ currentUser (JWT token)
         "appointmentType": appointmentType,
         "bookingFee": bookingFee,
         "doctorId": (appointmentType == 'VIP') ? selectedDoctor?.id : null,
         "startDateTime": startDateTime, // Backend sẽ tự tính EndDateTime
+        // Set status theo logic giống web app: VIP -> AWAITING_PAYMENT, STANDARD -> PENDING
+        "status": (appointmentType == 'VIP') ? "AWAITING_PAYMENT" : "PENDING",
+        "channel": "Mobile App", // Set channel để phân biệt booking từ mobile
         "note": "Booking via Mobile App ($appointmentType)",
         "services": [
           {

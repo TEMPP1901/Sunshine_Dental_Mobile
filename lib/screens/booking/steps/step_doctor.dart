@@ -155,7 +155,11 @@ class _StepDoctorState extends State<StepDoctor> {
                 border: Border.all(color: Colors.white, width: 2),
                 boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 4)],
                 image: DecorationImage(
-                  image: NetworkImage(doctor.avatarUrl ?? "https://i.pravatar.cc/150?u=${doctor.id}"),
+                  image: NetworkImage(
+                    (doctor.avatarUrl != null && doctor.avatarUrl!.isNotEmpty)
+                        ? doctor.avatarUrl!
+                        : "https://i.pravatar.cc/150?u=${doctor.id}"
+                  ),
                   fit: BoxFit.cover,
                 ),
               ),
