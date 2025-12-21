@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:go_router/go_router.dart';
 import 'account_text_field.dart';
 
 class AccountForm extends StatelessWidget {
@@ -76,11 +75,12 @@ class AccountForm extends StatelessWidget {
                     Expanded(
                       child: Text(
                         'account.myAccount.title'.tr(),
-                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                          fontWeight: FontWeight.w700,
-                          color: colorScheme.onSurface,
-                          letterSpacing: -0.5,
-                        ),
+                        style: Theme.of(context).textTheme.headlineSmall
+                            ?.copyWith(
+                              fontWeight: FontWeight.w700,
+                              color: colorScheme.onSurface,
+                              letterSpacing: -0.5,
+                            ),
                       ),
                     ),
                   ],
@@ -108,7 +108,9 @@ class AccountForm extends StatelessWidget {
                     if (value == null || value.trim().isEmpty) {
                       return 'account.myAccount.validation.email'.tr();
                     }
-                    if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value.trim())) {
+                    if (!RegExp(
+                      r'^[^@]+@[^@]+\.[^@]+',
+                    ).hasMatch(value.trim())) {
                       return 'account.myAccount.validation.emailFormat'.tr();
                     }
                     return null;
@@ -157,18 +159,22 @@ class AccountForm extends StatelessWidget {
                           children: [
                             Text(
                               'account.myAccount.username'.tr(),
-                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: colorScheme.onSurface.withOpacity(0.6),
-                                fontWeight: FontWeight.w500,
-                              ),
+                              style: Theme.of(context).textTheme.bodySmall
+                                  ?.copyWith(
+                                    color: colorScheme.onSurface.withOpacity(
+                                      0.6,
+                                    ),
+                                    fontWeight: FontWeight.w500,
+                                  ),
                             ),
                             const SizedBox(height: 2),
                             Text(
                               username,
-                              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                fontWeight: FontWeight.w600,
-                                color: colorScheme.onSurface,
-                              ),
+                              style: Theme.of(context).textTheme.bodyLarge
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                    color: colorScheme.onSurface,
+                                  ),
                             ),
                           ],
                         ),

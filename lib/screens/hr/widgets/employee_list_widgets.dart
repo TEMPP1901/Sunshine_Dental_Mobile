@@ -25,7 +25,7 @@ class EmployeeEmptyState extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final surfaceColor = isDark ? const Color(0xFF1E293B) : Colors.white;
-    
+
     return Container(
       padding: const EdgeInsets.all(48),
       decoration: BoxDecoration(
@@ -50,20 +50,14 @@ class EmployeeEmptyState extends StatelessWidget {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: isDark
-                    ? [
-                        Colors.grey[800]!,
-                        Colors.grey[700]!,
-                      ]
-                    : [
-                        Colors.grey[200]!,
-                        Colors.grey[100]!,
-                      ],
+                    ? [Colors.grey[800]!, Colors.grey[700]!]
+                    : [Colors.grey[200]!, Colors.grey[100]!],
               ),
               shape: BoxShape.circle,
             ),
             child: Icon(
-              Icons.people_outline_rounded, 
-              size: 48, 
+              Icons.people_outline_rounded,
+              size: 48,
               color: isDark ? Colors.grey[400] : Colors.grey[500],
             ),
           ),
@@ -80,7 +74,7 @@ class EmployeeEmptyState extends StatelessWidget {
           Text(
             'hr.employees.emptyState'.tr(),
             style: TextStyle(
-              fontSize: 14, 
+              fontSize: 14,
               color: isDark ? Colors.grey[400] : Colors.grey[600],
             ),
           ),
@@ -94,10 +88,7 @@ class EmployeeEmptyState extends StatelessWidget {
 class EmployeeStatusChip extends StatelessWidget {
   final bool active;
 
-  const EmployeeStatusChip({
-    super.key,
-    required this.active,
-  });
+  const EmployeeStatusChip({super.key, required this.active});
 
   @override
   Widget build(BuildContext context) {
@@ -117,10 +108,7 @@ class EmployeeStatusChip extends StatelessWidget {
                 ],
         ),
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(
-          color: color.withOpacity(0.25),
-          width: 1,
-        ),
+        border: Border.all(color: color.withOpacity(0.25), width: 1),
         boxShadow: [
           BoxShadow(
             color: color.withOpacity(0.06),
@@ -186,10 +174,13 @@ class EmployeeCard extends StatelessWidget {
     final avatarColor = EmployeeHelpers.getAvatarColor(firstLetter);
 
     // Nền card trung tính, ít “phát sáng” hơn trong dark mode
-    final surfaceColor = isDark ? const Color(0xFF020617) : Colors.white; // slate-950
-    final surfaceLightColor =
-        isDark ? const Color(0xFF020617) : const Color(0xFFFAFBFC);
-    
+    final surfaceColor = isDark
+        ? const Color(0xFF020617)
+        : Colors.white; // slate-950
+    final surfaceLightColor = isDark
+        ? const Color(0xFF020617)
+        : const Color(0xFFFAFBFC);
+
     return Container(
       margin: const EdgeInsets.only(bottom: 14),
       decoration: BoxDecoration(
@@ -198,10 +189,7 @@ class EmployeeCard extends StatelessWidget {
             : LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [
-                  surfaceColor,
-                  surfaceLightColor,
-                ],
+                colors: [surfaceColor, surfaceLightColor],
               ),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
@@ -270,7 +258,9 @@ class EmployeeCard extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w800,
-                          color: isDark ? Colors.white : const Color(0xFF0F172A),
+                          color: isDark
+                              ? Colors.white
+                              : const Color(0xFF0F172A),
                           letterSpacing: -0.5,
                           height: 1.2,
                         ),
@@ -285,17 +275,21 @@ class EmployeeCard extends StatelessWidget {
                           child: Row(
                             children: [
                               Icon(
-                                Icons.badge_outlined, 
-                                size: 14, 
-                                color: isDark ? Colors.grey[400] : Colors.grey[600],
+                                Icons.badge_outlined,
+                                size: 14,
+                                color: isDark
+                                    ? Colors.grey[400]
+                                    : Colors.grey[600],
                               ),
                               const SizedBox(width: 6),
                               Expanded(
                                 child: Text(
                                   code,
                                   style: TextStyle(
-                                    fontSize: 13, 
-                                    color: isDark ? Colors.grey[300] : Colors.grey[700], 
+                                    fontSize: 13,
+                                    color: isDark
+                                        ? Colors.grey[300]
+                                        : Colors.grey[700],
                                     fontWeight: FontWeight.w500,
                                   ),
                                   maxLines: 1,
@@ -312,17 +306,21 @@ class EmployeeCard extends StatelessWidget {
                           child: Row(
                             children: [
                               Icon(
-                                Icons.email_outlined, 
-                                size: 14, 
-                                color: isDark ? Colors.grey[400] : Colors.grey[600],
+                                Icons.email_outlined,
+                                size: 14,
+                                color: isDark
+                                    ? Colors.grey[400]
+                                    : Colors.grey[600],
                               ),
                               const SizedBox(width: 6),
                               Expanded(
                                 child: Text(
                                   email.toString(),
                                   style: TextStyle(
-                                    fontSize: 13, 
-                                    color: isDark ? Colors.grey[300] : Colors.grey[700], 
+                                    fontSize: 13,
+                                    color: isDark
+                                        ? Colors.grey[300]
+                                        : Colors.grey[700],
                                     fontWeight: FontWeight.w500,
                                   ),
                                   maxLines: 1,
@@ -341,17 +339,26 @@ class EmployeeCard extends StatelessWidget {
                           EmployeeStatusChip(active: active),
                           if (role.toString().isNotEmpty)
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 6,
+                              ),
                               decoration: BoxDecoration(
                                 gradient: LinearGradient(
                                   colors: [
-                                    const Color(0xFF5B21B6).withOpacity(isDark ? 0.18 : 0.12),
-                                    const Color(0xFF6D28D9).withOpacity(isDark ? 0.18 : 0.12),
+                                    const Color(
+                                      0xFF5B21B6,
+                                    ).withOpacity(isDark ? 0.18 : 0.12),
+                                    const Color(
+                                      0xFF6D28D9,
+                                    ).withOpacity(isDark ? 0.18 : 0.12),
                                   ],
                                 ),
                                 borderRadius: BorderRadius.circular(10),
                                 border: Border.all(
-                                  color: const Color(0xFF6D28D9).withOpacity(isDark ? 0.25 : 0.2),
+                                  color: const Color(
+                                    0xFF6D28D9,
+                                  ).withOpacity(isDark ? 0.25 : 0.2),
                                   width: 1,
                                 ),
                               ),
@@ -360,7 +367,9 @@ class EmployeeCard extends StatelessWidget {
                                 style: TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w700,
-                                  color: isDark ? const Color(0xFF7C3AED) : const Color(0xFF6D28D9),
+                                  color: isDark
+                                      ? const Color(0xFF7C3AED)
+                                      : const Color(0xFF6D28D9),
                                 ),
                               ),
                             ),
@@ -368,7 +377,9 @@ class EmployeeCard extends StatelessWidget {
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(10),
                               border: Border.all(
-                                color: (active == true ? const Color(0xFFDC2626).withOpacity(0.3) : const Color(0xFF059669).withOpacity(0.3)),
+                                color: (active == true
+                                    ? const Color(0xFFDC2626).withOpacity(0.3)
+                                    : const Color(0xFF059669).withOpacity(0.3)),
                                 width: 1,
                               ),
                             ),
@@ -378,22 +389,33 @@ class EmployeeCard extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(10),
                                 onTap: onToggleStatus,
                                 child: Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 6,
+                                  ),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       Icon(
-                                        active == true ? Icons.lock_outline_rounded : Icons.lock_open_outlined,
+                                        active == true
+                                            ? Icons.lock_outline_rounded
+                                            : Icons.lock_open_outlined,
                                         size: 14,
-                                        color: active == true ? const Color(0xFFDC2626) : const Color(0xFF059669),
+                                        color: active == true
+                                            ? const Color(0xFFDC2626)
+                                            : const Color(0xFF059669),
                                       ),
                                       const SizedBox(width: 4),
                                       Text(
-                                        active == true ? 'hr.common.inactive'.tr() : 'hr.common.active'.tr(),
+                                        active == true
+                                            ? 'hr.common.inactive'.tr()
+                                            : 'hr.common.active'.tr(),
                                         style: TextStyle(
                                           fontSize: 12,
                                           fontWeight: FontWeight.w700,
-                                          color: active == true ? const Color(0xFFDC2626) : const Color(0xFF059669),
+                                          color: active == true
+                                              ? const Color(0xFFDC2626)
+                                              : const Color(0xFF059669),
                                         ),
                                       ),
                                     ],
@@ -434,14 +456,14 @@ class EmployeeFilterDropdown extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     return DropdownButtonFormField<int?>(
-      value: value,
+      initialValue: value,
       isExpanded: true,
       decoration: InputDecoration(
         labelText: label,
         labelStyle: TextStyle(
-          color: isDark ? Colors.grey[300] : Colors.grey[700], 
+          color: isDark ? Colors.grey[300] : Colors.grey[700],
           fontSize: 13,
         ),
         filled: true,
@@ -462,10 +484,13 @@ class EmployeeFilterDropdown extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: Color(0xFF6366F1), width: 2),
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 14,
+        ),
       ),
       style: TextStyle(
-        fontSize: 14, 
+        fontSize: 14,
         color: isDark ? Colors.white : const Color(0xFF1E293B),
       ),
       dropdownColor: isDark ? const Color(0xFF1E293B) : Colors.white,
@@ -473,42 +498,63 @@ class EmployeeFilterDropdown extends StatelessWidget {
         DropdownMenuItem(
           value: null,
           child: Text(
-            'hr.common.all'.tr(), 
+            'hr.common.all'.tr(),
             overflow: TextOverflow.ellipsis,
-            style: TextStyle(color: isDark ? Colors.white : const Color(0xFF1E293B)),
+            style: TextStyle(
+              color: isDark ? Colors.white : const Color(0xFF1E293B),
+            ),
           ),
         ),
         ...data.map((e) {
-          final id = int.tryParse((e['id'] ?? e['clinicId'] ?? e['departmentId'] ?? e['roleId'] ?? '').toString());
-          final name = e['name']?.toString() ?? e['clinicName']?.toString() ?? e['departmentName']?.toString() ?? e['roleName']?.toString() ?? 'N/A';
+          final id = int.tryParse(
+            (e['id'] ?? e['clinicId'] ?? e['departmentId'] ?? e['roleId'] ?? '')
+                .toString(),
+          );
+          final name =
+              e['name']?.toString() ??
+              e['clinicName']?.toString() ??
+              e['departmentName']?.toString() ??
+              e['roleName']?.toString() ??
+              'N/A';
           return DropdownMenuItem(
             value: id,
             child: Text(
               name,
               overflow: TextOverflow.ellipsis,
               maxLines: 1,
-              style: TextStyle(color: isDark ? Colors.white : const Color(0xFF1E293B)),
+              style: TextStyle(
+                color: isDark ? Colors.white : const Color(0xFF1E293B),
+              ),
             ),
           );
-        })
+        }),
       ],
       selectedItemBuilder: (context) {
         final isDark = Theme.of(context).brightness == Brightness.dark;
         return [
           Text(
-            'hr.common.all'.tr(), 
+            'hr.common.all'.tr(),
             overflow: TextOverflow.ellipsis,
-            style: TextStyle(color: isDark ? Colors.white : const Color(0xFF1E293B)),
+            style: TextStyle(
+              color: isDark ? Colors.white : const Color(0xFF1E293B),
+            ),
           ),
           ...data.map((e) {
-            final name = e['name']?.toString() ?? e['clinicName']?.toString() ?? e['departmentName']?.toString() ?? e['roleName']?.toString() ?? 'N/A';
+            final name =
+                e['name']?.toString() ??
+                e['clinicName']?.toString() ??
+                e['departmentName']?.toString() ??
+                e['roleName']?.toString() ??
+                'N/A';
             return Text(
-              name, 
-              overflow: TextOverflow.ellipsis, 
+              name,
+              overflow: TextOverflow.ellipsis,
               maxLines: 1,
-              style: TextStyle(color: isDark ? Colors.white : const Color(0xFF1E293B)),
+              style: TextStyle(
+                color: isDark ? Colors.white : const Color(0xFF1E293B),
+              ),
             );
-          })
+          }),
         ];
       },
       onChanged: onChanged,
@@ -537,18 +583,17 @@ class EmployeePager extends StatelessWidget {
     final canGoPrev = currentPage > 0;
     final canGoNext = currentPage + 1 < totalPages;
     final surfaceColor = isDark ? const Color(0xFF1E293B) : Colors.white;
-    final surfaceLightColor = isDark ? const Color(0xFF334155) : const Color(0xFFFAFBFC);
-    
+    final surfaceLightColor = isDark
+        ? const Color(0xFF334155)
+        : const Color(0xFFFAFBFC);
+
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            surfaceColor,
-            surfaceLightColor,
-          ],
+          colors: [surfaceColor, surfaceLightColor],
         ),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
@@ -586,7 +631,9 @@ class EmployeePager extends StatelessWidget {
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w700,
-                color: isDark ? const Color(0xFF7C3AED) : const Color(0xFF6D28D9),
+                color: isDark
+                    ? const Color(0xFF7C3AED)
+                    : const Color(0xFF6D28D9),
                 letterSpacing: 0.3,
               ),
             ),
@@ -600,7 +647,9 @@ class EmployeePager extends StatelessWidget {
                           colors: [Color(0xFF6D28D9), Color(0xFF7C3AED)],
                         )
                       : null,
-                  color: canGoPrev ? null : (isDark ? Colors.grey[800] : Colors.grey[200]),
+                  color: canGoPrev
+                      ? null
+                      : (isDark ? Colors.grey[800] : Colors.grey[200]),
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: canGoPrev
                       ? [
@@ -621,7 +670,9 @@ class EmployeePager extends StatelessWidget {
                       padding: const EdgeInsets.all(12),
                       child: Icon(
                         Icons.chevron_left_rounded,
-                        color: canGoPrev ? Colors.white : (isDark ? Colors.grey[600] : Colors.grey[400]),
+                        color: canGoPrev
+                            ? Colors.white
+                            : (isDark ? Colors.grey[600] : Colors.grey[400]),
                         size: 20,
                       ),
                     ),
@@ -657,7 +708,9 @@ class EmployeePager extends StatelessWidget {
                       padding: const EdgeInsets.all(12),
                       child: Icon(
                         Icons.chevron_right_rounded,
-                        color: canGoNext ? Colors.white : (isDark ? Colors.grey[600] : Colors.grey[400]),
+                        color: canGoNext
+                            ? Colors.white
+                            : (isDark ? Colors.grey[600] : Colors.grey[400]),
                         size: 20,
                       ),
                     ),
@@ -671,4 +724,3 @@ class EmployeePager extends StatelessWidget {
     );
   }
 }
-

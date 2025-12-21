@@ -11,11 +11,11 @@ class ProductItemCard extends StatelessWidget {
   final VoidCallback onBuyNow;
 
   const ProductItemCard({
-    Key? key,
+    super.key,
     required this.product,
     required this.onTap,
     required this.onBuyNow,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -23,9 +23,14 @@ class ProductItemCard extends StatelessWidget {
 
     // Lấy thông tin Brand và Type
     final String brandText = product.brand?.toUpperCase() ?? '';
-    final String typeText = product.typeNames.isNotEmpty ? product.typeNames.first : '';
+    final String typeText = product.typeNames.isNotEmpty
+        ? product.typeNames.first
+        : '';
     // Ghép chuỗi hiển thị: "BRAND • Type"
-    final String metaText = [brandText, typeText].where((e) => e.isNotEmpty).join(' • ');
+    final String metaText = [
+      brandText,
+      typeText,
+    ].where((e) => e.isNotEmpty).join(' • ');
 
     return GestureDetector(
       onTap: onTap,
@@ -52,7 +57,9 @@ class ProductItemCard extends StatelessWidget {
                   Container(
                     width: double.infinity,
                     decoration: BoxDecoration(
-                      borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                      borderRadius: const BorderRadius.vertical(
+                        top: Radius.circular(16),
+                      ),
                       image: DecorationImage(
                         image: ApiService.resolveAvatarImage(product.thumbnail),
                         fit: BoxFit.cover,
@@ -61,19 +68,27 @@ class ProductItemCard extends StatelessWidget {
                   ),
 
                   // Badge % Giảm giá (Góc phải trên)
-                  if (product.discountPercentage != null && product.discountPercentage! > 0)
+                  if (product.discountPercentage != null &&
+                      product.discountPercentage! > 0)
                     Positioned(
                       top: 8,
                       right: 8,
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 4,
+                        ),
                         decoration: BoxDecoration(
                           color: GlassTheme.priceColor,
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
                           '-${product.discountPercentage!.toInt()}%',
-                          style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),
@@ -84,12 +99,22 @@ class ProductItemCard extends StatelessWidget {
                       top: 8,
                       left: 8,
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 4,
+                        ),
                         decoration: BoxDecoration(
                           color: Colors.grey[800],
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        child: const Text('HẾT HÀNG', style: TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.bold)),
+                        child: const Text(
+                          'HẾT HÀNG',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 9,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
                     ),
                 ],
@@ -114,7 +139,8 @@ class ProductItemCard extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 10,
                           fontWeight: FontWeight.w600,
-                          color: Colors.grey[500], // Màu nhạt để làm nền cho tên SP
+                          color: Colors
+                              .grey[500], // Màu nhạt để làm nền cho tên SP
                           letterSpacing: 0.3,
                         ),
                       ),
@@ -133,7 +159,6 @@ class ProductItemCard extends StatelessWidget {
                     ),
 
                     const SizedBox(height: 4), // Khoảng cách nhỏ
-
                     // C. Giá tiền & Nút Giỏ hàng (Row dưới cùng)
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -146,9 +171,14 @@ class ProductItemCard extends StatelessWidget {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               // Giá gốc (Gạch ngang)
-                              if (product.originalPrice != null && product.originalPrice! > product.defaultRetailPrice)
+                              if (product.originalPrice != null &&
+                                  product.originalPrice! >
+                                      product.defaultRetailPrice)
                                 Text(
-                                  CurrencyHelper.format(product.originalPrice!, product.currency),
+                                  CurrencyHelper.format(
+                                    product.originalPrice!,
+                                    product.currency,
+                                  ),
                                   style: const TextStyle(
                                     color: Colors.grey,
                                     decoration: TextDecoration.lineThrough,
@@ -157,7 +187,10 @@ class ProductItemCard extends StatelessWidget {
                                 ),
                               // Giá bán (Màu Tím)
                               Text(
-                                CurrencyHelper.format(product.defaultRetailPrice, product.currency),
+                                CurrencyHelper.format(
+                                  product.defaultRetailPrice,
+                                  product.currency,
+                                ),
                                 style: const TextStyle(
                                   color: GlassTheme.primaryPurple,
                                   fontWeight: FontWeight.w900,
@@ -182,14 +215,15 @@ class ProductItemCard extends StatelessWidget {
                               shape: BoxShape.circle,
                             ),
                             child: Icon(
-                              Ionicons.bag_handle_outline, // Đã đổi sang icon túi xách
+                              Ionicons
+                                  .bag_handle_outline, // Đã đổi sang icon túi xách
                               size: 18,
                               color: isOutOfStock
                                   ? Colors.grey
                                   : GlassTheme.primaryPurple, // Màu icon tím
                             ),
                           ),
-                        )
+                        ),
                       ],
                     ),
                   ],

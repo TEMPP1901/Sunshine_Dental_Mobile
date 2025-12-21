@@ -2,7 +2,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:intl/intl.dart';
 import '../../../services/admin_service.dart';
 
 class AdminSystemLogsPage extends StatefulWidget {
@@ -15,7 +14,7 @@ class AdminSystemLogsPage extends StatefulWidget {
 class _AdminSystemLogsPageState extends State<AdminSystemLogsPage> {
   final AdminService _adminService = AdminService();
   final TextEditingController _searchController = TextEditingController();
-  
+
   List<Map<String, dynamic>> _allLogs = [];
   Map<String, List<Map<String, dynamic>>> _groupedLogs = {};
   bool _isLoading = false;
@@ -41,11 +40,11 @@ class _AdminSystemLogsPageState extends State<AdminSystemLogsPage> {
       int currentPage = 0;
       int totalPages = 1;
       const maxPages = 20; // Giới hạn tối đa 20 pages (2000 logs)
-      
+
       // Load tất cả pages (có giới hạn)
       while (currentPage < totalPages && currentPage < maxPages) {
         final data = await _adminService.fetchAuditLogs(
-          fromDate: _selectedDate != null 
+          fromDate: _selectedDate != null
               ? DateFormat('yyyy-MM-dd').format(_selectedDate!)
               : null,
           toDate: _selectedDate != null
@@ -54,51 +53,55 @@ class _AdminSystemLogsPageState extends State<AdminSystemLogsPage> {
           page: currentPage,
           size: _pageSize,
         );
-        
+
         final content = data['content'] as List<Map<String, dynamic>>? ?? [];
         allLogs.addAll(content);
         totalPages = data['totalPages'] ?? 1;
         currentPage++;
-        
+
         // Nếu không còn dữ liệu, dừng lại
         if (content.isEmpty || currentPage >= totalPages) break;
       }
-      
+
       // Nếu đã load đến giới hạn, thông báo
       if (currentPage >= maxPages && totalPages > maxPages) {
         Fluttertoast.showToast(
-          msg: 'admin.systemLogs.loadedLogs'.tr(namedArgs: {
-            'count': '${allLogs.length}',
-            'older': '${(totalPages - maxPages) * _pageSize}'
-          }),
+          msg: 'admin.systemLogs.loadedLogs'.tr(
+            namedArgs: {
+              'count': '${allLogs.length}',
+              'older': '${(totalPages - maxPages) * _pageSize}',
+            },
+          ),
           toastLength: Toast.LENGTH_LONG,
         );
       }
-      
+
       // Group logs theo ngày
       _groupLogsByDate(allLogs);
-      
+
       setState(() {
         _allLogs = allLogs;
         _isLoading = false;
       });
     } catch (e) {
       setState(() => _isLoading = false);
-      Fluttertoast.showToast(msg: 'admin.systemLogs.error.loadFailed'.tr(args: [e.toString()]));
+      Fluttertoast.showToast(
+        msg: 'admin.systemLogs.error.loadFailed'.tr(args: [e.toString()]),
+      );
     }
   }
 
   void _groupLogsByDate(List<Map<String, dynamic>> logs) {
     final grouped = <String, List<Map<String, dynamic>>>{};
-    
+
     for (final log in logs) {
       final createdAt = log['createdAt']?.toString();
       if (createdAt == null) continue;
-      
+
       try {
         final dt = DateTime.parse(createdAt);
         final dateKey = DateFormat('yyyy-MM-dd').format(dt);
-        
+
         if (!grouped.containsKey(dateKey)) {
           grouped[dateKey] = [];
         }
@@ -108,16 +111,15 @@ class _AdminSystemLogsPageState extends State<AdminSystemLogsPage> {
         continue;
       }
     }
-    
+
     // Sort dates descending (newest first)
-    final sortedKeys = grouped.keys.toList()
-      ..sort((a, b) => b.compareTo(a));
-    
+    final sortedKeys = grouped.keys.toList()..sort((a, b) => b.compareTo(a));
+
     final sortedGrouped = <String, List<Map<String, dynamic>>>{};
     for (final key in sortedKeys) {
       sortedGrouped[key] = grouped[key]!;
     }
-    
+
     _groupedLogs = sortedGrouped;
   }
 
@@ -132,14 +134,16 @@ class _AdminSystemLogsPageState extends State<AdminSystemLogsPage> {
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: ColorScheme.light(
-              primary: isDark ? const Color(0xFF5C6BC0) : const Color(0xFF1A237E),
+              primary: isDark
+                  ? const Color(0xFF5C6BC0)
+                  : const Color(0xFF1A237E),
             ),
           ),
           child: child!,
         );
       },
     );
-    
+
     if (picked != null) {
       setState(() {
         _selectedDate = picked;
@@ -177,7 +181,8 @@ class _AdminSystemLogsPageState extends State<AdminSystemLogsPage> {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new_rounded),
-          onPressed: () => context.canPop() ? context.pop() : context.go('/admin'),
+          onPressed: () =>
+              context.canPop() ? context.pop() : context.go('/admin'),
         ),
         title: Text(
           'admin.systemLogs.title'.tr(),
@@ -199,7 +204,7 @@ class _AdminSystemLogsPageState extends State<AdminSystemLogsPage> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
-              color: isDark 
+              color: isDark
                   ? const Color(0xFF1A2332).withOpacity(0.4)
                   : colorScheme.surfaceContainerHighest.withOpacity(0.2),
               border: Border(
@@ -219,15 +224,20 @@ class _AdminSystemLogsPageState extends State<AdminSystemLogsPage> {
                       onTap: _selectDate,
                       borderRadius: BorderRadius.circular(14),
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 13,
+                        ),
                         decoration: BoxDecoration(
                           color: _selectedDate != null
-                              ? (isDark 
-                                  ? colorScheme.primary.withOpacity(0.15)
-                                  : colorScheme.primaryContainer.withOpacity(0.4))
-                              : (isDark 
-                                  ? const Color(0xFF1A2332).withOpacity(0.7)
-                                  : colorScheme.surface),
+                              ? (isDark
+                                    ? colorScheme.primary.withOpacity(0.15)
+                                    : colorScheme.primaryContainer.withOpacity(
+                                        0.4,
+                                      ))
+                              : (isDark
+                                    ? const Color(0xFF1A2332).withOpacity(0.7)
+                                    : colorScheme.surface),
                           borderRadius: BorderRadius.circular(14),
                           border: Border.all(
                             color: _selectedDate != null
@@ -252,7 +262,8 @@ class _AdminSystemLogsPageState extends State<AdminSystemLogsPage> {
                               decoration: BoxDecoration(
                                 color: _selectedDate != null
                                     ? colorScheme.primary.withOpacity(0.2)
-                                    : colorScheme.surfaceContainerHighest.withOpacity(0.5),
+                                    : colorScheme.surfaceContainerHighest
+                                          .withOpacity(0.5),
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: Icon(
@@ -260,23 +271,28 @@ class _AdminSystemLogsPageState extends State<AdminSystemLogsPage> {
                                 size: 16,
                                 color: _selectedDate != null
                                     ? colorScheme.primary
-                                    : colorScheme.onSurfaceVariant.withOpacity(0.8),
+                                    : colorScheme.onSurfaceVariant.withOpacity(
+                                        0.8,
+                                      ),
                               ),
                             ),
                             const SizedBox(width: 10),
                             Expanded(
                               child: Text(
                                 _selectedDate != null
-                                    ? DateFormat('dd/MM/yyyy').format(_selectedDate!)
+                                    ? DateFormat(
+                                        'dd/MM/yyyy',
+                                      ).format(_selectedDate!)
                                     : 'admin.systemLogs.selectDate'.tr(),
                                 style: TextStyle(
                                   fontSize: 13,
-                                  fontWeight: _selectedDate != null 
-                                      ? FontWeight.w700 
+                                  fontWeight: _selectedDate != null
+                                      ? FontWeight.w700
                                       : FontWeight.w500,
                                   color: _selectedDate != null
                                       ? colorScheme.onSurface
-                                      : colorScheme.onSurfaceVariant.withOpacity(0.7),
+                                      : colorScheme.onSurfaceVariant
+                                            .withOpacity(0.7),
                                   letterSpacing: 0.2,
                                 ),
                               ),
@@ -292,7 +308,8 @@ class _AdminSystemLogsPageState extends State<AdminSystemLogsPage> {
                                   child: Container(
                                     padding: const EdgeInsets.all(4),
                                     decoration: BoxDecoration(
-                                      color: colorScheme.errorContainer.withOpacity(0.3),
+                                      color: colorScheme.errorContainer
+                                          .withOpacity(0.3),
                                       borderRadius: BorderRadius.circular(20),
                                     ),
                                     child: Icon(
@@ -377,10 +394,13 @@ class _AdminSystemLogsPageState extends State<AdminSystemLogsPage> {
                         ),
                       ),
                       filled: true,
-                      fillColor: isDark 
+                      fillColor: isDark
                           ? const Color(0xFF1A2332).withOpacity(0.7)
                           : colorScheme.surface,
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 13,
+                      ),
                       isDense: true,
                     ),
                     onChanged: (_) {
@@ -397,47 +417,59 @@ class _AdminSystemLogsPageState extends State<AdminSystemLogsPage> {
                 ? Center(
                     child: CircularProgressIndicator(
                       valueColor: AlwaysStoppedAnimation<Color>(
-                        isDark ? const Color(0xFF5C6BC0) : const Color(0xFF1A237E),
+                        isDark
+                            ? const Color(0xFF5C6BC0)
+                            : const Color(0xFF1A237E),
                       ),
                     ),
                   )
                 : _groupedLogs.isEmpty
-                    ? Center(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.history_rounded,
-                              size: 64,
-                              color: colorScheme.onSurfaceVariant.withOpacity(0.5),
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              'admin.systemLogs.noLogs'.tr(),
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                color: colorScheme.onSurfaceVariant,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              _selectedDate != null
-                                  ? 'admin.systemLogs.noActivityForDate'.tr(args: [DateFormat('dd/MM/yyyy').format(_selectedDate!)])
-                                  : 'admin.systemLogs.noActivityRecorded'.tr(),
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: colorScheme.onSurfaceVariant.withOpacity(0.7),
-                              ),
-                            ),
-                          ],
+                ? Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.history_rounded,
+                          size: 64,
+                          color: colorScheme.onSurfaceVariant.withOpacity(0.5),
                         ),
-                      )
-                    : RefreshIndicator(
-                        onRefresh: () => _loadAllLogs(),
-                        color: isDark ? const Color(0xFF5C6BC0) : const Color(0xFF1A237E),
-                        child: _buildGroupedLogsList(),
-                      ),
+                        const SizedBox(height: 16),
+                        Text(
+                          'admin.systemLogs.noLogs'.tr(),
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: colorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          _selectedDate != null
+                              ? 'admin.systemLogs.noActivityForDate'.tr(
+                                  args: [
+                                    DateFormat(
+                                      'dd/MM/yyyy',
+                                    ).format(_selectedDate!),
+                                  ],
+                                )
+                              : 'admin.systemLogs.noActivityRecorded'.tr(),
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: colorScheme.onSurfaceVariant.withOpacity(
+                              0.7,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                : RefreshIndicator(
+                    onRefresh: () => _loadAllLogs(),
+                    color: isDark
+                        ? const Color(0xFF5C6BC0)
+                        : const Color(0xFF1A237E),
+                    child: _buildGroupedLogsList(),
+                  ),
           ),
         ],
       ),
@@ -448,34 +480,36 @@ class _AdminSystemLogsPageState extends State<AdminSystemLogsPage> {
     final colorScheme = Theme.of(context).colorScheme;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final searchQuery = _searchController.text.toLowerCase();
-    
+
     // Filter logs by search query
     final filteredGroupedLogs = <String, List<Map<String, dynamic>>>{};
-    
+
     for (final entry in _groupedLogs.entries) {
       final filteredLogs = entry.value.where((log) {
         if (searchQuery.isEmpty) return true;
-        
+
         final title = log['title']?.toString().toLowerCase() ?? '';
         final message = log['message']?.toString().toLowerCase() ?? '';
         final action = log['action']?.toString().toLowerCase() ?? '';
         final tableName = log['tableName']?.toString().toLowerCase() ?? '';
-        final username = log['user']?['username']?.toString().toLowerCase() ?? '';
-        final fullName = log['user']?['fullName']?.toString().toLowerCase() ?? '';
-        
+        final username =
+            log['user']?['username']?.toString().toLowerCase() ?? '';
+        final fullName =
+            log['user']?['fullName']?.toString().toLowerCase() ?? '';
+
         return title.contains(searchQuery) ||
-               message.contains(searchQuery) ||
-               action.contains(searchQuery) ||
-               tableName.contains(searchQuery) ||
-               username.contains(searchQuery) ||
-               fullName.contains(searchQuery);
+            message.contains(searchQuery) ||
+            action.contains(searchQuery) ||
+            tableName.contains(searchQuery) ||
+            username.contains(searchQuery) ||
+            fullName.contains(searchQuery);
       }).toList();
-      
+
       if (filteredLogs.isNotEmpty) {
         filteredGroupedLogs[entry.key] = filteredLogs;
       }
     }
-    
+
     if (filteredGroupedLogs.isEmpty) {
       return Center(
         child: Column(
@@ -507,7 +541,7 @@ class _AdminSystemLogsPageState extends State<AdminSystemLogsPage> {
         ),
       );
     }
-    
+
     return ListView.builder(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       itemCount: filteredGroupedLogs.length * 2, // Date header + logs
@@ -517,7 +551,7 @@ class _AdminSystemLogsPageState extends State<AdminSystemLogsPage> {
           final dateIndex = index ~/ 2;
           final dateKey = filteredGroupedLogs.keys.elementAt(dateIndex);
           final date = DateTime.parse(dateKey);
-          
+
           return _DateHeader(
             date: date,
             logCount: filteredGroupedLogs[dateKey]!.length,
@@ -529,13 +563,17 @@ class _AdminSystemLogsPageState extends State<AdminSystemLogsPage> {
           final dateIndex = (index - 1) ~/ 2;
           final dateKey = filteredGroupedLogs.keys.elementAt(dateIndex);
           final logs = filteredGroupedLogs[dateKey]!;
-          
+
           return Column(
-            children: logs.map((log) => _LogCard(
-              log: log,
-              formatDateTime: _formatDateTime,
-              isDark: isDark,
-            )).toList(),
+            children: logs
+                .map(
+                  (log) => _LogCard(
+                    log: log,
+                    formatDateTime: _formatDateTime,
+                    isDark: isDark,
+                  ),
+                )
+                .toList(),
           );
         }
       },
@@ -561,7 +599,7 @@ class _DateHeader extends StatelessWidget {
     final today = DateTime(now.year, now.month, now.day);
     final yesterday = today.subtract(const Duration(days: 1));
     final dateOnly = DateTime(date.year, date.month, date.day);
-    
+
     String dateText;
     if (dateOnly == today) {
       dateText = 'admin.systemLogs.today'.tr();
@@ -574,7 +612,7 @@ class _DateHeader extends StatelessWidget {
         dateText = dateText[0].toUpperCase() + dateText.substring(1);
       }
     }
-    
+
     return Container(
       margin: const EdgeInsets.only(top: 20, bottom: 14),
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
@@ -644,11 +682,7 @@ class _DateHeader extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(
-                  Icons.list_rounded,
-                  size: 12,
-                  color: colorScheme.primary,
-                ),
+                Icon(Icons.list_rounded, size: 12, color: colorScheme.primary),
                 const SizedBox(width: 6),
                 Text(
                   '$logCount',
@@ -700,7 +734,7 @@ class _LogCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: isDark 
+        color: isDark
             ? const Color(0xFF1A2332).withOpacity(0.7)
             : colorScheme.surface,
         borderRadius: BorderRadius.circular(14),
@@ -725,7 +759,10 @@ class _LogCard extends StatelessWidget {
             Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 9,
+                    vertical: 5,
+                  ),
                   decoration: BoxDecoration(
                     color: priorityColor.withOpacity(isDark ? 0.3 : 0.18),
                     borderRadius: BorderRadius.circular(9),
@@ -746,7 +783,10 @@ class _LogCard extends StatelessWidget {
                 ),
                 const Spacer(),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: colorScheme.surfaceContainerHighest.withOpacity(0.5),
                     borderRadius: BorderRadius.circular(8),
@@ -806,8 +846,10 @@ class _LogCard extends StatelessWidget {
                 if (log['user'] != null)
                   _InfoChip(
                     icon: Icons.person_outline_rounded,
-                    label: log['user']['username']?.toString() ?? 
-                           log['user']['fullName']?.toString() ?? 'admin.common.user'.tr(),
+                    label:
+                        log['user']['username']?.toString() ??
+                        log['user']['fullName']?.toString() ??
+                        'admin.common.user'.tr(),
                     isDark: isDark,
                   ),
                 if (log['action'] != null)
@@ -825,7 +867,9 @@ class _LogCard extends StatelessWidget {
                 if (log['recordId'] != null)
                   _InfoChip(
                     icon: Icons.tag_rounded,
-                    label: 'admin.systemLogs.recordId'.tr(namedArgs: {'id': '${log['recordId']}'}),
+                    label: 'admin.systemLogs.recordId'.tr(
+                      namedArgs: {'id': '${log['recordId']}'},
+                    ),
                     isDark: isDark,
                   ),
               ],
@@ -848,7 +892,9 @@ class _LogCard extends StatelessWidget {
               if (log['ipAddr'] != null)
                 _InfoRow(
                   icon: Icons.language_rounded,
-                  label: 'admin.systemLogs.ipAddress'.tr(namedArgs: {'ip': '${log['ipAddr']}'}),
+                  label: 'admin.systemLogs.ipAddress'.tr(
+                    namedArgs: {'ip': '${log['ipAddr']}'},
+                  ),
                   isDark: isDark,
                 ),
               if (log['userAgent'] != null)
@@ -871,7 +917,7 @@ class _InfoChip extends StatelessWidget {
   final bool isDark;
 
   const _InfoChip({
-    required this.icon, 
+    required this.icon,
     required this.label,
     required this.isDark,
   });
@@ -882,7 +928,7 @@ class _InfoChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
       decoration: BoxDecoration(
-        color: isDark 
+        color: isDark
             ? const Color(0xFF2A3441).withOpacity(0.6)
             : colorScheme.surfaceContainerHighest.withOpacity(0.7),
         borderRadius: BorderRadius.circular(10),
@@ -935,7 +981,7 @@ class _InfoRow extends StatelessWidget {
   final bool isDark;
 
   const _InfoRow({
-    required this.icon, 
+    required this.icon,
     required this.label,
     required this.isDark,
   });
@@ -950,7 +996,7 @@ class _InfoRow extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(6),
             decoration: BoxDecoration(
-              color: isDark 
+              color: isDark
                   ? const Color(0xFF2A3441).withOpacity(0.5)
                   : colorScheme.surfaceContainerHighest.withOpacity(0.6),
               borderRadius: BorderRadius.circular(8),
@@ -984,5 +1030,3 @@ class _InfoRow extends StatelessWidget {
     );
   }
 }
-
-

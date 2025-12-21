@@ -1,0 +1,22 @@
+{
+  "title": "My Appointments",
+  "tabs": {
+    "upcoming": "Upcoming",
+    "history": "History",
+    "cancelled": "Cancelled"
+  },
+  "empty": "No appointments found",
+  "doctor": "Dr. {name}",
+  "status": {
+    "pending": "Pending",
+    "scheduled": "Scheduled",
+    "confirmed": "Confirmed",
+    "inProgress": "In Progress",
+    "completed": "Completed",
+    "cancelled": "Cancelled",
+    "noShow": "No Show"
+  },
+  "date": {
+    "month": "MMM" 
+  }
+}

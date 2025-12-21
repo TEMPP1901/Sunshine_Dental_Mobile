@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:easy_localization/easy_localization.dart'; // Import i18n
 import '../../../../models/patient/patient_models.dart';
 import '../../../../services/patient/patient_service.dart';
 import '../appointments/widgets/appointment_card.dart';
 import 'widgets/rank_card.dart';
-import 'widgets/wellness_card.dart'; // [MỚI] Import WellnessCard
+import 'widgets/wellness_card.dart';
 
 class PatientDashboardScreen extends StatefulWidget {
   const PatientDashboardScreen({super.key});
@@ -68,9 +69,9 @@ class _PatientDashboardScreenState extends State<PatientDashboardScreen> {
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
-        title: const Text(
-          "Tổng Quan Sức Khỏe",
-          style: TextStyle(fontWeight: FontWeight.bold),
+        title: Text(
+          'dashboard.title'.tr(), // "Tổng Quan Sức Khỏe"
+          style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         backgroundColor: Colors.white,
         elevation: 0,
@@ -86,10 +87,10 @@ class _PatientDashboardScreenState extends State<PatientDashboardScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text("Không tải được dữ liệu"),
+                  Text('dashboard.error'.tr()), // "Không tải được dữ liệu"
                   TextButton(
                     onPressed: _fetchData,
-                    child: const Text("Thử lại"),
+                    child: Text('dashboard.retry'.tr()), // "Thử lại"
                   ),
                 ],
               ),
@@ -108,7 +109,7 @@ class _PatientDashboardScreenState extends State<PatientDashboardScreen> {
                       children: [
                         RankCard(data: _data!),
 
-                        // [MỚI] Hiển thị ưu đãi giảm giá
+                        // Hiển thị ưu đãi giảm giá
                         Builder(
                           builder: (context) {
                             final discount = _getDiscountInfo(
@@ -138,7 +139,11 @@ class _PatientDashboardScreenState extends State<PatientDashboardScreen> {
                                     style: TextStyle(fontSize: 16),
                                   ),
                                   Text(
-                                    "Ưu đãi thành viên: Giảm ${discount['pct']}%",
+                                    'dashboard.discount'.tr(
+                                      namedArgs: {
+                                        'percent': discount['pct'].toString(),
+                                      },
+                                    ), // "Ưu đãi thành viên..."
                                     style: TextStyle(
                                       color: discount['color'],
                                       fontWeight: FontWeight.bold,
@@ -155,9 +160,9 @@ class _PatientDashboardScreenState extends State<PatientDashboardScreen> {
                     const SizedBox(height: 24),
 
                     // 2. Menu Nhanh
-                    const Text(
-                      "Truy cập nhanh",
-                      style: TextStyle(
+                    Text(
+                      'dashboard.quickAccess'.tr(), // "Truy cập nhanh"
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
@@ -167,7 +172,7 @@ class _PatientDashboardScreenState extends State<PatientDashboardScreen> {
                       children: [
                         _buildQuickLink(
                           context,
-                          "Lịch hẹn",
+                          'dashboard.appointments'.tr(), // "Lịch hẹn"
                           Icons.calendar_month,
                           Colors.blue,
                           () => context.push('/my-appointments'),
@@ -175,7 +180,7 @@ class _PatientDashboardScreenState extends State<PatientDashboardScreen> {
                         const SizedBox(width: 12),
                         _buildQuickLink(
                           context,
-                          "Hồ sơ",
+                          'dashboard.records'.tr(), // "Hồ sơ"
                           Icons.medical_information,
                           Colors.teal,
                           () => context.push('/patient-profile'),
@@ -184,23 +189,20 @@ class _PatientDashboardScreenState extends State<PatientDashboardScreen> {
                     ),
                     const SizedBox(height: 24),
 
-                    // 3. Wellness Card (Thay thế AI Tip cũ)
-                    // [MỚI] Sử dụng WellnessCard
-                    SizedBox(
-                      height: 220, // Chiều cao cố định cho đẹp
-                      child: WellnessCard(
-                        status: _data!.healthStatus,
-                        message: _data!.healthMessage,
-                        daysSince: _data!.daysSinceLastVisit,
-                      ),
+                    // 3. Wellness Card
+                    // ĐÃ SỬA: Xóa SizedBox cố định chiều cao để tránh overflow
+                    WellnessCard(
+                      status: _data!.healthStatus,
+                      message: _data!.healthMessage,
+                      daysSince: _data!.daysSinceLastVisit,
                     ),
                     const SizedBox(height: 24),
 
                     // 4. Lịch hẹn sắp tới
                     if (_data!.nextAppointment != null) ...[
-                      const Text(
-                        "Lịch hẹn sắp tới",
-                        style: TextStyle(
+                      Text(
+                        'dashboard.upcoming'.tr(), // "Lịch hẹn sắp tới"
+                        style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),

@@ -6,7 +6,7 @@ class ProductProvider extends ChangeNotifier {
   final ProductService _service = ProductService();
 
   // --- STATE DANH SÁCH ---
-  List<ProductModel> _products = [];
+  final List<ProductModel> _products = [];
   bool _isLoading = false;
   String _errorMessage = '';
 
@@ -17,7 +17,7 @@ class ProductProvider extends ChangeNotifier {
   // --- STATE BỘ LỌC (Filter & Sort) ---
   String _keyword = '';
   String _sortBy = 'defaultRetailPrice'; // Mặc định sắp xếp theo giá
-  String _order = 'asc';                 // Mặc định tăng dần
+  String _order = 'asc'; // Mặc định tăng dần
 
   // Bộ lọc nâng cao (Brand, Type, Price Range)
   List<String> _filterBrands = [];

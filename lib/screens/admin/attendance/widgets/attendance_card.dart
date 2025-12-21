@@ -1,6 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'attendance_info_row.dart';
 import 'attendance_action_button.dart';
 
@@ -47,7 +46,7 @@ class AttendanceCard extends StatelessWidget {
     try {
       // Parse datetime từ backend (thường là UTC format với 'Z' ở cuối)
       DateTime dateTime = DateTime.parse(dateTimeStr);
-      
+
       // Backend trả về UTC, cần convert sang local time
       // toLocal() sẽ tự động convert từ UTC sang timezone của device
       // Nếu device đang ở timezone VN (UTC+7) thì sẽ hiển thị đúng
@@ -55,7 +54,7 @@ class AttendanceCard extends StatelessWidget {
         dateTime = dateTime.toLocal();
       }
       // Nếu không phải UTC, giả định đã là local time hoặc format khác
-      
+
       return DateFormat('dd/MM/yyyy HH:mm').format(dateTime);
     } catch (e) {
       return dateTimeStr;
@@ -65,13 +64,19 @@ class AttendanceCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Lấy status từ attendanceStatus (backend) hoặc status (fallback)
-    final status = (item['attendanceStatus'] ?? item['status'])?.toString().toUpperCase() ?? 'UNKNOWN';
+    final status =
+        (item['attendanceStatus'] ?? item['status'])
+            ?.toString()
+            .toUpperCase() ??
+        'UNKNOWN';
     final statusColor = _getStatusColor(status);
     final surfaceColor = isDark ? const Color(0xFF1A2332) : Colors.white;
     final borderColor = isDark
         ? Colors.grey[800]!.withOpacity(0.5)
         : Colors.grey[200]!.withOpacity(0.8);
-    final textColor = isDark ? const Color(0xFFE8EAED) : const Color(0xFF0F172A);
+    final textColor = isDark
+        ? const Color(0xFFE8EAED)
+        : const Color(0xFF0F172A);
     final textSecondaryColor = isDark ? Colors.grey[400] : Colors.grey[600];
 
     return Container(
@@ -79,10 +84,7 @@ class AttendanceCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: surfaceColor,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: borderColor,
-          width: 1,
-        ),
+        border: Border.all(color: borderColor, width: 1),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(isDark ? 0.3 : 0.05),
@@ -134,7 +136,10 @@ class AttendanceCard extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        item['fullName'] ?? item['employeeName'] ?? item['userName'] ?? 'admin.common.employee'.tr(),
+                        item['fullName'] ??
+                            item['employeeName'] ??
+                            item['userName'] ??
+                            'admin.common.employee'.tr(),
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
@@ -145,7 +150,9 @@ class AttendanceCard extends StatelessWidget {
                       const SizedBox(height: 6),
                       Row(
                         children: [
-                          if (item['jobTitle'] != null || item['roleName'] != null || item['role'] != null) ...[
+                          if (item['jobTitle'] != null ||
+                              item['roleName'] != null ||
+                              item['role'] != null) ...[
                             Icon(
                               Icons.work_rounded,
                               size: 14,
@@ -154,10 +161,12 @@ class AttendanceCard extends StatelessWidget {
                             const SizedBox(width: 4),
                             Flexible(
                               child: Text(
-                                item['jobTitle']?.toString() ?? 
-                                item['roleName']?.toString() ?? 
-                                (item['role'] is Map ? item['role']['roleName']?.toString() : item['role']?.toString()) ?? 
-                                'admin.common.employee'.tr(),
+                                item['jobTitle']?.toString() ??
+                                    item['roleName']?.toString() ??
+                                    (item['role'] is Map
+                                        ? item['role']['roleName']?.toString()
+                                        : item['role']?.toString()) ??
+                                    'admin.common.employee'.tr(),
                                 style: TextStyle(
                                   fontSize: 13,
                                   color: textSecondaryColor,
@@ -167,7 +176,8 @@ class AttendanceCard extends StatelessWidget {
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
-                          ] else if (item['userId'] != null || item['employeeId'] != null) ...[
+                          ] else if (item['userId'] != null ||
+                              item['employeeId'] != null) ...[
                             Icon(
                               Icons.badge_rounded,
                               size: 12,
@@ -176,7 +186,12 @@ class AttendanceCard extends StatelessWidget {
                             const SizedBox(width: 4),
                             Flexible(
                               child: Text(
-                                'admin.attendance.userId'.tr(namedArgs: {'id': '${item['userId'] ?? item['employeeId'] ?? ''}'}),
+                                'admin.attendance.userId'.tr(
+                                  namedArgs: {
+                                    'id':
+                                        '${item['userId'] ?? item['employeeId'] ?? ''}',
+                                  },
+                                ),
                                 style: TextStyle(
                                   fontSize: 12,
                                   color: textSecondaryColor,
@@ -194,7 +209,10 @@ class AttendanceCard extends StatelessWidget {
                 ),
                 // Status badge - luôn hiển thị để biết trạng thái
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 8,
+                  ),
                   decoration: BoxDecoration(
                     color: statusColor.withOpacity(isDark ? 0.2 : 0.12),
                     borderRadius: BorderRadius.circular(24),
@@ -247,7 +265,11 @@ class AttendanceCard extends StatelessWidget {
                     icon: Icons.access_time_rounded,
                     iconColor: const Color(0xFF3B82F6),
                     label: 'admin.attendance.checkIn'.tr(),
-                    value: _formatDateTime(item['checkInTime']?.toString() ?? item['checkIn']?.toString() ?? '--'),
+                    value: _formatDateTime(
+                      item['checkInTime']?.toString() ??
+                          item['checkIn']?.toString() ??
+                          '--',
+                    ),
                     isDark: isDark,
                   ),
                   const SizedBox(height: 12),
@@ -255,7 +277,11 @@ class AttendanceCard extends StatelessWidget {
                     icon: Icons.logout_rounded,
                     iconColor: const Color(0xFF8B5CF6),
                     label: 'admin.attendance.checkOut'.tr(),
-                    value: _formatDateTime(item['checkOutTime']?.toString() ?? item['checkOut']?.toString() ?? '--'),
+                    value: _formatDateTime(
+                      item['checkOutTime']?.toString() ??
+                          item['checkOut']?.toString() ??
+                          '--',
+                    ),
                     isDark: isDark,
                   ),
                   if (item['clinicName'] != null || item['clinic'] != null) ...[
@@ -264,7 +290,10 @@ class AttendanceCard extends StatelessWidget {
                       icon: Icons.business_rounded,
                       iconColor: const Color(0xFF10B981),
                       label: 'admin.common.clinic'.tr(),
-                      value: item['clinicName']?.toString() ?? item['clinic']?.toString() ?? '--',
+                      value:
+                          item['clinicName']?.toString() ??
+                          item['clinic']?.toString() ??
+                          '--',
                       isDark: isDark,
                     ),
                   ],
@@ -272,47 +301,45 @@ class AttendanceCard extends StatelessWidget {
               ),
             ),
             // Action buttons - chỉ hiển thị khi status là UNKNOWN hoặc null
-            if (status.toUpperCase() == 'UNKNOWN' || status.isEmpty)
-              ...[
-                const SizedBox(height: 16),
-                Row(
-                  children: [
-                    Expanded(
-                      child: AttendanceActionButton(
-                        label: 'admin.attendance.statusOptions.present'.tr(),
-                        color: const Color(0xFF10B981),
-                        icon: Icons.check_circle_rounded,
-                        isDark: isDark,
-                        onTap: () => onUpdateStatus('PRESENT'),
-                      ),
+            if (status.toUpperCase() == 'UNKNOWN' || status.isEmpty) ...[
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    child: AttendanceActionButton(
+                      label: 'admin.attendance.statusOptions.present'.tr(),
+                      color: const Color(0xFF10B981),
+                      icon: Icons.check_circle_rounded,
+                      isDark: isDark,
+                      onTap: () => onUpdateStatus('PRESENT'),
                     ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: AttendanceActionButton(
-                        label: 'admin.attendance.statusOptions.late'.tr(),
-                        color: const Color(0xFFF59E0B),
-                        icon: Icons.schedule_rounded,
-                        isDark: isDark,
-                        onTap: () => onUpdateStatus('LATE'),
-                      ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: AttendanceActionButton(
+                      label: 'admin.attendance.statusOptions.late'.tr(),
+                      color: const Color(0xFFF59E0B),
+                      icon: Icons.schedule_rounded,
+                      isDark: isDark,
+                      onTap: () => onUpdateStatus('LATE'),
                     ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: AttendanceActionButton(
-                        label: 'admin.attendance.statusOptions.absent'.tr(),
-                        color: const Color(0xFFEF4444),
-                        icon: Icons.cancel_rounded,
-                        isDark: isDark,
-                        onTap: () => onUpdateStatus('ABSENT'),
-                      ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: AttendanceActionButton(
+                      label: 'admin.attendance.statusOptions.absent'.tr(),
+                      color: const Color(0xFFEF4444),
+                      icon: Icons.cancel_rounded,
+                      isDark: isDark,
+                      onTap: () => onUpdateStatus('ABSENT'),
                     ),
-                  ],
-                ),
-              ],
+                  ),
+                ],
+              ),
+            ],
           ],
         ),
       ),
     );
   }
 }
-

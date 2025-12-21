@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart'; // Import i18n
 import '../../../../models/patient/patient_models.dart';
-import '../../../../services/api_service.dart'; // Để resolve ảnh
+import '../../../../services/api_service.dart';
 
 class MedicalRecordDetailDialog extends StatelessWidget {
   final MedicalRecord record;
@@ -38,9 +39,9 @@ class MedicalRecordDetailDialog extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          "Chi tiết hồ sơ",
-                          style: TextStyle(
+                        Text(
+                          "records.detail.title".tr(), // "Chi tiết hồ sơ"
+                          style: const TextStyle(
                             color: Colors.white,
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
@@ -78,7 +79,7 @@ class MedicalRecordDetailDialog extends StatelessWidget {
                       children: [
                         Expanded(
                           child: _buildInfoBox(
-                            "Chẩn đoán",
+                            "records.detail.diagnosis".tr(), // "CHẨN ĐOÁN"
                             record.diagnosis,
                             Colors.grey.shade100,
                             Colors.grey.shade800,
@@ -87,11 +88,13 @@ class MedicalRecordDetailDialog extends StatelessWidget {
                         const SizedBox(width: 12),
                         Expanded(
                           child: _buildInfoBox(
-                            "Điều trị",
+                            "records.detail.treatment".tr(), // "ĐIỀU TRỊ"
                             record.treatment,
                             Colors.blue.shade50,
                             Colors.blue.shade800,
-                            footer: "BS. ${record.doctorName}",
+                            footer: "records.card.doctor".tr(
+                              namedArgs: {'name': record.doctorName},
+                            ),
                           ),
                         ),
                       ],
@@ -100,9 +103,9 @@ class MedicalRecordDetailDialog extends StatelessWidget {
 
                     // Lời dặn (Note)
                     if (record.note != null && record.note!.isNotEmpty) ...[
-                      const Text(
-                        "💬 LỜI DẶN",
-                        style: TextStyle(
+                      Text(
+                        "💬 ${"records.detail.note".tr()}", // "LỜI DẶN"
+                        style: const TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
                           color: Colors.grey,
@@ -132,9 +135,9 @@ class MedicalRecordDetailDialog extends StatelessWidget {
                     // Đơn thuốc
                     if (record.prescriptionNote != null &&
                         record.prescriptionNote!.isNotEmpty) ...[
-                      const Text(
-                        "💊 ĐƠN THUỐC",
-                        style: TextStyle(
+                      Text(
+                        "💊 ${"records.detail.prescription".tr()}", // "ĐƠN THUỐC"
+                        style: const TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
                           color: Colors.grey,
@@ -164,9 +167,9 @@ class MedicalRecordDetailDialog extends StatelessWidget {
                     // Hình ảnh
                     if (record.imageUrl != null &&
                         record.imageUrl!.isNotEmpty) ...[
-                      const Text(
-                        "HÌNH ẢNH",
-                        style: TextStyle(
+                      Text(
+                        "records.detail.image".tr(), // "HÌNH ẢNH"
+                        style: const TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
                           color: Colors.grey,
@@ -219,7 +222,7 @@ class MedicalRecordDetailDialog extends StatelessWidget {
                     side: BorderSide(color: Colors.grey.shade300),
                     foregroundColor: Colors.grey.shade700,
                   ),
-                  child: const Text("Đóng lại"),
+                  child: Text("records.detail.close".tr()), // "Đóng lại"
                 ),
               ),
             ),

@@ -1,4 +1,5 @@
 {
+  "appName": "Sunshine Dental",
   "signInRequired": "Please sign in to continue",
   "understood": "Understood",
   "cancel": "Cancel",
@@ -6,6 +7,17 @@
   "submit": "Submit",
   "retry": "Retry",
   "seeAll": "See All",
+  "save": "Save",
+  "edit": "Edit",
+  "delete": "Delete",
+  "close": "Close",
+  "back": "Back",
+  "continue": "Continue",
+  "loading": "Loading...",
+  "success": "Success",
+  "error": "An error occurred",
+  "required": "Please enter {}",
+  "selectDate": "Select Date",
   "roles": {
     "USER": "User",
     "ADMIN": "Administrator",
@@ -13,7 +25,7 @@
     "DOCTOR": "Doctor",
     "RECEPTION": "Receptionist",
     "RECEPTIONIST": "Receptionist",
-    "ACCOUNTANT": "Accountant"
+    "ACCOUNTANT": "Accountant",
+    "PATIENT": "Patient"
   }
 }
-

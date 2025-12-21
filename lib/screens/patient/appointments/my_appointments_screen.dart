@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:easy_localization/easy_localization.dart'; // Import i18n
 import '../../../../models/patient/patient_models.dart';
 import '../../../../services/patient/patient_service.dart';
 import 'widgets/appointment_card.dart';
@@ -42,14 +43,17 @@ class _MyAppointmentsScreenState extends State<MyAppointmentsScreen>
     }
   }
 
-  // Đã xóa hàm _confirmCancel vì không dùng nữa
-
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
-        title: const Text("Quản Lý Lịch Hẹn"),
+        title: Text(
+          "appointments.title".tr(), // "Quản Lý Lịch Hẹn"
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
         centerTitle: true,
         backgroundColor: Colors.white,
         elevation: 0,
@@ -59,13 +63,15 @@ class _MyAppointmentsScreenState extends State<MyAppointmentsScreen>
         ),
         bottom: TabBar(
           controller: _tabController,
-          labelColor: Theme.of(context).primaryColor,
+          labelColor: colorScheme.primary,
           unselectedLabelColor: Colors.grey,
-          indicatorColor: Theme.of(context).primaryColor,
-          tabs: const [
-            Tab(text: "Sắp tới"),
-            Tab(text: "Lịch sử"),
-            Tab(text: "Đã hủy"),
+          indicatorColor: colorScheme.primary,
+          // Sử dụng Builder để rebuild khi đổi ngôn ngữ (nếu cần thiết,
+          // nhưng TabBar thường cần reload màn hình để update text)
+          tabs: [
+            Tab(text: "appointments.tabs.upcoming".tr()), // "Sắp tới"
+            Tab(text: "appointments.tabs.history".tr()), // "Lịch sử"
+            Tab(text: "appointments.tabs.cancelled".tr()), // "Đã hủy"
           ],
         ),
       ),
@@ -101,7 +107,7 @@ class _MyAppointmentsScreenState extends State<MyAppointmentsScreen>
             Icon(Icons.event_busy, size: 64, color: Colors.grey[300]),
             const SizedBox(height: 16),
             Text(
-              "Không có lịch hẹn nào",
+              "appointments.empty".tr(), // "Không có lịch hẹn nào"
               style: TextStyle(color: Colors.grey[500], fontSize: 16),
             ),
           ],
@@ -117,7 +123,6 @@ class _MyAppointmentsScreenState extends State<MyAppointmentsScreen>
         separatorBuilder: (_, __) => const SizedBox(height: 12),
         itemBuilder: (ctx, i) {
           final item = list[i];
-          // Không còn truyền onCancel nữa
           return AppointmentCard(appointment: item);
         },
       ),

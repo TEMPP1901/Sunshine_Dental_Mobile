@@ -1,0 +1,22 @@
+{
+  "title": "Quản Lý Lịch Hẹn",
+  "tabs": {
+    "upcoming": "Sắp tới",
+    "history": "Lịch sử",
+    "cancelled": "Đã hủy"
+  },
+  "empty": "Không có lịch hẹn nào",
+  "doctor": "BS. {name}",
+  "status": {
+    "pending": "Chờ xác nhận",
+    "scheduled": "Đã lên lịch",
+    "confirmed": "Đã xác nhận",
+    "inProgress": "Đang khám",
+    "completed": "Hoàn thành",
+    "cancelled": "Đã hủy",
+    "noShow": "Vắng mặt"
+  },
+  "date": {
+    "month": "Th {month}"
+  }
+}

@@ -1,8 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 
 import '../../services/admin_service.dart';
 import '../../services/hr_service.dart';
@@ -13,7 +11,8 @@ class PendingExplanationsPage extends StatefulWidget {
   const PendingExplanationsPage({super.key});
 
   @override
-  State<PendingExplanationsPage> createState() => _PendingExplanationsPageState();
+  State<PendingExplanationsPage> createState() =>
+      _PendingExplanationsPageState();
 }
 
 class _PendingExplanationsPageState extends State<PendingExplanationsPage> {
@@ -74,7 +73,11 @@ class _PendingExplanationsPageState extends State<PendingExplanationsPage> {
       final confirm = await showDialog<bool>(
         context: context,
         builder: (ctx) => AlertDialog(
-          title: Text(action == 'APPROVE' ? 'hr.pendingExplanations.approveTitle'.tr() : 'hr.pendingExplanations.rejectTitle'.tr()),
+          title: Text(
+            action == 'APPROVE'
+                ? 'hr.pendingExplanations.approveTitle'.tr()
+                : 'hr.pendingExplanations.rejectTitle'.tr(),
+          ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -96,22 +99,34 @@ class _PendingExplanationsPageState extends State<PendingExplanationsPage> {
             FilledButton(
               onPressed: () => Navigator.pop(ctx, true),
               style: FilledButton.styleFrom(
-                backgroundColor: action == 'APPROVE' ? Colors.green : Colors.red,
+                backgroundColor: action == 'APPROVE'
+                    ? Colors.green
+                    : Colors.red,
               ),
-              child: Text(action == 'APPROVE' ? 'hr.pendingExplanations.approve'.tr() : 'hr.pendingExplanations.reject'.tr()),
+              child: Text(
+                action == 'APPROVE'
+                    ? 'hr.pendingExplanations.approve'.tr()
+                    : 'hr.pendingExplanations.reject'.tr(),
+              ),
             ),
           ],
         ),
       );
       if (confirm != true) return;
-      adminNote = controller.text.trim().isEmpty ? null : controller.text.trim();
+      adminNote = controller.text.trim().isEmpty
+          ? null
+          : controller.text.trim();
     } else {
       // APPROVE - có thể có ghi chú
       final controller = TextEditingController();
       final confirm = await showDialog<bool>(
         context: context,
         builder: (ctx) => AlertDialog(
-          title: Text(action == 'APPROVE' ? 'hr.pendingExplanations.approveTitle'.tr() : 'hr.pendingExplanations.rejectTitle'.tr()),
+          title: Text(
+            action == 'APPROVE'
+                ? 'hr.pendingExplanations.approveTitle'.tr()
+                : 'hr.pendingExplanations.rejectTitle'.tr(),
+          ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -132,16 +147,16 @@ class _PendingExplanationsPageState extends State<PendingExplanationsPage> {
             ),
             FilledButton(
               onPressed: () => Navigator.pop(ctx, true),
-              style: FilledButton.styleFrom(
-                backgroundColor: Colors.green,
-              ),
+              style: FilledButton.styleFrom(backgroundColor: Colors.green),
               child: Text('hr.pendingExplanations.approve'.tr()),
             ),
           ],
         ),
       );
       if (confirm != true) return;
-      adminNote = controller.text.trim().isEmpty ? null : controller.text.trim();
+      adminNote = controller.text.trim().isEmpty
+          ? null
+          : controller.text.trim();
     }
 
     try {
@@ -151,13 +166,13 @@ class _PendingExplanationsPageState extends State<PendingExplanationsPage> {
         adminNote: adminNote,
       );
       Fluttertoast.showToast(
-        msg: action == 'APPROVE' ? 'hr.pendingExplanations.approved'.tr() : 'hr.pendingExplanations.rejected'.tr(),
+        msg: action == 'APPROVE'
+            ? 'hr.pendingExplanations.approved'.tr()
+            : 'hr.pendingExplanations.rejected'.tr(),
       );
       _load();
     } catch (e) {
-      Fluttertoast.showToast(
-        msg: e.toString().replaceFirst('Exception: ', ''),
-      );
+      Fluttertoast.showToast(msg: e.toString().replaceFirst('Exception: ', ''));
     }
   }
 
@@ -169,10 +184,7 @@ class _PendingExplanationsPageState extends State<PendingExplanationsPage> {
         titleText: 'hr.pendingExplanations.title'.tr(),
         onRefresh: _loading ? null : _load,
       ),
-      body: RefreshIndicator(
-        onRefresh: _load,
-        child: _buildBody(),
-      ),
+      body: RefreshIndicator(onRefresh: _load, child: _buildBody()),
     );
   }
 
@@ -224,14 +236,17 @@ class _PendingExplanationsPageState extends State<PendingExplanationsPage> {
         children: [
           Expanded(
             child: DropdownButtonFormField<int?>(
-              value: _selectedClinicId,
+              initialValue: _selectedClinicId,
               decoration: InputDecoration(
                 labelText: 'hr.pendingExplanations.filterByClinic'.tr(),
                 prefixIcon: const Icon(Icons.business_outlined, size: 20),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 14,
+                ),
               ),
               items: [
                 DropdownMenuItem<int?>(
@@ -239,12 +254,14 @@ class _PendingExplanationsPageState extends State<PendingExplanationsPage> {
                   child: Text('hr.common.all'.tr()),
                 ),
                 ..._clinics.map((c) {
-                  final id = int.tryParse((c['id'] ?? c['clinicId'] ?? '').toString());
-                  final name = c['clinicName']?.toString() ?? c['clinicCode']?.toString() ?? 'Clinic';
-                  return DropdownMenuItem<int?>(
-                    value: id,
-                    child: Text(name),
+                  final id = int.tryParse(
+                    (c['id'] ?? c['clinicId'] ?? '').toString(),
                   );
+                  final name =
+                      c['clinicName']?.toString() ??
+                      c['clinicCode']?.toString() ??
+                      'Clinic';
+                  return DropdownMenuItem<int?>(value: id, child: Text(name));
                 }),
               ],
               onChanged: (value) {
@@ -308,10 +325,15 @@ class _PendingExplanationsPageState extends State<PendingExplanationsPage> {
 
     // Extract data
     final user = item['user'] as Map<String, dynamic>?;
-    final employeeName = user?['fullName']?.toString() ?? 'hr.common.employee'.tr();
-    final employeeId = user?['id']?.toString() ?? user?['userId']?.toString() ?? '';
+    final employeeName =
+        user?['fullName']?.toString() ?? 'hr.common.employee'.tr();
+    final employeeId =
+        user?['id']?.toString() ?? user?['userId']?.toString() ?? '';
     final clinic = item['clinic'] as Map<String, dynamic>?;
-    final clinicName = clinic?['clinicName']?.toString() ?? clinic?['clinicCode']?.toString() ?? '--';
+    final clinicName =
+        clinic?['clinicName']?.toString() ??
+        clinic?['clinicCode']?.toString() ??
+        '--';
     final workDateRaw = item['workDate'];
     String workDateStr = '--';
     if (workDateRaw != null) {
@@ -409,7 +431,10 @@ class _PendingExplanationsPageState extends State<PendingExplanationsPage> {
                 ),
                 // Status badge
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.amber.withOpacity(0.15),
                     borderRadius: BorderRadius.circular(999),
@@ -619,7 +644,11 @@ class _PendingExplanationsPageState extends State<PendingExplanationsPage> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Icon(Icons.check_circle_rounded, color: Colors.white, size: 20),
+                              const Icon(
+                                Icons.check_circle_rounded,
+                                color: Colors.white,
+                                size: 20,
+                              ),
                               const SizedBox(width: 8),
                               Text(
                                 'hr.pendingExplanations.approve'.tr(),
@@ -668,10 +697,7 @@ class _PendingExplanationsPageState extends State<PendingExplanationsPage> {
               ],
             ),
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(
-              color: iconColor.withOpacity(0.2),
-              width: 1,
-            ),
+            border: Border.all(color: iconColor.withOpacity(0.2), width: 1),
             boxShadow: [
               BoxShadow(
                 color: iconColor.withOpacity(0.1),
@@ -680,11 +706,7 @@ class _PendingExplanationsPageState extends State<PendingExplanationsPage> {
               ),
             ],
           ),
-          child: Icon(
-            icon,
-            size: 18,
-            color: iconColor,
-          ),
+          child: Icon(icon, size: 18, color: iconColor),
         ),
         const SizedBox(width: 12),
         Expanded(

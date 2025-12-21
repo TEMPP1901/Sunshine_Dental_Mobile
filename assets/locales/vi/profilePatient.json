@@ -1,0 +1,24 @@
+{
+  "patientProfile": {
+    "title": "Hồ sơ bệnh nhân",
+    "personalInfo": "Thông tin cá nhân",
+    "medicalInfo": "Thông tin y tế",
+    "fullName": "Họ và tên",
+    "phone": "Số điện thoại",
+    "code": "Mã BN",
+    "genderLabel": "Giới tính",
+    "dob": "Ngày sinh",
+    "address": "Địa chỉ liên hệ",
+    "noteHint": "Tiền sử bệnh / Dị ứng / Ghi chú",
+    "gender": {
+      "Male": "Nam",
+      "Female": "Nữ",
+      "Other": "Khác"
+    },
+    "toast": {
+      "loadFailed": "Không tải được hồ sơ",
+      "updateSuccess": "Cập nhật thành công!",
+      "updateError": "Lỗi cập nhật hồ sơ"
+    }
+  }
+}

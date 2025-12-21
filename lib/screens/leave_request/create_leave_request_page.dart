@@ -190,7 +190,7 @@ class _CreateLeaveRequestPageState extends State<CreateLeaveRequestPage> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: isDark 
+                color: isDark
                     ? const Color(0xFF1A2332).withOpacity(0.5)
                     : colorScheme.primaryContainer.withOpacity(0.3),
                 borderRadius: BorderRadius.circular(12),
@@ -265,7 +265,9 @@ class _CreateLeaveRequestPageState extends State<CreateLeaveRequestPage> {
                 label: 'leaveRequest.shiftType'.tr(),
                 icon: Icons.access_time_rounded,
                 value: _getShiftLabel(_selectedShiftType),
-                items: _shiftTypes.map((shift) => _getShiftLabel(shift)).toList(),
+                items: _shiftTypes
+                    .map((shift) => _getShiftLabel(shift))
+                    .toList(),
                 onChanged: (index) {
                   setState(() {
                     _selectedShiftType = _shiftTypes[index];
@@ -340,14 +342,14 @@ class _CreateLeaveRequestPageState extends State<CreateLeaveRequestPage> {
     required bool isDark,
   }) {
     final colorScheme = Theme.of(context).colorScheme;
-    
+
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(14),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         decoration: BoxDecoration(
-          color: isDark 
+          color: isDark
               ? const Color(0xFF1A2332).withOpacity(0.6)
               : colorScheme.surface,
           borderRadius: BorderRadius.circular(14),
@@ -387,13 +389,15 @@ class _CreateLeaveRequestPageState extends State<CreateLeaveRequestPage> {
                   const SizedBox(height: 4),
                   Text(
                     date != null
-                        ? DateFormat('dd/MM/yyyy').format(date!)
+                        ? DateFormat('dd/MM/yyyy').format(date)
                         : 'Chọn ngày',
                     style: TextStyle(
                       fontSize: 15,
-                      fontWeight: date != null ? FontWeight.w600 : FontWeight.normal,
-                      color: date != null 
-                          ? colorScheme.onSurface 
+                      fontWeight: date != null
+                          ? FontWeight.w600
+                          : FontWeight.normal,
+                      color: date != null
+                          ? colorScheme.onSurface
                           : colorScheme.onSurfaceVariant.withOpacity(0.6),
                     ),
                   ),
@@ -422,10 +426,10 @@ class _CreateLeaveRequestPageState extends State<CreateLeaveRequestPage> {
     required bool isDark,
   }) {
     final colorScheme = Theme.of(context).colorScheme;
-    
+
     return Container(
       decoration: BoxDecoration(
-        color: isDark 
+        color: isDark
             ? const Color(0xFF1A2332).withOpacity(0.6)
             : colorScheme.surface,
         borderRadius: BorderRadius.circular(14),
@@ -452,11 +456,7 @@ class _CreateLeaveRequestPageState extends State<CreateLeaveRequestPage> {
                       color: colorScheme.primary.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: Icon(
-                      icon,
-                      size: 20,
-                      color: colorScheme.primary,
-                    ),
+                    child: Icon(icon, size: 20, color: colorScheme.primary),
                   ),
                   const SizedBox(width: 14),
                   Expanded(
@@ -513,10 +513,10 @@ class _CreateLeaveRequestPageState extends State<CreateLeaveRequestPage> {
 
   Widget _buildReasonField(BuildContext context, bool isDark) {
     final colorScheme = Theme.of(context).colorScheme;
-    
+
     return Container(
       decoration: BoxDecoration(
-        color: isDark 
+        color: isDark
             ? const Color(0xFF1A2332).withOpacity(0.6)
             : colorScheme.surface,
         borderRadius: BorderRadius.circular(14),
@@ -528,10 +528,7 @@ class _CreateLeaveRequestPageState extends State<CreateLeaveRequestPage> {
       child: TextFormField(
         controller: _reasonController,
         maxLines: 4,
-        style: TextStyle(
-          fontSize: 15,
-          color: colorScheme.onSurface,
-        ),
+        style: TextStyle(fontSize: 15, color: colorScheme.onSurface),
         decoration: InputDecoration(
           labelText: 'leaveRequest.reason'.tr(),
           hintText: 'leaveRequest.reasonPlaceholder'.tr(),
@@ -578,7 +575,7 @@ class _CreateLeaveRequestPageState extends State<CreateLeaveRequestPage> {
     bool isDark,
   ) {
     final colorScheme = Theme.of(context).colorScheme;
-    
+
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -640,4 +637,3 @@ class _CreateLeaveRequestPageState extends State<CreateLeaveRequestPage> {
     );
   }
 }
-

@@ -28,12 +28,8 @@ class _ProfilePageState extends State<ProfilePage> {
     'RECEPTION',
     'ACCOUNTANT',
     'ADMIN',
-  }; // Admin cũng có thể check
-  static const _attendanceForbidden = {
-    'PATIENT',
-    'USER',
-  }; // User thường không chấm công
-
+  };
+  static const _attendanceForbidden = {'PATIENT', 'USER'};
   static const _staffRoles = {
     'ADMIN',
     'HR',
@@ -41,18 +37,11 @@ class _ProfilePageState extends State<ProfilePage> {
     'RECEPTION',
     'ACCOUNTANT',
   };
-
-  static const _leaveRequestRoles = {
-    'HR',
-    'DOCTOR',
-    'RECEPTION',
-    'ACCOUNTANT',
-    // ADMIN không có quyền xin nghỉ
-  };
-  static const _leaveRequestForbidden = {'USER', 'PATIENT', 'ADMIN'};
+  static const _leaveRequestRoles = {'HR', 'DOCTOR', 'RECEPTION', 'ACCOUNTANT'};
 
   Map<String, dynamic>? _user;
   bool _isLoading = true;
+  bool _isSwitchingLanguage = false; // State riêng cho việc đổi ngôn ngữ
 
   @override
   void initState() {
@@ -85,6 +74,70 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
+  // Helper Roles
+  List<String> _extractRoles(dynamic roles) {
+    if (roles == null) return [];
+    try {
+      List<dynamic> rawList;
+      if (roles is List) {
+        rawList = roles;
+      } else if (roles is String) {
+        rawList = roles.replaceAll('[', '').replaceAll(']', '').split(',');
+      } else {
+        return [];
+      }
+      return rawList.map((r) {
+        String str = r.toString().toUpperCase().trim();
+        if (r is Map && r.containsKey('name')) {
+          str = r['name'].toString().toUpperCase().trim();
+        }
+        if (str.startsWith('ROLE_')) return str.substring(5);
+        return str;
+      }).toList();
+    } catch (e) {
+      return [];
+    }
+  }
+
+  bool get _showPatientLinks {
+    final roles = _extractRoles(_user?['roles']);
+    if (roles.isEmpty) return false;
+    bool isStaff = roles.any((r) => _staffRoles.contains(r));
+    return !isStaff;
+  }
+
+  bool get _showDoctorLinks {
+    final roles = _extractRoles(_user?['roles']);
+    return roles.contains('DOCTOR');
+  }
+
+  bool get _canCheckAttendance {
+    final roles = _extractRoles(_user?['roles']);
+    if (roles.isEmpty) return false;
+    if (roles.any((r) => _attendanceForbidden.contains(r)) &&
+        !roles.contains('ADMIN')) {
+      if (roles.any((r) => _attendanceRoles.contains(r))) return true;
+      return false;
+    }
+    return roles.any((r) => _attendanceRoles.contains(r));
+  }
+
+  bool get _canViewLeaveRequest {
+    final roles = _extractRoles(_user?['roles']);
+    if (roles.isEmpty || roles.contains('ADMIN')) return false;
+    return roles.any((r) => _leaveRequestRoles.contains(r));
+  }
+
+  bool get _isHR => _extractRoles(_user?['roles']).contains('HR');
+  bool get _isAdmin => _extractRoles(_user?['roles']).contains('ADMIN');
+
+  bool get _canUpdateFaceProfile {
+    final roles = _extractRoles(_user?['roles']);
+    if (roles.isEmpty || roles.contains('ADMIN')) return false;
+    final faceProfileRoles = {'HR', 'DOCTOR', 'RECEPTION', 'ACCOUNTANT'};
+    return roles.any((r) => faceProfileRoles.contains(r));
+  }
+
   Future<void> _handleLogout() async {
     final confirmed = await showDialog<bool>(
       context: context,
@@ -111,100 +164,6 @@ class _ProfilePageState extends State<ProfilePage> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.clear();
     if (mounted) context.go('/login');
-  }
-
-  // --- ROLE HELPERS (Đã gia cố để không bị crash) ---
-  List<String> _extractRoles(dynamic roles) {
-    if (roles == null) return [];
-    try {
-      List<dynamic> rawList;
-      if (roles is List) {
-        rawList = roles;
-      } else if (roles is String) {
-        // Trường hợp roles lưu dạng chuỗi "[ROLE_USER]"
-        rawList = roles.replaceAll('[', '').replaceAll(']', '').split(',');
-      } else {
-        return [];
-      }
-
-      return rawList.map((r) {
-        String str = r.toString().toUpperCase().trim();
-        // Xử lý nếu object là Map (ví dụ {id: 1, name: "ROLE_ADMIN"})
-        if (r is Map && r.containsKey('name')) {
-          str = r['name'].toString().toUpperCase().trim();
-        }
-
-        // Chuẩn hóa: Bỏ "ROLE_"
-        if (str.startsWith('ROLE_')) {
-          return str.substring(5);
-        }
-        return str;
-      }).toList();
-    } catch (e) {
-      debugPrint("Error extracting roles: $e");
-      return [];
-    }
-  }
-
-  // Logic: Chỉ hiện menu bệnh nhân nếu là USER và KHÔNG PHẢI nhân viên
-  bool get _showPatientLinks {
-    final roles = _extractRoles(_user?['roles']);
-    if (roles.isEmpty) return false;
-
-    // Nếu có role ADMIN hoặc DOCTOR... thì chắc chắn không phải Patient thuần túy
-    bool isStaff = roles.any((r) => _staffRoles.contains(r));
-    if (isStaff) return false;
-
-    return true; // Mặc định hiển thị cho User thường
-  }
-
-  // Logic: Hiện menu bác sĩ
-  bool get _showDoctorLinks {
-    final roles = _extractRoles(_user?['roles']);
-    return roles.contains('DOCTOR');
-  }
-
-  bool get _canCheckAttendance {
-    final roles = _extractRoles(_user?['roles']);
-    if (roles.isEmpty) return false;
-    // Nếu có role bị cấm thì chặn luôn
-    if (roles.any((r) => _attendanceForbidden.contains(r)) &&
-        !roles.contains('ADMIN')) {
-      // Tuy nhiên, logic này cần cẩn thận: Một người vừa là USER vừa là DOCTOR thì sao?
-      // Ưu tiên role cao hơn. Nếu là DOCTOR thì được check.
-      if (roles.any((r) => _attendanceRoles.contains(r))) return true;
-      return false;
-    }
-    return roles.any((r) => _attendanceRoles.contains(r));
-  }
-
-  bool get _canViewLeaveRequest {
-    final roles = _extractRoles(_user?['roles']);
-    if (roles.isEmpty) return false;
-    // Loại trừ ADMIN
-    if (roles.contains('ADMIN')) return false;
-    return roles.any((r) => _leaveRequestRoles.contains(r));
-  }
-
-  bool get _isHR {
-    final roles = _extractRoles(_user?['roles']);
-    return roles.contains('HR');
-  }
-
-  bool get _isAdmin {
-    final roles = _extractRoles(_user?['roles']);
-    return roles.contains('ADMIN');
-  }
-
-  // Kiểm tra xem có thể cập nhật face profile không (chỉ cho nhân viên, không bao gồm ADMIN)
-  bool get _canUpdateFaceProfile {
-    final roles = _extractRoles(_user?['roles']);
-    if (roles.isEmpty) return false;
-    // Loại trừ ADMIN
-    if (roles.contains('ADMIN')) return false;
-    // Chỉ cho phép các role nhân viên: HR, DOCTOR, RECEPTION, ACCOUNTANT
-    final faceProfileRoles = {'HR', 'DOCTOR', 'RECEPTION', 'ACCOUNTANT'};
-    return roles.any((r) => faceProfileRoles.contains(r));
   }
 
   @override
@@ -260,39 +219,36 @@ class _ProfilePageState extends State<ProfilePage> {
       padding: const EdgeInsets.only(bottom: 40),
       child: Column(
         children: [
-          // 1. Header (Avatar, Tên, Role)
-          // Đảm bảo user không null khi truyền vào
           ProfileHeader(user: _user!),
 
-          // 2. Menu Items
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // === SECTION BỆNH NHÂN (Chỉ hiện cho bệnh nhân) ===
+                // SECTION BỆNH NHÂN
                 if (_showPatientLinks) ...[
-                  _buildSectionTitle("Bệnh nhân"),
+                  _buildSectionTitle('profile.section.patient'.tr()),
                   const SizedBox(height: 8),
                   ProfileMenuItem(
                     icon: Icons.dashboard_customize_outlined,
-                    title: "Tổng quan sức khỏe",
-                    subtitle: "Xem hạng & chỉ số",
+                    title: 'profile.patient.overview'.tr(),
+                    subtitle: 'profile.patient.overviewSub'.tr(),
                     onTap: () => context.push('/patient-dashboard'),
                     isFirst: true,
                     customIconColor: Colors.blue,
                   ),
                   ProfileMenuItem(
                     icon: Icons.calendar_month_outlined,
-                    title: "Lịch hẹn của tôi",
-                    subtitle: "Quản lý & Hủy lịch",
+                    title: 'profile.patient.appointments'.tr(),
+                    subtitle: 'profile.patient.appointmentsSub'.tr(),
                     onTap: () => context.push('/my-appointments'),
                     customIconColor: Colors.orange,
                   ),
                   ProfileMenuItem(
                     icon: Icons.history_edu_outlined,
-                    title: "Hồ sơ bệnh án",
-                    subtitle: "Lịch sử khám & điều trị",
+                    title: 'profile.patient.records'.tr(),
+                    subtitle: 'profile.patient.recordsSub'.tr(),
                     onTap: () => context.push('/medical-records'),
                     isLast: true,
                     customIconColor: Colors.teal,
@@ -300,16 +256,15 @@ class _ProfilePageState extends State<ProfilePage> {
                   const SizedBox(height: 24),
                 ],
 
-                // === SECTION BÁC SĨ (MỚI: Để Doctor không bị trống) ===
+                // SECTION BÁC SĨ
                 if (_showDoctorLinks) ...[
-                  _buildSectionTitle("Dành cho Bác sĩ"),
+                  _buildSectionTitle('profile.section.doctor'.tr()),
                   const SizedBox(height: 8),
                   ProfileMenuItem(
                     icon: Icons.calendar_month,
-                    title: "Lịch làm việc",
-                    subtitle: "Xem ca trực & Lịch hẹn khách",
-                    onTap: () =>
-                        context.push('/schedule'), // Dùng trang schedule có sẵn
+                    title: 'profile.doctor.schedule'.tr(),
+                    subtitle: 'profile.doctor.scheduleSub'.tr(),
+                    onTap: () => context.push('/schedule'),
                     isFirst: true,
                     isLast: true,
                     customIconColor: Colors.purple,
@@ -317,13 +272,13 @@ class _ProfilePageState extends State<ProfilePage> {
                   const SizedBox(height: 24),
                 ],
 
-                // === SECTION NHÂN VIÊN (CHẤM CÔNG) ===
+                // SECTION NHÂN VIÊN
                 if (_canCheckAttendance) ...[
                   const AttendanceCard(),
                   const SizedBox(height: 24),
                 ],
 
-                // === SECTION ADMIN (Chỉ hiện cho ADMIN) ===
+                // SECTION ADMIN
                 if (_isAdmin) ...[
                   _buildSectionTitle("Admin Management"),
                   const SizedBox(height: 8),
@@ -339,7 +294,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   const SizedBox(height: 24),
                 ],
 
-                // === SECTION HR (Chỉ hiện cho HR) ===
+                // SECTION HR
                 if (_isHR) ...[
                   _buildSectionTitle("HR Management"),
                   const SizedBox(height: 8),
@@ -355,10 +310,9 @@ class _ProfilePageState extends State<ProfilePage> {
                   const SizedBox(height: 24),
                 ],
 
-                // === SECTION TÀI KHOẢN (Chung cho tất cả) ===
+                // SECTION TÀI KHOẢN
                 _buildSectionTitle('profile.accountSettings'.tr()),
                 const SizedBox(height: 8),
-
                 ProfileMenuItem(
                   icon: Icons.person_outline,
                   title: 'account.myAccount.title'.tr(),
@@ -366,7 +320,6 @@ class _ProfilePageState extends State<ProfilePage> {
                   onTap: () => context.go('/my-account'),
                   isFirst: true,
                 ),
-
                 if (_canViewLeaveRequest)
                   ProfileMenuItem(
                     icon: Icons.calendar_today_outlined,
@@ -374,8 +327,6 @@ class _ProfilePageState extends State<ProfilePage> {
                     subtitle: 'leaveRequest.subtitle'.tr(),
                     onTap: () => context.go('/leave-request'),
                   ),
-
-                // Cập nhật khuôn mặt chấm công (chỉ cho nhân viên, không bao gồm ADMIN)
                 if (_canUpdateFaceProfile)
                   ProfileMenuItem(
                     icon: Icons.face_retouching_natural_rounded,
@@ -384,7 +335,6 @@ class _ProfilePageState extends State<ProfilePage> {
                     onTap: () => context.push('/update-face-profile'),
                     customIconColor: Colors.purple,
                   ),
-
                 ProfileMenuItem(
                   icon: Icons.key_outlined,
                   title: 'profile.changePassword.title'.tr(),
@@ -394,15 +344,15 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
                 const SizedBox(height: 24),
 
-                // === SECTION CÀI ĐẶT ===
+                // SECTION CÀI ĐẶT
                 _buildSectionTitle('profile.settings'.tr()),
                 const SizedBox(height: 8),
                 _buildThemeItem(context),
-                _buildLanguageItem(context),
+                _buildLanguageItem(context), // Widget chuyển ngữ đã fix
 
                 const SizedBox(height: 24),
 
-                // Logout Button
+                // Nút Đăng xuất
                 OutlinedButton.icon(
                   onPressed: _handleLogout,
                   icon: const Icon(Icons.logout_rounded),
@@ -455,27 +405,44 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  // [TỐI ƯU UI] Widget chuyển ngữ mượt mà
   Widget _buildLanguageItem(BuildContext context) {
     return Consumer<LanguageProvider>(
-      builder: (_, langProvider, __) => ProfileMenuItem(
-        icon: Icons.language_outlined,
-        title: 'profile.language.title'.tr(),
-        onTap: () async {
-          await langProvider.toggleLanguage();
-          if (context.mounted) {
-            context.setLocale(langProvider.locale);
-            _loadUser();
-          }
-        },
-        isLast: true,
-        trailingWidget: Text(
-          langProvider.currentLanguageName,
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            color: Colors.blue,
-          ),
-        ),
-      ),
+      builder: (_, langProvider, __) {
+        final isEnglish = context.locale.languageCode == 'en';
+        final displayLang = isEnglish ? 'English' : 'Tiếng Việt';
+
+        return ProfileMenuItem(
+          icon: Icons.language_outlined,
+          title: 'profile.language.title'.tr(),
+          trailingWidget: _isSwitchingLanguage
+              ? const SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
+              : Text(
+                  displayLang,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.blue,
+                  ),
+                ),
+          onTap: () async {
+            setState(() => _isSwitchingLanguage = true);
+            await langProvider.toggleLanguage();
+
+            if (context.mounted) {
+              await context.setLocale(langProvider.locale);
+              setState(() {
+                _isSwitchingLanguage = false;
+                _loadUser(); // Load lại thông tin user để đảm bảo
+              });
+            }
+          },
+          isLast: true,
+        );
+      },
     );
   }
 }

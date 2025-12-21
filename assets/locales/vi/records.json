@@ -1,0 +1,22 @@
+{
+  "title": "Lịch Sử Khám Bệnh",
+  "searchHint": "Tìm theo bác sĩ, chẩn đoán...",
+  "filterDate": "Lọc theo ngày",
+  "count": "{count} hồ sơ",
+  "empty": "Không tìm thấy hồ sơ nào",
+  "clearFilter": "Xóa bộ lọc",
+  "card": {
+    "diagnosis": "Chẩn đoán: {val}",
+    "doctor": "BS. {name}",
+    "treatment": "Điều trị: {val}"
+  },
+  "detail": {
+    "title": "Chi tiết hồ sơ",
+    "diagnosis": "CHẨN ĐOÁN",
+    "treatment": "ĐIỀU TRỊ",
+    "note": "LỜI DẶN",
+    "prescription": "ĐƠN THUỐC",
+    "image": "HÌNH ẢNH",
+    "close": "Đóng lại"
+  }
+}

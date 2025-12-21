@@ -1,0 +1,27 @@
+{
+  "title": "Tổng Quan Sức Khỏe",
+  "error": "Không tải được dữ liệu",
+  "retry": "Thử lại",
+  "spent": "Chi tiêu tích lũy",
+  "nextTier": "Cần thêm {amount} để thăng hạng",
+  "discount": "Ưu đãi thành viên: Giảm {percent}%",
+  "quickAccess": "Truy cập nhanh",
+  "appointments": "Lịch hẹn",
+  "records": "Hồ sơ",
+  "upcoming": "Lịch hẹn sắp tới",
+  "rank": {
+    "diamond": "💎 Kim Cương",
+    "gold": "🥇 Vàng",
+    "silver": "🥈 Bạc",
+    "member": "👋 Thành viên"
+  },
+  "wellness": {
+    "safe": "An toàn",
+    "warning": "Cần kiểm tra",
+    "overdue": "Quá hạn",
+    "new": "Thành viên mới",
+    "daysUnchecked": "ngày chưa khám",
+    "bookNow": "Đặt lịch ngay",
+    "bookingRedirect": "Chuyển tới trang Đặt Lịch (Booking)"
+  }
+}

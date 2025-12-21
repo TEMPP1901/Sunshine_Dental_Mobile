@@ -3,7 +3,6 @@ import 'dart:ui';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:image_picker/image_picker.dart';
 
 /// Màn hình chụp ảnh khuôn mặt với giao diện Premium (Scanning Effect)
 class FaceCameraScreen extends StatefulWidget {
@@ -20,11 +19,11 @@ class _FaceCameraScreenState extends State<FaceCameraScreen>
   bool _isInitialized = false;
   bool _isCapturing = false;
   int _selectedCameraIndex = 0;
-  
+
   // Animation cho hiệu ứng quét (Scanning)
   late AnimationController _scanController;
   late Animation<double> _scanAnimation;
-  
+
   bool _showFlash = false;
 
   @override
@@ -35,11 +34,11 @@ class _FaceCameraScreenState extends State<FaceCameraScreen>
       vsync: this,
       duration: const Duration(seconds: 3),
     )..repeat(reverse: false);
-    
+
     _scanAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _scanController, curve: Curves.easeInOut),
     );
-    
+
     _initializeCamera();
   }
 
@@ -76,7 +75,11 @@ class _FaceCameraScreenState extends State<FaceCameraScreen>
   }
 
   Future<void> _captureImage() async {
-    if (_controller == null || !_controller!.value.isInitialized || _isCapturing) return;
+    if (_controller == null ||
+        !_controller!.value.isInitialized ||
+        _isCapturing) {
+      return;
+    }
 
     setState(() => _isCapturing = true);
 
@@ -102,7 +105,9 @@ class _FaceCameraScreenState extends State<FaceCameraScreen>
 
   @override
   Widget build(BuildContext context) {
-    if (!_isInitialized || _controller == null || !_controller!.value.isInitialized) {
+    if (!_isInitialized ||
+        _controller == null ||
+        !_controller!.value.isInitialized) {
       return const Scaffold(backgroundColor: Colors.black);
     }
 
@@ -136,7 +141,9 @@ class _FaceCameraScreenState extends State<FaceCameraScreen>
 
           // 3. Top Bar (Minimalist)
           Positioned(
-            top: 0, left: 0, right: 0,
+            top: 0,
+            left: 0,
+            right: 0,
             child: SafeArea(
               child: Padding(
                 padding: const EdgeInsets.all(16),
@@ -164,7 +171,8 @@ class _FaceCameraScreenState extends State<FaceCameraScreen>
           // 4. Instruction Text
           Positioned(
             top: size.height * 0.15,
-            left: 0, right: 0,
+            left: 0,
+            right: 0,
             child: Column(
               children: [
                 Text(
@@ -189,13 +197,16 @@ class _FaceCameraScreenState extends State<FaceCameraScreen>
 
           // 5. Bottom Controls (Shutter Button)
           Positioned(
-            bottom: 50, left: 0, right: 0,
+            bottom: 50,
+            left: 0,
+            right: 0,
             child: Center(
               child: GestureDetector(
                 onTap: _isCapturing ? null : _captureImage,
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
-                  width: 80, height: 80,
+                  width: 80,
+                  height: 80,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     border: Border.all(color: Colors.white, width: 5),
@@ -205,12 +216,17 @@ class _FaceCameraScreenState extends State<FaceCameraScreen>
                     margin: const EdgeInsets.all(4),
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: _isCapturing ? Colors.white.withOpacity(0.5) : Colors.white,
+                      color: _isCapturing
+                          ? Colors.white.withOpacity(0.5)
+                          : Colors.white,
                     ),
                     child: _isCapturing
                         ? const Padding(
                             padding: EdgeInsets.all(20),
-                            child: CircularProgressIndicator(color: Colors.black, strokeWidth: 2),
+                            child: CircularProgressIndicator(
+                              color: Colors.black,
+                              strokeWidth: 2,
+                            ),
                           )
                         : null,
                   ),
@@ -251,9 +267,10 @@ class FaceScanningOverlayPainter extends CustomPainter {
       ..fillType = PathFillType.evenOdd
       ..addRect(Rect.fromLTWH(0, 0, size.width, size.height))
       ..addOval(rect);
-    
+
     final overlayPaint = Paint()
-      ..color = Colors.black.withOpacity(0.8) // Darker for focus
+      ..color = Colors.black
+          .withOpacity(0.8) // Darker for focus
       ..style = PaintingStyle.fill;
 
     canvas.drawPath(path, overlayPaint);
@@ -268,7 +285,7 @@ class FaceScanningOverlayPainter extends CustomPainter {
     // 3. Draw Scanning Line (Gradient)
     // Line moves from top of oval to bottom of oval
     final scanY = rect.top + (rect.height * scanValue);
-    
+
     // Only draw scan line if it's within the oval (it always is by math, but visual clipping helps)
     canvas.save();
     canvas.clipPath(Path()..addOval(rect)); // Clip to oval
@@ -290,17 +307,17 @@ class FaceScanningOverlayPainter extends CustomPainter {
       Rect.fromLTWH(rect.left, scanY - 20, rect.width, 40),
       scanPaint,
     );
-    
+
     // Draw the sharp line in the middle of the beam
     final linePaint = Paint()
       ..color = Colors.blueAccent.withOpacity(0.8)
       ..strokeWidth = 2
       ..style = PaintingStyle.stroke;
-      
+
     canvas.drawLine(
-      Offset(rect.left + 20, scanY), 
-      Offset(rect.right - 20, scanY), 
-      linePaint
+      Offset(rect.left + 20, scanY),
+      Offset(rect.right - 20, scanY),
+      linePaint,
     );
 
     canvas.restore();
@@ -311,30 +328,42 @@ class FaceScanningOverlayPainter extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeWidth = 3
       ..strokeCap = StrokeCap.round;
-      
+
     final cornerSize = 30.0;
     final gap = 20.0; // Gap from the oval
     final bracketRect = rect.inflate(gap);
 
     // TL
     canvas.drawPath(
-      Path()..moveTo(bracketRect.left, bracketRect.top + cornerSize)..lineTo(bracketRect.left, bracketRect.top)..lineTo(bracketRect.left + cornerSize, bracketRect.top),
-      bracketPaint
+      Path()
+        ..moveTo(bracketRect.left, bracketRect.top + cornerSize)
+        ..lineTo(bracketRect.left, bracketRect.top)
+        ..lineTo(bracketRect.left + cornerSize, bracketRect.top),
+      bracketPaint,
     );
     // TR
     canvas.drawPath(
-      Path()..moveTo(bracketRect.right - cornerSize, bracketRect.top)..lineTo(bracketRect.right, bracketRect.top)..lineTo(bracketRect.right, bracketRect.top + cornerSize),
-      bracketPaint
+      Path()
+        ..moveTo(bracketRect.right - cornerSize, bracketRect.top)
+        ..lineTo(bracketRect.right, bracketRect.top)
+        ..lineTo(bracketRect.right, bracketRect.top + cornerSize),
+      bracketPaint,
     );
     // BL
     canvas.drawPath(
-      Path()..moveTo(bracketRect.left, bracketRect.bottom - cornerSize)..lineTo(bracketRect.left, bracketRect.bottom)..lineTo(bracketRect.left + cornerSize, bracketRect.bottom),
-      bracketPaint
+      Path()
+        ..moveTo(bracketRect.left, bracketRect.bottom - cornerSize)
+        ..lineTo(bracketRect.left, bracketRect.bottom)
+        ..lineTo(bracketRect.left + cornerSize, bracketRect.bottom),
+      bracketPaint,
     );
     // BR
     canvas.drawPath(
-      Path()..moveTo(bracketRect.right - cornerSize, bracketRect.bottom)..lineTo(bracketRect.right, bracketRect.bottom)..lineTo(bracketRect.right, bracketRect.bottom - cornerSize),
-      bracketPaint
+      Path()
+        ..moveTo(bracketRect.right - cornerSize, bracketRect.bottom)
+        ..lineTo(bracketRect.right, bracketRect.bottom)
+        ..lineTo(bracketRect.right, bracketRect.bottom - cornerSize),
+      bracketPaint,
     );
   }
 

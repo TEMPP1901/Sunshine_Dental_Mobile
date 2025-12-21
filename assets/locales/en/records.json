@@ -1,0 +1,22 @@
+{
+  "title": "Medical Records",
+  "searchHint": "Search by doctor, diagnosis...",
+  "filterDate": "Filter by Date",
+  "count": "{count} records",
+  "empty": "No records found",
+  "clearFilter": "Clear Filter",
+  "card": {
+    "diagnosis": "Diagnosis: {val}",
+    "doctor": "Dr. {name}",
+    "treatment": "Treatment: {val}"
+  },
+  "detail": {
+    "title": "Record Details",
+    "diagnosis": "DIAGNOSIS",
+    "treatment": "TREATMENT",
+    "note": "DOCTOR'S NOTE",
+    "prescription": "PRESCRIPTION",
+    "image": "IMAGE",
+    "close": "Close"
+  }
+}

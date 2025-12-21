@@ -11,26 +11,31 @@ class ApiService {
   // === CẤU HÌNH IP CHO MÁY THỰC ===
   // Thay đổi IP này theo IP Wi-Fi của máy chạy backend (kiểm tra bằng ipconfig trên Windows)
   // Ví dụ: Nếu IP Wi-Fi là 192.168.1.122 thì set: '192.168.1.122'
-  static const String _realDeviceIp = '192.168.1.5';
+  static const String _realDeviceIp = '192.168.100.232';
   static const int _serverPort = 8080;
-  
+
   // Chọn chế độ: 'emulator' hoặc 'real_device'
   // - 'emulator': Dùng cho Android Emulator (10.0.2.2)
   // - 'real_device': Dùng cho điện thoại thật (IP LAN)
-  static const String _androidMode = 'real_device'; // Đổi thành 'emulator' nếu chạy trên emulator
+  static const String _androidMode =
+      'real_device'; // Đổi thành 'emulator' nếu chạy trên emulator
 
   // Xác định baseUrl phù hợp với từng môi trường/chạy trên web, android, ios
   static String _resolveBaseUrl() {
     // 1. Ưu tiên lấy từ biến môi trường (nếu chạy lệnh flutter run --dart-define=API_URL=...)
     const envUrl = String.fromEnvironment('API_URL');
     if (envUrl.isNotEmpty) {
-      if (enableLogging) debugPrint(' [ApiService] Using API_URL from environment: $envUrl');
+      if (enableLogging) {
+        debugPrint(' [ApiService] Using API_URL from environment: $envUrl');
+      }
       return envUrl;
     }
 
     // 2. Cấu hình cho Web
     if (kIsWeb) {
-      if (enableLogging) debugPrint(' [ApiService] Platform: Web, using localhost:$_serverPort');
+      if (enableLogging) {
+        debugPrint(' [ApiService] Platform: Web, using localhost:$_serverPort');
+      }
       return 'http://localhost:$_serverPort';
     }
 
@@ -64,12 +69,16 @@ class ApiService {
       final baseUrl = 'http://$_realDeviceIp:$_serverPort';
       if (enableLogging) {
         debugPrint(' [ApiService] Platform: iOS, using: $baseUrl');
-        debugPrint(' [ApiService] For iOS Simulator, you may need to use localhost');
+        debugPrint(
+          ' [ApiService] For iOS Simulator, you may need to use localhost',
+        );
       }
       return baseUrl;
     }
 
-    if (enableLogging) debugPrint(' [ApiService] Platform: Other, using localhost:$_serverPort');
+    if (enableLogging) {
+      debugPrint(' [ApiService] Platform: Other, using localhost:$_serverPort');
+    }
     return 'http://localhost:$_serverPort';
   }
 
@@ -84,84 +93,97 @@ class ApiService {
 
   // Khởi tạo Dio, thêm interceptor để gắn token và xử lý lỗi 401 (token hết hạn, bị sai)
   ApiService._internal() {
-    if (enableLogging) debugPrint(' [ApiService] Initializing with baseUrl: $baseUrl');
-    _dio = Dio(BaseOptions(
-      baseUrl: baseUrl,
-      connectTimeout: const Duration(seconds: 15), // Tăng timeout lên 15s cho chắc
-      receiveTimeout: const Duration(seconds: 15),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    ));
+    if (enableLogging) {
+      debugPrint(' [ApiService] Initializing with baseUrl: $baseUrl');
+    }
+    _dio = Dio(
+      BaseOptions(
+        baseUrl: baseUrl,
+        connectTimeout: const Duration(
+          seconds: 15,
+        ), // Tăng timeout lên 15s cho chắc
+        receiveTimeout: const Duration(seconds: 15),
+        headers: {'Content-Type': 'application/json'},
+      ),
+    );
 
-    _dio.interceptors.add(InterceptorsWrapper(
-      onRequest: (options, handler) async {
-        if (enableLogging) {
-          debugPrint(' [ApiService] → ${options.method} ${options.uri}');
-          if (options.data != null) {
-            debugPrint(' [ApiService] Request data: ${options.data}');
-          }
-        }
-        final prefs = await SharedPreferences.getInstance();
-        final token = prefs.getString('accessToken');
-        if (token != null && token.isNotEmpty) {
-          cachedToken = token;
-          options.headers['Authorization'] = 'Bearer $token';
-        }
-        return handler.next(options);
-      },
-      onResponse: (response, handler) {
-        if (enableLogging) {
-          debugPrint(' [ApiService] ← ${response.statusCode} ${response.requestOptions.uri}');
-        }
-        return handler.next(response);
-      },
-      onError: (error, handler) async {
-        if (enableLogging) {
-          debugPrint(' [ApiService] ✗ Error: ${error.type}');
-          debugPrint(' [ApiService] URL: ${error.requestOptions.uri}');
-          if (error.response != null) {
-            debugPrint(' [ApiService] Status: ${error.response?.statusCode}');
-            debugPrint(' [ApiService] Response: ${error.response?.data}');
-          } else {
-            debugPrint(' [ApiService] Message: ${error.message}');
-          }
-        }
-        if (error.response?.statusCode == 401) {
-          // Kiểm tra xem 401 có phải do face verification failed không
-          // Nếu là face verification failed thì KHÔNG xóa token (chỉ báo lỗi)
-          final errorData = error.response?.data;
-          final errorType = errorData is Map 
-              ? errorData['error']?.toString().toLowerCase() 
-              : null;
-          final errorMessage = errorData is Map 
-              ? errorData['message']?.toString().toLowerCase() 
-              : null;
-          
-          final isFaceVerificationError = 
-              (errorType != null && errorType.contains('face verification')) ||
-              (errorMessage != null && errorMessage.contains('face verification')) ||
-              (errorMessage != null && errorMessage.contains('khuôn mặt'));
-          
-          if (!isFaceVerificationError) {
-            // Chỉ xóa token khi 401 là do token hết hạn/không hợp lệ (KHÔNG phải face verification)
-            if (enableLogging) {
-              debugPrint(' [ApiService] 401 Unauthorized - Token expired/invalid. Clearing auth data.');
-            }
-            final prefs = await SharedPreferences.getInstance();
-            await prefs.remove('accessToken');
-            await prefs.remove('user');
-            cachedToken = null;
-          } else {
-            // Face verification failed - giữ nguyên token, chỉ báo lỗi
-            if (enableLogging) {
-              debugPrint(' [ApiService] 401 Face Verification Failed - Keeping token.');
+    _dio.interceptors.add(
+      InterceptorsWrapper(
+        onRequest: (options, handler) async {
+          if (enableLogging) {
+            debugPrint(' [ApiService] → ${options.method} ${options.uri}');
+            if (options.data != null) {
+              debugPrint(' [ApiService] Request data: ${options.data}');
             }
           }
-        }
-        return handler.next(error);
-      },
-    ),
+          final prefs = await SharedPreferences.getInstance();
+          final token = prefs.getString('accessToken');
+          if (token != null && token.isNotEmpty) {
+            cachedToken = token;
+            options.headers['Authorization'] = 'Bearer $token';
+          }
+          return handler.next(options);
+        },
+        onResponse: (response, handler) {
+          if (enableLogging) {
+            debugPrint(
+              ' [ApiService] ← ${response.statusCode} ${response.requestOptions.uri}',
+            );
+          }
+          return handler.next(response);
+        },
+        onError: (error, handler) async {
+          if (enableLogging) {
+            debugPrint(' [ApiService] ✗ Error: ${error.type}');
+            debugPrint(' [ApiService] URL: ${error.requestOptions.uri}');
+            if (error.response != null) {
+              debugPrint(' [ApiService] Status: ${error.response?.statusCode}');
+              debugPrint(' [ApiService] Response: ${error.response?.data}');
+            } else {
+              debugPrint(' [ApiService] Message: ${error.message}');
+            }
+          }
+          if (error.response?.statusCode == 401) {
+            // Kiểm tra xem 401 có phải do face verification failed không
+            // Nếu là face verification failed thì KHÔNG xóa token (chỉ báo lỗi)
+            final errorData = error.response?.data;
+            final errorType = errorData is Map
+                ? errorData['error']?.toString().toLowerCase()
+                : null;
+            final errorMessage = errorData is Map
+                ? errorData['message']?.toString().toLowerCase()
+                : null;
+
+            final isFaceVerificationError =
+                (errorType != null &&
+                    errorType.contains('face verification')) ||
+                (errorMessage != null &&
+                    errorMessage.contains('face verification')) ||
+                (errorMessage != null && errorMessage.contains('khuôn mặt'));
+
+            if (!isFaceVerificationError) {
+              // Chỉ xóa token khi 401 là do token hết hạn/không hợp lệ (KHÔNG phải face verification)
+              if (enableLogging) {
+                debugPrint(
+                  ' [ApiService] 401 Unauthorized - Token expired/invalid. Clearing auth data.',
+                );
+              }
+              final prefs = await SharedPreferences.getInstance();
+              await prefs.remove('accessToken');
+              await prefs.remove('user');
+              cachedToken = null;
+            } else {
+              // Face verification failed - giữ nguyên token, chỉ báo lỗi
+              if (enableLogging) {
+                debugPrint(
+                  ' [ApiService] 401 Face Verification Failed - Keeping token.',
+                );
+              }
+            }
+          }
+          return handler.next(error);
+        },
+      ),
     );
   }
 
@@ -212,7 +234,9 @@ class ApiService {
     // Kiểm tra cloudinary sau khi đã resolve
     if (_isCloudinaryUrl(resolvedUrl)) {
       if (enableLogging) {
-        debugPrint(' [ApiService] Using Cloudinary URL (no headers): $resolvedUrl');
+        debugPrint(
+          ' [ApiService] Using Cloudinary URL (no headers): $resolvedUrl',
+        );
       }
       return NetworkImage(resolvedUrl);
     }
@@ -222,10 +246,7 @@ class ApiService {
     if (enableLogging) {
       debugPrint(' [ApiService] Resolved avatar URL: $trimmed -> $resolvedUrl');
     }
-    return NetworkImage(
-      resolvedUrl,
-      headers: headers,
-    );
+    return NetworkImage(resolvedUrl, headers: headers);
   }
 
   // Chuẩn hóa, thay thế localhost/127.0.0.1 bằng baseUrl nếu cần, trả về url dùng để tải file từ server
@@ -246,7 +267,9 @@ class ApiService {
           final resolvedUri = uri.replace(
             scheme: _baseUri.scheme,
             host: _baseUri.host,
-            port: _baseUri.hasPort ? _baseUri.port : (uri.hasPort ? uri.port : null),
+            port: _baseUri.hasPort
+                ? _baseUri.port
+                : (uri.hasPort ? uri.port : null),
           );
           final resolved = resolvedUri.toString();
           if (enableLogging) {
@@ -359,10 +382,7 @@ class ApiService {
       return await _dio.post(
         path,
         data: formData,
-        options: Options(
-          contentType: 'multipart/form-data',
-          headers: headers,
-        ),
+        options: Options(contentType: 'multipart/form-data', headers: headers),
       );
     } catch (e) {
       rethrow;
@@ -383,10 +403,7 @@ class ApiService {
       return await _dio.patch(
         path,
         data: formData,
-        options: Options(
-          contentType: 'multipart/form-data',
-          headers: headers,
-        ),
+        options: Options(contentType: 'multipart/form-data', headers: headers),
       );
     } catch (e) {
       rethrow;

@@ -14,10 +14,10 @@ class FilterSelectionSheet extends StatelessWidget {
   final String filterType; // 'brand' hoặc 'type'
 
   const FilterSelectionSheet({
-    Key? key,
+    super.key,
     required this.title,
     required this.filterType,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +27,10 @@ class FilterSelectionSheet extends StatelessWidget {
     // 1. Lấy danh sách items có sẵn từ products hiện tại
     Set<String> items = {};
     if (filterType == 'brand') {
-      items = provider.products.where((p) => p.brand != null).map((p) => p.brand!).toSet();
+      items = provider.products
+          .where((p) => p.brand != null)
+          .map((p) => p.brand!)
+          .toSet();
     } else {
       items = provider.products.expand((p) => p.typeNames).toSet();
     }
@@ -52,22 +55,34 @@ class FilterSelectionSheet extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
                 if (selectedItems.isNotEmpty)
                   TextButton(
                     onPressed: () {
                       provider.clearFilter(filterType);
                       context.pop();
                     },
-                    child: const Text("Xóa chọn", style: TextStyle(color: Colors.red)),
-                  )
+                    child: const Text(
+                      "Xóa chọn",
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  ),
               ],
             ),
           ),
           const Divider(),
 
           if (items.isEmpty)
-            const Padding(padding: EdgeInsets.all(20), child: Text("Không có dữ liệu lọc")),
+            const Padding(
+              padding: EdgeInsets.all(20),
+              child: Text("Không có dữ liệu lọc"),
+            ),
 
           // List Items
           Flexible(
@@ -77,15 +92,26 @@ class FilterSelectionSheet extends StatelessWidget {
                 final isSelected = selectedItems.contains(item);
                 return ListTile(
                   title: Text(
-                      item,
-                      style: TextStyle(
-                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                          color: isSelected ? GlassTheme.primaryPurple : Colors.black87
-                      )
+                    item,
+                    style: TextStyle(
+                      fontWeight: isSelected
+                          ? FontWeight.bold
+                          : FontWeight.normal,
+                      color: isSelected
+                          ? GlassTheme.primaryPurple
+                          : Colors.black87,
+                    ),
                   ),
                   trailing: isSelected
-                      ? const Icon(Ionicons.checkmark_circle, color: GlassTheme.primaryPurple)
-                      : const Icon(Ionicons.ellipse_outline, color: Colors.grey, size: 18),
+                      ? const Icon(
+                          Ionicons.checkmark_circle,
+                          color: GlassTheme.primaryPurple,
+                        )
+                      : const Icon(
+                          Ionicons.ellipse_outline,
+                          color: Colors.grey,
+                          size: 18,
+                        ),
                   onTap: () {
                     // Logic chọn/bỏ chọn
                     if (filterType == 'brand') {
@@ -110,13 +136,21 @@ class FilterSelectionSheet extends StatelessWidget {
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: GlassTheme.primaryPurple,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
                 onPressed: () => context.pop(),
-                child: const Text("Xong", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                child: const Text(
+                  "Xong",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
             ),
-          )
+          ),
         ],
       ),
     );
@@ -125,7 +159,7 @@ class FilterSelectionSheet extends StatelessWidget {
 
 // --- WIDGET 2: SHEET SẮP XẾP ---
 class SortSelectionSheet extends StatelessWidget {
-  const SortSelectionSheet({Key? key}) : super(key: key);
+  const SortSelectionSheet({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -145,14 +179,42 @@ class SortSelectionSheet extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Container(width: 40, height: 4, decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(2))),
+          Container(
+            width: 40,
+            height: 4,
+            decoration: BoxDecoration(
+              color: Colors.grey[300],
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
           const SizedBox(height: 20),
-          const Text("Sắp xếp theo", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+          const Text(
+            "Sắp xếp theo",
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          ),
           const SizedBox(height: 10),
 
-          _buildOption(context, "Giá: Thấp đến Cao", "defaultRetailPrice", "asc", isSelected("defaultRetailPrice", "asc")),
-          _buildOption(context, "Giá: Cao đến Thấp", "defaultRetailPrice", "desc", isSelected("defaultRetailPrice", "desc")),
-          _buildOption(context, "Tên: A - Z", "productName", "asc", isSelected("productName", "asc")), // Giả sử field tên là productName
+          _buildOption(
+            context,
+            "Giá: Thấp đến Cao",
+            "defaultRetailPrice",
+            "asc",
+            isSelected("defaultRetailPrice", "asc"),
+          ),
+          _buildOption(
+            context,
+            "Giá: Cao đến Thấp",
+            "defaultRetailPrice",
+            "desc",
+            isSelected("defaultRetailPrice", "desc"),
+          ),
+          _buildOption(
+            context,
+            "Tên: A - Z",
+            "productName",
+            "asc",
+            isSelected("productName", "asc"),
+          ), // Giả sử field tên là productName
 
           const SizedBox(height: 20),
         ],
@@ -160,22 +222,33 @@ class SortSelectionSheet extends StatelessWidget {
     );
   }
 
-  Widget _buildOption(BuildContext context, String label, String field, String order, bool isActive) {
+  Widget _buildOption(
+    BuildContext context,
+    String label,
+    String field,
+    String order,
+    bool isActive,
+  ) {
     return ListTile(
       leading: Icon(
-          Ionicons.swap_vertical_outline,
-          color: isActive ? GlassTheme.primaryPurple : Colors.grey
+        Ionicons.swap_vertical_outline,
+        color: isActive ? GlassTheme.primaryPurple : Colors.grey,
       ),
       title: Text(
         label,
         style: TextStyle(
-            fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
-            color: isActive ? GlassTheme.primaryPurple : Colors.black87
+          fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
+          color: isActive ? GlassTheme.primaryPurple : Colors.black87,
         ),
       ),
-      trailing: isActive ? const Icon(Ionicons.checkmark, color: GlassTheme.primaryPurple) : null,
+      trailing: isActive
+          ? const Icon(Ionicons.checkmark, color: GlassTheme.primaryPurple)
+          : null,
       onTap: () {
-        Provider.of<ProductProvider>(context, listen: false).setSort(field, order);
+        Provider.of<ProductProvider>(
+          context,
+          listen: false,
+        ).setSort(field, order);
         context.pop();
       },
     );

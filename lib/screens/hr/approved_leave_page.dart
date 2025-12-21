@@ -1,11 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import 'common/hr_app_bar.dart';
 import 'common/empty_error_state.dart';
-import '../../services/hr_service.dart';
 import '../../services/admin_service.dart';
 import 'widgets/approved_leave_widgets.dart';
 
@@ -36,7 +34,7 @@ class _ApprovedLeavePageState extends State<ApprovedLeavePage> {
     });
     try {
       List<Map<String, dynamic>> data = [];
-      
+
       if (_statusFilter == 'PENDING') {
         data = await _adminService.fetchPendingLeaveRequests();
       } else if (_statusFilter == 'PENDING_ADMIN') {
@@ -44,10 +42,11 @@ class _ApprovedLeavePageState extends State<ApprovedLeavePage> {
       } else {
         // ALL - lấy cả hai
         final pending = await _adminService.fetchPendingLeaveRequests();
-        final pendingAdmin = await _adminService.fetchPendingAdminLeaveRequests();
+        final pendingAdmin = await _adminService
+            .fetchPendingAdminLeaveRequests();
         data = [...pending, ...pendingAdmin];
       }
-      
+
       setState(() => _items = data);
     } catch (e) {
       final errorMsg = e.toString().replaceFirst('Exception: ', '');
@@ -74,13 +73,11 @@ class _ApprovedLeavePageState extends State<ApprovedLeavePage> {
     String? comment;
     final controller = TextEditingController();
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     final confirm = await showDialog<bool>(
       context: context,
       builder: (ctx) => Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         backgroundColor: isDark ? const Color(0xFF1E293B) : Colors.white,
         child: Container(
           padding: const EdgeInsets.all(24),
@@ -91,10 +88,7 @@ class _ApprovedLeavePageState extends State<ApprovedLeavePage> {
                 : LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
-                    colors: [
-                      Colors.white,
-                      const Color(0xFFF8FAFC),
-                    ],
+                    colors: [Colors.white, const Color(0xFFF8FAFC)],
                   ),
           ),
           child: Column(
@@ -109,20 +103,28 @@ class _ApprovedLeavePageState extends State<ApprovedLeavePage> {
                       gradient: LinearGradient(
                         colors: action == 'APPROVE'
                             ? [const Color(0xFF10B981), const Color(0xFF34D399)]
-                            : [const Color(0xFFEF4444), const Color(0xFFF87171)],
+                            : [
+                                const Color(0xFFEF4444),
+                                const Color(0xFFF87171),
+                              ],
                       ),
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
-                          color: (action == 'APPROVE' ? const Color(0xFF10B981) : const Color(0xFFEF4444))
-                              .withOpacity(0.3),
+                          color:
+                              (action == 'APPROVE'
+                                      ? const Color(0xFF10B981)
+                                      : const Color(0xFFEF4444))
+                                  .withOpacity(0.3),
                           blurRadius: 12,
                           offset: const Offset(0, 4),
                         ),
                       ],
                     ),
                     child: Icon(
-                      action == 'APPROVE' ? Icons.check_circle_rounded : Icons.cancel_rounded,
+                      action == 'APPROVE'
+                          ? Icons.check_circle_rounded
+                          : Icons.cancel_rounded,
                       color: Colors.white,
                       size: 24,
                     ),
@@ -130,7 +132,9 @@ class _ApprovedLeavePageState extends State<ApprovedLeavePage> {
                   const SizedBox(width: 16),
                   Expanded(
                     child: Text(
-                      action == 'APPROVE' ? 'hr.approvedLeaves.approveTitle'.tr() : 'hr.approvedLeaves.rejectTitle'.tr(),
+                      action == 'APPROVE'
+                          ? 'hr.approvedLeaves.approveTitle'.tr()
+                          : 'hr.approvedLeaves.rejectTitle'.tr(),
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w800,
@@ -152,7 +156,9 @@ class _ApprovedLeavePageState extends State<ApprovedLeavePage> {
                   labelText: 'hr.approvedLeaves.note'.tr(),
                   hintText: 'hr.approvedLeaves.noteHint'.tr(),
                   filled: true,
-                  fillColor: isDark ? const Color(0xFF334155) : const Color(0xFFF1F5F9),
+                  fillColor: isDark
+                      ? const Color(0xFF334155)
+                      : const Color(0xFFF1F5F9),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16),
                     borderSide: BorderSide(
@@ -168,7 +174,9 @@ class _ApprovedLeavePageState extends State<ApprovedLeavePage> {
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16),
                     borderSide: BorderSide(
-                      color: action == 'APPROVE' ? const Color(0xFF10B981) : const Color(0xFFEF4444),
+                      color: action == 'APPROVE'
+                          ? const Color(0xFF10B981)
+                          : const Color(0xFFEF4444),
                       width: 2,
                     ),
                   ),
@@ -212,14 +220,23 @@ class _ApprovedLeavePageState extends State<ApprovedLeavePage> {
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: action == 'APPROVE'
-                              ? [const Color(0xFF10B981), const Color(0xFF34D399)]
-                              : [const Color(0xFFEF4444), const Color(0xFFF87171)],
+                              ? [
+                                  const Color(0xFF10B981),
+                                  const Color(0xFF34D399),
+                                ]
+                              : [
+                                  const Color(0xFFEF4444),
+                                  const Color(0xFFF87171),
+                                ],
                         ),
                         borderRadius: BorderRadius.circular(16),
                         boxShadow: [
                           BoxShadow(
-                            color: (action == 'APPROVE' ? const Color(0xFF10B981) : const Color(0xFFEF4444))
-                                .withOpacity(0.4),
+                            color:
+                                (action == 'APPROVE'
+                                        ? const Color(0xFF10B981)
+                                        : const Color(0xFFEF4444))
+                                    .withOpacity(0.4),
                             blurRadius: 16,
                             offset: const Offset(0, 6),
                           ),
@@ -236,13 +253,17 @@ class _ApprovedLeavePageState extends State<ApprovedLeavePage> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Icon(
-                                  action == 'APPROVE' ? Icons.check_circle_rounded : Icons.cancel_rounded,
+                                  action == 'APPROVE'
+                                      ? Icons.check_circle_rounded
+                                      : Icons.cancel_rounded,
                                   color: Colors.white,
                                   size: 20,
                                 ),
                                 const SizedBox(width: 8),
                                 Text(
-                                  action == 'APPROVE' ? 'hr.approvedLeaves.approve'.tr() : 'hr.approvedLeaves.reject'.tr(),
+                                  action == 'APPROVE'
+                                      ? 'hr.approvedLeaves.approve'.tr()
+                                      : 'hr.approvedLeaves.reject'.tr(),
                                   style: const TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w700,
@@ -273,13 +294,13 @@ class _ApprovedLeavePageState extends State<ApprovedLeavePage> {
         comment: comment,
       );
       Fluttertoast.showToast(
-        msg: action == 'APPROVE' ? 'hr.approvedLeaves.approved'.tr() : 'hr.approvedLeaves.rejected'.tr(),
+        msg: action == 'APPROVE'
+            ? 'hr.approvedLeaves.approved'.tr()
+            : 'hr.approvedLeaves.rejected'.tr(),
       );
       _load();
     } catch (e) {
-      Fluttertoast.showToast(
-        msg: e.toString().replaceFirst('Exception: ', ''),
-      );
+      Fluttertoast.showToast(msg: e.toString().replaceFirst('Exception: ', ''));
     }
   }
 
@@ -287,7 +308,9 @@ class _ApprovedLeavePageState extends State<ApprovedLeavePage> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0F172A) : const Color(0xFFF1F5F9),
+      backgroundColor: isDark
+          ? const Color(0xFF0F172A)
+          : const Color(0xFFF1F5F9),
       appBar: HrAppBar(
         context: context,
         titleText: 'hr.approvedLeaves.title'.tr(),
@@ -326,8 +349,10 @@ class _ApprovedLeavePageState extends State<ApprovedLeavePage> {
                   itemBuilder: (context, index) {
                     return LeaveRequestCard(
                       item: _items[index],
-                      onApprove: () => _processLeaveRequest(_items[index], 'APPROVE'),
-                      onReject: () => _processLeaveRequest(_items[index], 'REJECT'),
+                      onApprove: () =>
+                          _processLeaveRequest(_items[index], 'APPROVE'),
+                      onReject: () =>
+                          _processLeaveRequest(_items[index], 'REJECT'),
                     );
                   },
                 ),
@@ -344,7 +369,9 @@ class _ApprovedLeavePageState extends State<ApprovedLeavePage> {
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         border: Border(
           bottom: BorderSide(
-            color: isDark ? Colors.grey[800]!.withOpacity(0.5) : Colors.grey[200]!.withOpacity(0.8),
+            color: isDark
+                ? Colors.grey[800]!.withOpacity(0.5)
+                : Colors.grey[200]!.withOpacity(0.8),
             width: 1,
           ),
         ),
@@ -403,5 +430,4 @@ class _ApprovedLeavePageState extends State<ApprovedLeavePage> {
       ),
     );
   }
-
 }

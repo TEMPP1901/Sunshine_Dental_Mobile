@@ -1,5 +1,4 @@
-import 'package:dio/dio.dart';
-import '../../../main.dart'; // ApiService
+// ApiService
 import '../../models/huybro_products/product_model.dart';
 import '../api_service.dart';
 
@@ -35,7 +34,10 @@ class ProductService {
       if (brands != null && brands.isNotEmpty) params['brand'] = brands;
       if (types != null && types.isNotEmpty) params['type'] = types;
 
-      final response = await _apiService.get('/api/products/page', queryParameters: params);
+      final response = await _apiService.get(
+        '/api/products/page',
+        queryParameters: params,
+      );
 
       return ProductPageResponse.fromJson(response.data);
     } catch (e) {

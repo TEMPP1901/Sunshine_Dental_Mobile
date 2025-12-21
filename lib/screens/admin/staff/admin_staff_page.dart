@@ -14,13 +14,14 @@ class AdminStaffPage extends StatefulWidget {
 class _AdminStaffPageState extends State<AdminStaffPage> {
   final AdminService _adminService = AdminService();
   final TextEditingController _searchController = TextEditingController();
-  
+
   List<Map<String, dynamic>> _staffList = [];
   bool _isLoading = false;
   int _currentPage = 0;
   int _totalPages = 0;
   int _totalElements = 0;
-  final int _pageSize = 100; // Tăng lên 100 để load tất cả staff trong một lần (backend max = 100)
+  final int _pageSize =
+      100; // Tăng lên 100 để load tất cả staff trong một lần (backend max = 100)
 
   @override
   void initState() {
@@ -29,7 +30,7 @@ class _AdminStaffPageState extends State<AdminStaffPage> {
     _loadStaff();
     _loadTotalStaffCount(); // Load tổng số từ dashboard stats
   }
-  
+
   // Load tổng số nhân viên từ dashboard stats (tất cả users trong hệ thống)
   // Dashboard stats có totalStaff = userRepo.count() - tổng số TẤT CẢ users
   // Staff API chỉ trả về active staff với roles (RECEPTION, ACCOUNTANT, DOCTOR, HR, RECEPTIONIST)
@@ -38,8 +39,10 @@ class _AdminStaffPageState extends State<AdminStaffPage> {
     try {
       final stats = await _adminService.fetchDashboardStats();
       final totalStaff = stats['totalStaff'];
-      debugPrint('Dashboard stats totalStaff: $totalStaff (type: ${totalStaff?.runtimeType})');
-      
+      debugPrint(
+        'Dashboard stats totalStaff: $totalStaff (type: ${totalStaff?.runtimeType})',
+      );
+
       if (totalStaff != null) {
         int count = 0;
         if (totalStaff is int) {
@@ -49,7 +52,7 @@ class _AdminStaffPageState extends State<AdminStaffPage> {
         } else if (totalStaff is String) {
           count = int.tryParse(totalStaff) ?? 0;
         }
-        
+
         // Luôn update totalElements từ dashboard stats (tổng số tất cả users)
         // Vì đây là số chính xác hơn so với totalElements từ staff API
         if (count > 0) {
@@ -84,16 +87,18 @@ class _AdminStaffPageState extends State<AdminStaffPage> {
     try {
       // Load tất cả staff trong một lần với size lớn
       final data = await _adminService.fetchStaff(
-        search: _searchController.text.trim().isNotEmpty ? _searchController.text.trim() : null,
+        search: _searchController.text.trim().isNotEmpty
+            ? _searchController.text.trim()
+            : null,
         page: 0, // Luôn load từ page 0
         size: _pageSize, // 100 items
       );
-      
+
       // Debug log để kiểm tra dữ liệu
       debugPrint('Staff API Response: $data');
       debugPrint('totalElements type: ${data['totalElements']?.runtimeType}');
       debugPrint('totalElements value: ${data['totalElements']}');
-      
+
       // Parse totalElements an toàn hơn
       int totalElements = 0;
       final totalElementsValue = data['totalElements'];
@@ -106,7 +111,7 @@ class _AdminStaffPageState extends State<AdminStaffPage> {
           totalElements = int.tryParse(totalElementsValue) ?? 0;
         }
       }
-      
+
       // Parse totalPages an toàn hơn
       int totalPages = 0;
       final totalPagesValue = data['totalPages'];
@@ -119,43 +124,56 @@ class _AdminStaffPageState extends State<AdminStaffPage> {
           totalPages = int.tryParse(totalPagesValue) ?? 0;
         }
       }
-      
+
       // Nếu không có totalPages trong response, tính từ totalElements
       if (totalPages == 0 && totalElements > 0) {
         totalPages = ((totalElements - 1) ~/ _pageSize) + 1;
         debugPrint('Calculated totalPages from totalElements: $totalPages');
       }
-      
-      List<Map<String, dynamic>> allStaff = data['content'] as List<Map<String, dynamic>>? ?? [];
-      debugPrint('Initial load: ${allStaff.length} items, totalElements=$totalElements, totalPages=$totalPages');
-      
+
+      List<Map<String, dynamic>> allStaff =
+          data['content'] as List<Map<String, dynamic>>? ?? [];
+      debugPrint(
+        'Initial load: ${allStaff.length} items, totalElements=$totalElements, totalPages=$totalPages',
+      );
+
       // Nếu API không trả về đúng totalElements/totalPages (bằng 0) nhưng có content,
       // cần load tiếp các pages cho đến khi không còn data
-      if (totalElements == 0 && totalPages == 0 && allStaff.length > 0) {
+      if (totalElements == 0 && totalPages == 0 && allStaff.isNotEmpty) {
         // API không trả về pagination info, cần load tiếp từ page 1
-        debugPrint('API returned totalElements=0 but has content, will load more pages until empty');
-        
+        debugPrint(
+          'API returned totalElements=0 but has content, will load more pages until empty',
+        );
+
         // Load tất cả các pages tiếp theo cho đến khi gặp empty page
         int currentPage = 1;
-        while (currentPage < 100) { // Giới hạn 100 pages để tránh vòng lặp vô hạn
+        while (currentPage < 100) {
+          // Giới hạn 100 pages để tránh vòng lặp vô hạn
           try {
             debugPrint('Loading page $currentPage...');
             final pageData = await _adminService.fetchStaff(
-              search: _searchController.text.trim().isNotEmpty ? _searchController.text.trim() : null,
+              search: _searchController.text.trim().isNotEmpty
+                  ? _searchController.text.trim()
+                  : null,
               page: currentPage,
               size: _pageSize,
             );
-            final pageContent = pageData['content'] as List<Map<String, dynamic>>? ?? [];
+            final pageContent =
+                pageData['content'] as List<Map<String, dynamic>>? ?? [];
             if (pageContent.isNotEmpty) {
               allStaff.addAll(pageContent);
-              debugPrint('Loaded page $currentPage: ${pageContent.length} items, total so far: ${allStaff.length}');
-              
+              debugPrint(
+                'Loaded page $currentPage: ${pageContent.length} items, total so far: ${allStaff.length}',
+              );
+
               // Nếu page không đầy (ít hơn pageSize), có thể đã hết data
               if (pageContent.length < _pageSize) {
-                debugPrint('Page $currentPage is not full (${pageContent.length} < $_pageSize), likely last page');
+                debugPrint(
+                  'Page $currentPage is not full (${pageContent.length} < $_pageSize), likely last page',
+                );
                 break;
               }
-              
+
               currentPage++;
             } else {
               debugPrint('Page $currentPage returned empty content, stopping');
@@ -169,22 +187,29 @@ class _AdminStaffPageState extends State<AdminStaffPage> {
         }
       } else if (totalPages > 1 && allStaff.length < totalElements) {
         // API trả về đúng pagination info, load các pages còn lại
-        debugPrint('Need to load more: current=${allStaff.length}, total=$totalElements, pages=$totalPages');
-        
+        debugPrint(
+          'Need to load more: current=${allStaff.length}, total=$totalElements, pages=$totalPages',
+        );
+
         // Load tất cả các pages còn lại
         for (int page = 1; page < totalPages; page++) {
           try {
             debugPrint('Loading page $page/$totalPages...');
             final pageData = await _adminService.fetchStaff(
-              search: _searchController.text.trim().isNotEmpty ? _searchController.text.trim() : null,
+              search: _searchController.text.trim().isNotEmpty
+                  ? _searchController.text.trim()
+                  : null,
               page: page,
               size: _pageSize,
             );
-            final pageContent = pageData['content'] as List<Map<String, dynamic>>? ?? [];
+            final pageContent =
+                pageData['content'] as List<Map<String, dynamic>>? ?? [];
             if (pageContent.isNotEmpty) {
               allStaff.addAll(pageContent);
-              debugPrint('Loaded page $page: ${pageContent.length} items, total so far: ${allStaff.length}');
-              
+              debugPrint(
+                'Loaded page $page: ${pageContent.length} items, total so far: ${allStaff.length}',
+              );
+
               // Nếu đã đủ số lượng, dừng lại
               if (allStaff.length >= totalElements) {
                 debugPrint('Reached totalElements, stopping pagination');
@@ -200,9 +225,11 @@ class _AdminStaffPageState extends State<AdminStaffPage> {
           }
         }
       }
-      
-      debugPrint('Final staff list length: ${allStaff.length}, expected: $totalElements');
-      
+
+      debugPrint(
+        'Final staff list length: ${allStaff.length}, expected: $totalElements',
+      );
+
       setState(() {
         _staffList = allStaff;
         _totalPages = totalPages;
@@ -210,15 +237,19 @@ class _AdminStaffPageState extends State<AdminStaffPage> {
         _totalElements = totalElements;
         _isLoading = false;
       });
-      
-      debugPrint('Final - totalElements from API: $totalElements, totalPages: $_totalPages, staffCount: ${_staffList.length}');
-      
+
+      debugPrint(
+        'Final - totalElements from API: $totalElements, totalPages: $_totalPages, staffCount: ${_staffList.length}',
+      );
+
       // Kiểm tra nếu số items < totalElements từ API
       if (_staffList.length < totalElements && totalElements > 0) {
-        debugPrint('WARNING: Staff list (${_staffList.length}) < totalElements from API ($totalElements)');
+        debugPrint(
+          'WARNING: Staff list (${_staffList.length}) < totalElements from API ($totalElements)',
+        );
         debugPrint('This might indicate pagination issue or API filter');
       }
-      
+
       // Luôn load totalStaff từ dashboard stats để có tổng số TẤT CẢ users
       // (Dashboard có userRepo.count(), staff API chỉ có active staff với roles)
       _loadTotalStaffCount();
@@ -226,7 +257,9 @@ class _AdminStaffPageState extends State<AdminStaffPage> {
       setState(() => _isLoading = false);
       debugPrint('Error loading staff: $e');
       Fluttertoast.showToast(
-        msg: 'admin.staff.error.loadFailed'.tr(namedArgs: {'error': e.toString()}),
+        msg: 'admin.staff.error.loadFailed'.tr(
+          namedArgs: {'error': e.toString()},
+        ),
         toastLength: Toast.LENGTH_LONG,
       );
     }
@@ -244,7 +277,8 @@ class _AdminStaffPageState extends State<AdminStaffPage> {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new_rounded),
-          onPressed: () => context.canPop() ? context.pop() : context.go('/admin'),
+          onPressed: () =>
+              context.canPop() ? context.pop() : context.go('/admin'),
         ),
         title: Text(
           'admin.staff.title'.tr(),
@@ -324,7 +358,9 @@ class _AdminStaffPageState extends State<AdminStaffPage> {
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                   borderSide: BorderSide(
-                    color: isDark ? const Color(0xFF5C6BC0) : const Color(0xFF1A237E),
+                    color: isDark
+                        ? const Color(0xFF5C6BC0)
+                        : const Color(0xFF1A237E),
                     width: 2,
                   ),
                 ),
@@ -332,7 +368,10 @@ class _AdminStaffPageState extends State<AdminStaffPage> {
                 fillColor: isDark
                     ? Colors.grey[900]!.withOpacity(0.3)
                     : Colors.white,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 14,
+                ),
                 hintStyle: TextStyle(
                   fontSize: 13,
                   color: isDark ? Colors.grey[500] : Colors.grey[400],
@@ -340,7 +379,9 @@ class _AdminStaffPageState extends State<AdminStaffPage> {
               ),
               style: TextStyle(
                 fontSize: 14,
-                color: isDark ? const Color(0xFFE8EAED) : const Color(0xFF0F172A),
+                color: isDark
+                    ? const Color(0xFFE8EAED)
+                    : const Color(0xFF0F172A),
               ),
               onSubmitted: (_) => _loadStaff(resetPage: true),
             ),
@@ -367,15 +408,21 @@ class _AdminStaffPageState extends State<AdminStaffPage> {
                   Icon(
                     Icons.info_outline_rounded,
                     size: 16,
-                    color: isDark ? const Color(0xFF7C3AED) : const Color(0xFF1A237E),
+                    color: isDark
+                        ? const Color(0xFF7C3AED)
+                        : const Color(0xFF1A237E),
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    'admin.staff.totalStaff'.tr(namedArgs: {'count': '$_totalElements'}),
+                    'admin.staff.totalStaff'.tr(
+                      namedArgs: {'count': '$_totalElements'},
+                    ),
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
-                      color: isDark ? const Color(0xFFE8EAED) : const Color(0xFF0F172A),
+                      color: isDark
+                          ? const Color(0xFFE8EAED)
+                          : const Color(0xFF0F172A),
                     ),
                   ),
                 ],
@@ -387,66 +434,77 @@ class _AdminStaffPageState extends State<AdminStaffPage> {
                 ? Center(
                     child: CircularProgressIndicator(
                       valueColor: AlwaysStoppedAnimation<Color>(
-                        isDark ? const Color(0xFF5C6BC0) : const Color(0xFF1A237E),
+                        isDark
+                            ? const Color(0xFF5C6BC0)
+                            : const Color(0xFF1A237E),
                       ),
                     ),
                   )
                 : _staffList.isEmpty
-                    ? Center(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(24),
-                              decoration: BoxDecoration(
-                                color: (isDark ? const Color(0xFF5C6BC0) : const Color(0xFF1A237E))
+                ? Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(24),
+                          decoration: BoxDecoration(
+                            color:
+                                (isDark
+                                        ? const Color(0xFF5C6BC0)
+                                        : const Color(0xFF1A237E))
                                     .withOpacity(isDark ? 0.15 : 0.1),
-                                shape: BoxShape.circle,
-                              ),
-                              child: Icon(
-                                Icons.people_outline_rounded,
-                                size: 56,
-                                color: isDark ? const Color(0xFF7C3AED) : const Color(0xFF1A237E),
-                              ),
-                            ),
-                            const SizedBox(height: 20),
-                            Text(
-                              'admin.staff.notFound'.tr(),
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                color: isDark ? const Color(0xFFE8EAED) : const Color(0xFF0F172A),
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              _searchController.text.isNotEmpty
-                                  ? 'admin.staff.tryChangeSearch'.tr()
-                                  : 'admin.staff.emptyList'.tr(),
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: isDark ? Colors.grey[400] : Colors.grey[600],
-                              ),
-                            ),
-                          ],
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.people_outline_rounded,
+                            size: 56,
+                            color: isDark
+                                ? const Color(0xFF7C3AED)
+                                : const Color(0xFF1A237E),
+                          ),
                         ),
-                      )
-                    : RefreshIndicator(
-                        onRefresh: () => _loadStaff(resetPage: true),
-                        color: isDark ? const Color(0xFF5C6BC0) : const Color(0xFF1A237E),
-                        child: ListView.builder(
-                          padding: const EdgeInsets.all(16),
-                          itemCount: _staffList.length + 1, // +1 for pagination
-                          itemBuilder: (context, index) {
-                            if (index == _staffList.length) {
-                              // Pagination
-                              return _buildPagination(isDark);
-                            }
-                            final staff = _staffList[index];
-                            return StaffCard(staff: staff, isDark: isDark);
-                          },
+                        const SizedBox(height: 20),
+                        Text(
+                          'admin.staff.notFound'.tr(),
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: isDark
+                                ? const Color(0xFFE8EAED)
+                                : const Color(0xFF0F172A),
+                          ),
                         ),
-                      ),
+                        const SizedBox(height: 8),
+                        Text(
+                          _searchController.text.isNotEmpty
+                              ? 'admin.staff.tryChangeSearch'.tr()
+                              : 'admin.staff.emptyList'.tr(),
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: isDark ? Colors.grey[400] : Colors.grey[600],
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                : RefreshIndicator(
+                    onRefresh: () => _loadStaff(resetPage: true),
+                    color: isDark
+                        ? const Color(0xFF5C6BC0)
+                        : const Color(0xFF1A237E),
+                    child: ListView.builder(
+                      padding: const EdgeInsets.all(16),
+                      itemCount: _staffList.length + 1, // +1 for pagination
+                      itemBuilder: (context, index) {
+                        if (index == _staffList.length) {
+                          // Pagination
+                          return _buildPagination(isDark);
+                        }
+                        final staff = _staffList[index];
+                        return StaffCard(staff: staff, isDark: isDark);
+                      },
+                    ),
+                  ),
           ),
         ],
       ),
@@ -482,7 +540,9 @@ class _AdminStaffPageState extends State<AdminStaffPage> {
               'Trang ${_currentPage + 1}/$_totalPages',
               style: TextStyle(
                 fontWeight: FontWeight.w600,
-                color: isDark ? const Color(0xFFE8EAED) : const Color(0xFF0F172A),
+                color: isDark
+                    ? const Color(0xFFE8EAED)
+                    : const Color(0xFF0F172A),
               ),
             ),
           ),
@@ -506,20 +566,22 @@ class StaffCard extends StatelessWidget {
   final Map<String, dynamic> staff;
   final bool isDark;
 
-  const StaffCard({
-    super.key,
-    required this.staff,
-    required this.isDark,
-  });
+  const StaffCard({super.key, required this.staff, required this.isDark});
 
   String _getInitials(String? fullName) {
     if (fullName == null || fullName.trim().isEmpty) return 'N';
-    final parts = fullName.trim().split(' ').where((p) => p.isNotEmpty).toList();
+    final parts = fullName
+        .trim()
+        .split(' ')
+        .where((p) => p.isNotEmpty)
+        .toList();
     if (parts.isEmpty) return 'N';
     if (parts.length == 1) {
       final first = parts[0];
       if (first.isEmpty) return 'N';
-      return first.substring(0, first.length > 1 ? 1 : first.length).toUpperCase();
+      return first
+          .substring(0, first.length > 1 ? 1 : first.length)
+          .toUpperCase();
     }
     // Lấy chữ cái đầu của từ đầu và từ cuối
     final first = parts.first;
@@ -538,7 +600,9 @@ class StaffCard extends StatelessWidget {
     final borderColor = isDark
         ? Colors.grey[800]!.withOpacity(0.5)
         : Colors.grey[200]!.withOpacity(0.8);
-    final textColor = isDark ? const Color(0xFFE8EAED) : const Color(0xFF0F172A);
+    final textColor = isDark
+        ? const Color(0xFFE8EAED)
+        : const Color(0xFF0F172A);
     final textSecondaryColor = isDark ? Colors.grey[400] : Colors.grey[600];
 
     return Container(
@@ -546,10 +610,7 @@ class StaffCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: surfaceColor,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: borderColor,
-          width: 1,
-        ),
+        border: Border.all(color: borderColor, width: 1),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(isDark ? 0.3 : 0.05),
@@ -625,7 +686,9 @@ class StaffCard extends StatelessWidget {
                             ),
                             const SizedBox(width: 4),
                             Text(
-                              'admin.staff.code'.tr(namedArgs: {'code': '${staff['code']}'}),
+                              'admin.staff.code'.tr(
+                                namedArgs: {'code': '${staff['code']}'},
+                              ),
                               style: TextStyle(
                                 fontSize: 13,
                                 color: textSecondaryColor,
@@ -639,10 +702,15 @@ class StaffCard extends StatelessWidget {
                 ),
                 // Status badge
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
                     color: isActive
-                        ? const Color(0xFF10B981).withOpacity(isDark ? 0.2 : 0.12)
+                        ? const Color(
+                            0xFF10B981,
+                          ).withOpacity(isDark ? 0.2 : 0.12)
                         : Colors.red.withOpacity(isDark ? 0.2 : 0.12),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
@@ -656,15 +724,21 @@ class StaffCard extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(
-                        isActive ? Icons.check_circle_rounded : Icons.cancel_rounded,
+                        isActive
+                            ? Icons.check_circle_rounded
+                            : Icons.cancel_rounded,
                         size: 14,
                         color: isActive ? const Color(0xFF10B981) : Colors.red,
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        isActive ? 'admin.staff.active'.tr() : 'admin.staff.inactive'.tr(),
+                        isActive
+                            ? 'admin.staff.active'.tr()
+                            : 'admin.staff.inactive'.tr(),
                         style: TextStyle(
-                          color: isActive ? const Color(0xFF10B981) : Colors.red,
+                          color: isActive
+                              ? const Color(0xFF10B981)
+                              : Colors.red,
                           fontWeight: FontWeight.w700,
                           fontSize: 11,
                           letterSpacing: 0.3,
@@ -710,29 +784,38 @@ class StaffCard extends StatelessWidget {
                       isDark: isDark,
                     ),
                   ],
-                  if (staff['roles'] != null && staff['roles'] is List && (staff['roles'] as List).isNotEmpty) ...[
-                    if (staff['email'] != null || staff['phone'] != null) const SizedBox(height: 12),
+                  if (staff['roles'] != null &&
+                      staff['roles'] is List &&
+                      (staff['roles'] as List).isNotEmpty) ...[
+                    if (staff['email'] != null || staff['phone'] != null)
+                      const SizedBox(height: 12),
                     StaffInfoRow(
                       icon: Icons.badge_rounded,
                       iconColor: const Color(0xFF10B981),
                       label: 'admin.staff.role'.tr(),
-                      value: (staff['roles'] as List).map((r) {
-                        try {
-                          if (r is Map<String, dynamic>) {
-                            return r['roleName']?.toString() ?? 
-                                   r['name']?.toString() ?? 
-                                   r.toString();
-                          }
-                          return r.toString();
-                        } catch (e) {
-                          return r.toString();
-                        }
-                      }).where((s) => s.isNotEmpty).join(', '),
+                      value: (staff['roles'] as List)
+                          .map((r) {
+                            try {
+                              if (r is Map<String, dynamic>) {
+                                return r['roleName']?.toString() ??
+                                    r['name']?.toString() ??
+                                    r.toString();
+                              }
+                              return r.toString();
+                            } catch (e) {
+                              return r.toString();
+                            }
+                          })
+                          .where((s) => s.isNotEmpty)
+                          .join(', '),
                       isDark: isDark,
                     ),
                   ],
                   if (staff['departmentName'] != null) ...[
-                    if (staff['email'] != null || staff['phone'] != null || (staff['roles'] != null && staff['roles'] is List)) const SizedBox(height: 12),
+                    if (staff['email'] != null ||
+                        staff['phone'] != null ||
+                        (staff['roles'] != null && staff['roles'] is List))
+                      const SizedBox(height: 12),
                     StaffInfoRow(
                       icon: Icons.business_rounded,
                       iconColor: const Color(0xFFF59E0B),
@@ -741,24 +824,33 @@ class StaffCard extends StatelessWidget {
                       isDark: isDark,
                     ),
                   ],
-                  if (staff['clinics'] != null && staff['clinics'] is List && (staff['clinics'] as List).isNotEmpty) ...[
-                    if (staff['email'] != null || staff['phone'] != null || staff['roles'] != null || staff['departmentName'] != null) const SizedBox(height: 12),
+                  if (staff['clinics'] != null &&
+                      staff['clinics'] is List &&
+                      (staff['clinics'] as List).isNotEmpty) ...[
+                    if (staff['email'] != null ||
+                        staff['phone'] != null ||
+                        staff['roles'] != null ||
+                        staff['departmentName'] != null)
+                      const SizedBox(height: 12),
                     StaffInfoRow(
                       icon: Icons.local_hospital_rounded,
                       iconColor: const Color(0xFFEF4444),
                       label: 'admin.common.clinic'.tr(),
-                      value: (staff['clinics'] as List).map((c) {
-                        try {
-                          if (c is Map<String, dynamic>) {
-                            return c['clinicName']?.toString() ?? 
-                                   c['name']?.toString() ?? 
-                                   c.toString();
-                          }
-                          return c.toString();
-                        } catch (e) {
-                          return c.toString();
-                        }
-                      }).where((s) => s.isNotEmpty).join(', '),
+                      value: (staff['clinics'] as List)
+                          .map((c) {
+                            try {
+                              if (c is Map<String, dynamic>) {
+                                return c['clinicName']?.toString() ??
+                                    c['name']?.toString() ??
+                                    c.toString();
+                              }
+                              return c.toString();
+                            } catch (e) {
+                              return c.toString();
+                            }
+                          })
+                          .where((s) => s.isNotEmpty)
+                          .join(', '),
                       isDark: isDark,
                     ),
                   ],
@@ -790,9 +882,11 @@ class StaffInfoRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textColor = isDark ? const Color(0xFFE8EAED) : const Color(0xFF0F172A);
+    final textColor = isDark
+        ? const Color(0xFFE8EAED)
+        : const Color(0xFF0F172A);
     final textSecondaryColor = isDark ? Colors.grey[400] : Colors.grey[600];
-    
+
     return Row(
       children: [
         Container(
@@ -801,10 +895,7 @@ class StaffInfoRow extends StatelessWidget {
           decoration: BoxDecoration(
             color: iconColor.withOpacity(isDark ? 0.2 : 0.15),
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(
-              color: iconColor.withOpacity(0.3),
-              width: 1,
-            ),
+            border: Border.all(color: iconColor.withOpacity(0.3), width: 1),
           ),
           child: Icon(icon, size: 20, color: iconColor),
         ),
@@ -843,4 +934,3 @@ class StaffInfoRow extends StatelessWidget {
     );
   }
 }
-

@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:easy_localization/easy_localization.dart'; // Import i18n
 import '../../../../models/patient/patient_models.dart';
 
 class AppointmentCard extends StatelessWidget {
   final PatientAppointment appointment;
-  // Đã bỏ final VoidCallback? onCancel;
 
   const AppointmentCard({super.key, required this.appointment});
 
@@ -12,7 +11,15 @@ class AppointmentCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final date = appointment.startDateTime;
     final dayStr = DateFormat('dd').format(date);
-    final monthStr = DateFormat('MM').format(date);
+
+    // Xử lý tháng theo ngôn ngữ: "Th 05" (Việt) hoặc "May" (Anh)
+    // Cách 1: Dùng DateFormat('MM') rồi ghép chuỗi từ JSON (như bạn đang làm)
+    // Cách 2: Dùng DateFormat('MMM', context.locale.toString()) chuẩn quốc tế
+    final monthNum = DateFormat('MM').format(date);
+    final monthStr = context.locale.languageCode == 'vi'
+        ? "Th $monthNum"
+        : DateFormat('MMM').format(date);
+
     final timeStr = DateFormat('HH:mm').format(date);
 
     return Container(
@@ -55,7 +62,7 @@ class AppointmentCard extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      "Th $monthStr",
+                      monthStr,
                       style: const TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
@@ -107,7 +114,10 @@ class AppointmentCard extends StatelessWidget {
                     const SizedBox(height: 4),
                     _infoRow(
                       Icons.person_rounded,
-                      "BS. ${appointment.doctorName}",
+                      // "BS. Tên" hoặc "Dr. Name"
+                      "appointments.doctor".tr(
+                        namedArgs: {'name': appointment.doctorName},
+                      ),
                     ),
                     const SizedBox(height: 4),
                     _infoRow(Icons.location_on_rounded, appointment.clinicName),
@@ -116,8 +126,6 @@ class AppointmentCard extends StatelessWidget {
               ),
             ],
           ),
-
-          // --- [ĐÃ XÓA PHẦN NÚT HỦY TẠI ĐÂY ĐỂ GIỐNG WEB] ---
         ],
       ),
     );
@@ -143,48 +151,56 @@ class AppointmentCard extends StatelessWidget {
   Widget _buildStatusBadge(String status) {
     Color bg;
     Color text;
-    String label;
+    String labelKey; // Dùng key JSON thay vì text cứng
     final s = status.toUpperCase();
 
     switch (s) {
       case 'PENDING':
         bg = Colors.orange.shade50;
         text = Colors.orange.shade800;
-        label = "Chờ xác nhận";
+        labelKey = "appointments.status.pending";
         break;
       case 'SCHEDULED':
       case 'CONFIRMED':
         bg = Colors.blue.shade50;
         text = Colors.blue.shade800;
-        label = "Đã lên lịch";
+        labelKey = s == 'SCHEDULED'
+            ? "appointments.status.scheduled"
+            : "appointments.status.confirmed";
         break;
       case 'IN_PROGRESS':
       case 'PROCESSING':
         bg = Colors.purple.shade50;
         text = Colors.purple.shade800;
-        label = "Đang khám";
+        labelKey = "appointments.status.inProgress";
         break;
       case 'COMPLETED':
         bg = Colors.green.shade50;
         text = Colors.green.shade800;
-        label = "Hoàn thành";
+        labelKey = "appointments.status.completed";
         break;
       case 'CANCELLED':
       case 'CANCELED':
         bg = Colors.red.shade50;
         text = Colors.red.shade800;
-        label = "Đã hủy";
+        labelKey = "appointments.status.cancelled";
         break;
       case 'NOSHOW':
       case 'NO_SHOW':
         bg = Colors.grey.shade200;
         text = Colors.grey.shade700;
-        label = "Vắng mặt";
+        labelKey = "appointments.status.noShow";
         break;
       default:
         bg = Colors.grey.shade100;
         text = Colors.grey.shade800;
-        label = s;
+        labelKey = s; // Fallback nếu status lạ
+    }
+
+    // Kiểm tra xem key có tồn tại không, nếu không thì hiển thị nguyên gốc status
+    String label = tr(labelKey);
+    if (label == labelKey && !labelKey.startsWith("appointments")) {
+      label = s;
     }
 
     return Container(

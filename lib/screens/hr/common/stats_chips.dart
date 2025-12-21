@@ -20,8 +20,13 @@ class StatsChips extends StatelessWidget {
               .map(
                 (e) => Chip(
                   label: Text('${e.key}: ${e.value}'),
-                  backgroundColor: scheme.surfaceVariant.withOpacity(0.6),
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  backgroundColor: scheme.surfaceContainerHighest.withOpacity(
+                    0.6,
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                 ),
               )
               .toList(),
@@ -30,5 +35,3 @@ class StatsChips extends StatelessWidget {
     );
   }
 }
-
-

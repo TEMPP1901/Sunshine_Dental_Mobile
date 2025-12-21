@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../../../services/admin_service.dart';
-import 'package:intl/intl.dart';
 
 class AdminReportsPage extends StatefulWidget {
   const AdminReportsPage({super.key});
@@ -31,11 +30,11 @@ class _AdminReportsPageState extends State<AdminReportsPage> {
         _adminService.fetchDashboardStats(),
         _adminService.fetchInventoryStatistics(),
       ]);
-      
+
       // Debug log để kiểm tra dữ liệu
       debugPrint('Dashboard Stats Response: $statsData');
       debugPrint('Inventory Stats Response: $inventoryData');
-      
+
       setState(() {
         _stats = statsData;
         _inventoryStats = inventoryData;
@@ -44,15 +43,17 @@ class _AdminReportsPageState extends State<AdminReportsPage> {
     } catch (e) {
       setState(() => _isLoading = false);
       debugPrint('Error loading data: $e');
-      Fluttertoast.showToast(msg: 'admin.reports.error.loadFailed'.tr(args: [e.toString()]));
+      Fluttertoast.showToast(
+        msg: 'admin.reports.error.loadFailed'.tr(args: [e.toString()]),
+      );
     }
   }
 
   String _formatCurrency(dynamic value) {
     if (value == null) return '0 ₫';
     // Xử lý cả int, double, String (BigDecimal từ Java có thể là String)
-    final numValue = value is num 
-        ? value.toDouble() 
+    final numValue = value is num
+        ? value.toDouble()
         : double.tryParse(value.toString()) ?? 0;
     return NumberFormat.currency(locale: 'vi_VN', symbol: '₫').format(numValue);
   }
@@ -84,7 +85,8 @@ class _AdminReportsPageState extends State<AdminReportsPage> {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new_rounded),
-          onPressed: () => context.canPop() ? context.pop() : context.go('/admin'),
+          onPressed: () =>
+              context.canPop() ? context.pop() : context.go('/admin'),
         ),
         title: Text(
           'admin.reports.title'.tr(),
@@ -112,12 +114,20 @@ class _AdminReportsPageState extends State<AdminReportsPage> {
               onRefresh: _loadData,
               color: isDark ? const Color(0xFF5C6BC0) : const Color(0xFF1A237E),
               child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Revenue Section
-                    _buildSectionTitle('admin.reports.revenue'.tr(), Icons.trending_up_rounded, const Color(0xFF10B981), isDark),
+                    _buildSectionTitle(
+                      'admin.reports.revenue'.tr(),
+                      Icons.trending_up_rounded,
+                      const Color(0xFF10B981),
+                      isDark,
+                    ),
                     const SizedBox(height: 12),
                     Row(
                       children: [
@@ -145,7 +155,12 @@ class _AdminReportsPageState extends State<AdminReportsPage> {
                     const SizedBox(height: 20),
 
                     // Appointments Section
-                    _buildSectionTitle('admin.reports.appointments'.tr(), Icons.calendar_today_rounded, const Color(0xFF3B82F6), isDark),
+                    _buildSectionTitle(
+                      'admin.reports.appointments'.tr(),
+                      Icons.calendar_today_rounded,
+                      const Color(0xFF3B82F6),
+                      isDark,
+                    ),
                     const SizedBox(height: 12),
                     Row(
                       children: [
@@ -173,7 +188,12 @@ class _AdminReportsPageState extends State<AdminReportsPage> {
                     const SizedBox(height: 20),
 
                     // Staff & Patients Section
-                    _buildSectionTitle('admin.reports.staffAndPatients'.tr(), Icons.people_rounded, const Color(0xFF6366F1), isDark),
+                    _buildSectionTitle(
+                      'admin.reports.staffAndPatients'.tr(),
+                      Icons.people_rounded,
+                      const Color(0xFF6366F1),
+                      isDark,
+                    ),
                     const SizedBox(height: 12),
                     Row(
                       children: [
@@ -201,7 +221,12 @@ class _AdminReportsPageState extends State<AdminReportsPage> {
                     const SizedBox(height: 20),
 
                     // Clinics Section
-                    _buildSectionTitle('admin.reports.clinics'.tr(), Icons.local_hospital_rounded, const Color(0xFFEF4444), isDark),
+                    _buildSectionTitle(
+                      'admin.reports.clinics'.tr(),
+                      Icons.local_hospital_rounded,
+                      const Color(0xFFEF4444),
+                      isDark,
+                    ),
                     const SizedBox(height: 12),
                     _StatCard(
                       'admin.reports.totalClinics'.tr(),
@@ -215,7 +240,12 @@ class _AdminReportsPageState extends State<AdminReportsPage> {
 
                     // Inventory Section
                     if (_inventoryStats.isNotEmpty) ...[
-                      _buildSectionTitle('admin.reports.inventoryAlerts'.tr(), Icons.warning_rounded, const Color(0xFFF59E0B), isDark),
+                      _buildSectionTitle(
+                        'admin.reports.inventoryAlerts'.tr(),
+                        Icons.warning_rounded,
+                        const Color(0xFFF59E0B),
+                        isDark,
+                      ),
                       const SizedBox(height: 12),
                       Row(
                         children: [
@@ -245,7 +275,12 @@ class _AdminReportsPageState extends State<AdminReportsPage> {
 
                     // Pending Actions
                     if ((_stats['pendingLeaveRequests'] ?? 0) > 0) ...[
-                      _buildSectionTitle('admin.reports.pendingActions'.tr(), Icons.notifications_active_rounded, const Color(0xFFF59E0B), isDark),
+                      _buildSectionTitle(
+                        'admin.reports.pendingActions'.tr(),
+                        Icons.notifications_active_rounded,
+                        const Color(0xFFF59E0B),
+                        isDark,
+                      ),
                       const SizedBox(height: 12),
                       _StatCard(
                         'admin.reports.pendingLeaves'.tr(),
@@ -264,7 +299,12 @@ class _AdminReportsPageState extends State<AdminReportsPage> {
     );
   }
 
-  Widget _buildSectionTitle(String title, IconData icon, Color color, bool isDark) {
+  Widget _buildSectionTitle(
+    String title,
+    IconData icon,
+    Color color,
+    bool isDark,
+  ) {
     final colorScheme = Theme.of(context).colorScheme;
     return Row(
       children: [
@@ -326,7 +366,7 @@ class _StatCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final surfaceColor = isDark 
+    final surfaceColor = isDark
         ? color.withOpacity(0.15)
         : color.withOpacity(0.08);
     final borderColor = color.withOpacity(isDark ? 0.2 : 0.15);
@@ -338,10 +378,7 @@ class _StatCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: surfaceColor,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: borderColor,
-          width: 1,
-        ),
+        border: Border.all(color: borderColor, width: 1),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(isDark ? 0.2 : 0.04),
@@ -436,4 +473,3 @@ class _StatCard extends StatelessWidget {
     );
   }
 }
-

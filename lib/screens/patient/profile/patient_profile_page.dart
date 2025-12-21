@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart'; // [MỚI]
+import 'package:provider/provider.dart';
+import 'package:easy_localization/easy_localization.dart'; // Import i18n
 
-import '../../../../services/api_service.dart'; // [MỚI] Để xử lý ảnh
-import '../../../../providers/user_provider.dart'; // [MỚI] Để lấy thông tin user đăng nhập
+import '../../../../services/api_service.dart';
+import '../../../../providers/user_provider.dart';
 import '../../../../services/patient/patient_service.dart';
 import '../../../../models/patient/patient_profile_model.dart';
 
@@ -39,20 +40,38 @@ class _PatientProfilePageState extends State<PatientProfilePage> {
     _fetchProfile();
   }
 
+  // [AN TOÀN] Hàm chuẩn hóa giới tính từ API
+  String? _normalizeGender(String? rawGender) {
+    if (rawGender == null || rawGender.isEmpty) return null;
+    final g = rawGender.trim().toLowerCase();
+
+    if (g == 'nam' || g == 'male' || g == 'm') return 'Male';
+    if (g == 'nữ' || g == 'nu' || g == 'female' || g == 'f') return 'Female';
+
+    return 'Other';
+  }
+
   Future<void> _fetchProfile() async {
-    final data = await _service.getPatientProfile();
-    if (mounted) {
-      setState(() {
-        _profile = data;
-        _isLoading = false;
-        if (data != null) {
-          _nameController.text = data.fullName;
-          _addressController.text = data.address ?? '';
-          _noteController.text = data.note ?? '';
-          _selectedGender = data.gender;
-          _selectedDate = data.dateOfBirth;
-        }
-      });
+    try {
+      final data = await _service.getPatientProfile();
+      if (mounted) {
+        setState(() {
+          _profile = data;
+          _isLoading = false;
+          if (data != null) {
+            _nameController.text = data.fullName;
+            _addressController.text = data.address ?? '';
+            _noteController.text = data.note ?? '';
+            _selectedGender = _normalizeGender(data.gender);
+            _selectedDate = data.dateOfBirth;
+          }
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+        Fluttertoast.showToast(msg: "patientProfile.toast.loadFailed".tr());
+      }
     }
   }
 
@@ -80,12 +99,12 @@ class _PatientProfilePageState extends State<PatientProfilePage> {
         _isEditing = false;
       });
       Fluttertoast.showToast(
-        msg: "Cập nhật thành công!",
+        msg: "patientProfile.toast.updateSuccess".tr(),
         backgroundColor: Colors.green,
       );
     } catch (e) {
       Fluttertoast.showToast(
-        msg: "Lỗi cập nhật: $e",
+        msg: "patientProfile.toast.updateError".tr(),
         backgroundColor: Colors.red,
       );
     } finally {
@@ -95,16 +114,15 @@ class _PatientProfilePageState extends State<PatientProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    // [MỚI] Lấy avatar từ UserProvider (giống localStorage bên web)
     final user = context.watch<UserProvider>().user;
     final avatarUrl = user?['avatarUrl'];
 
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
-        title: const Text(
-          "Hồ sơ bệnh nhân",
-          style: TextStyle(fontWeight: FontWeight.bold),
+        title: Text(
+          "patientProfile.title".tr(), // KEY MỚI
+          style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         elevation: 0,
         backgroundColor: Colors.white,
@@ -129,7 +147,7 @@ class _PatientProfilePageState extends State<PatientProfilePage> {
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
                   : Text(
-                      _isEditing ? "Lưu" : "Sửa",
+                      _isEditing ? "common.save".tr() : "common.edit".tr(),
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
@@ -141,11 +159,10 @@ class _PatientProfilePageState extends State<PatientProfilePage> {
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _profile == null
-          ? const Center(child: Text("Không tải được hồ sơ"))
+          ? Center(child: Text("patientProfile.toast.loadFailed".tr()))
           : SingleChildScrollView(
               child: Column(
                 children: [
-                  // Truyền avatarUrl vào Header
                   _buildHeaderBanner(avatarUrl),
                   Padding(
                     padding: const EdgeInsets.all(20),
@@ -154,11 +171,13 @@ class _PatientProfilePageState extends State<PatientProfilePage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _buildSectionTitle("Thông tin cá nhân"),
+                          _buildSectionTitle(
+                            "patientProfile.personalInfo".tr(),
+                          ),
                           const SizedBox(height: 16),
 
                           _buildTextField(
-                            "Họ và tên",
+                            "patientProfile.fullName".tr(),
                             _nameController,
                             Icons.person,
                             enabled: _isEditing,
@@ -168,7 +187,7 @@ class _PatientProfilePageState extends State<PatientProfilePage> {
                             children: [
                               Expanded(
                                 child: _buildReadOnlyField(
-                                  "Số điện thoại",
+                                  "patientProfile.phone".tr(),
                                   _profile!.phone,
                                   Icons.phone,
                                 ),
@@ -176,7 +195,7 @@ class _PatientProfilePageState extends State<PatientProfilePage> {
                               const SizedBox(width: 12),
                               Expanded(
                                 child: _buildReadOnlyField(
-                                  "Mã BN",
+                                  "patientProfile.code".tr(),
                                   _profile!.patientCode,
                                   Icons.qr_code,
                                 ),
@@ -186,6 +205,7 @@ class _PatientProfilePageState extends State<PatientProfilePage> {
                           const SizedBox(height: 16),
 
                           Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Expanded(child: _buildGenderDropdown()),
                               const SizedBox(width: 12),
@@ -195,14 +215,14 @@ class _PatientProfilePageState extends State<PatientProfilePage> {
                           const SizedBox(height: 16),
 
                           _buildTextField(
-                            "Địa chỉ liên hệ",
+                            "patientProfile.address".tr(),
                             _addressController,
                             Icons.location_on,
                             enabled: _isEditing,
                           ),
 
                           const SizedBox(height: 24),
-                          _buildSectionTitle("Thông tin y tế"),
+                          _buildSectionTitle("patientProfile.medicalInfo".tr()),
                           const SizedBox(height: 16),
 
                           TextFormField(
@@ -210,7 +230,7 @@ class _PatientProfilePageState extends State<PatientProfilePage> {
                             enabled: _isEditing,
                             maxLines: 4,
                             decoration: InputDecoration(
-                              labelText: "Tiền sử bệnh / Dị ứng / Ghi chú",
+                              labelText: "patientProfile.noteHint".tr(),
                               alignLabelWithHint: true,
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
@@ -234,13 +254,11 @@ class _PatientProfilePageState extends State<PatientProfilePage> {
 
   // --- WIDGETS CON ---
 
-  // [CẬP NHẬT] Nhận avatarUrl làm tham số
   Widget _buildHeaderBanner(String? avatarUrl) {
     return Stack(
       clipBehavior: Clip.none,
       alignment: Alignment.bottomCenter,
       children: [
-        // Banner nền
         Container(
           height: 140,
           width: double.infinity,
@@ -253,7 +271,6 @@ class _PatientProfilePageState extends State<PatientProfilePage> {
           ),
           margin: const EdgeInsets.only(bottom: 50),
         ),
-        // Avatar
         Positioned(
           bottom: 0,
           child: Container(
@@ -265,7 +282,6 @@ class _PatientProfilePageState extends State<PatientProfilePage> {
             child: CircleAvatar(
               radius: 50,
               backgroundColor: Colors.grey[200],
-              // [FIX] Sử dụng ApiService để resolve ảnh
               backgroundImage: ApiService.resolveAvatarImage(avatarUrl),
               child: avatarUrl == null
                   ? const Icon(Icons.person, size: 50, color: Colors.grey)
@@ -299,7 +315,8 @@ class _PatientProfilePageState extends State<PatientProfilePage> {
       child: TextFormField(
         controller: controller,
         enabled: enabled,
-        validator: (val) => val!.isEmpty ? "Vui lòng nhập $label" : null,
+        validator: (val) =>
+            val!.isEmpty ? "common.required".tr(args: [label]) : null,
         decoration: InputDecoration(
           labelText: label,
           prefixIcon: Icon(icon, color: Colors.grey),
@@ -326,20 +343,39 @@ class _PatientProfilePageState extends State<PatientProfilePage> {
   }
 
   Widget _buildGenderDropdown() {
+    const validValues = ["Male", "Female", "Other"];
+
+    // Kiểm tra an toàn
+    String? safeValue = _selectedGender;
+    if (safeValue != null && !validValues.contains(safeValue)) {
+      safeValue = null;
+    }
+
     return DropdownButtonFormField<String>(
-      initialValue: _selectedGender,
+      isExpanded: true, // Fix lỗi RenderFlex overflowed
+      initialValue: safeValue,
       decoration: InputDecoration(
-        labelText: "Giới tính",
+        labelText: "patientProfile.genderLabel".tr(), // KEY MỚI
         prefixIcon: const Icon(Icons.transgender, color: Colors.grey),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
         filled: true,
         fillColor: _isEditing ? Colors.white : Colors.grey[100],
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 10,
+          vertical: 15,
+        ),
       ),
-      items: [
-        "Nam",
-        "Nữ",
-        "Khác",
-      ].map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+      items: validValues
+          .map(
+            (e) => DropdownMenuItem(
+              value: e,
+              child: Text(
+                "patientProfile.gender.$e".tr(), // KEY MỚI
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          )
+          .toList(),
       onChanged: _isEditing
           ? (val) => setState(() => _selectedGender = val)
           : null,
@@ -361,19 +397,25 @@ class _PatientProfilePageState extends State<PatientProfilePage> {
           : null,
       child: InputDecorator(
         decoration: InputDecoration(
-          labelText: "Ngày sinh",
+          labelText: "patientProfile.dob".tr(), // KEY MỚI
           prefixIcon: const Icon(Icons.calendar_today, color: Colors.grey),
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
           filled: true,
           fillColor: _isEditing ? Colors.white : Colors.grey[100],
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 10,
+            vertical: 15,
+          ),
         ),
         child: Text(
           _selectedDate != null
               ? DateFormat('dd/MM/yyyy').format(_selectedDate!)
-              : "Chọn ngày",
+              : "common.selectDate".tr(),
           style: TextStyle(
             color: _selectedDate != null ? Colors.black : Colors.grey,
+            overflow: TextOverflow.ellipsis,
           ),
+          maxLines: 1,
         ),
       ),
     );

@@ -2,7 +2,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:intl/intl.dart';
 import '../../../services/admin_service.dart';
 import 'widgets/attendance_filter_chip.dart';
 import 'widgets/attendance_card.dart';
@@ -17,7 +16,7 @@ class AdminAttendancePage extends StatefulWidget {
 class _AdminAttendancePageState extends State<AdminAttendancePage> {
   final AdminService _adminService = AdminService();
   final TextEditingController _dateController = TextEditingController();
-  
+
   List<Map<String, dynamic>> _attendanceList = [];
   List<Map<String, dynamic>> _clinicsList = [];
   bool _isLoading = false;
@@ -56,7 +55,9 @@ class _AdminAttendancePageState extends State<AdminAttendancePage> {
       debugPrint('Error loading clinics: $e');
       debugPrint('Error stack: ${e.toString()}');
       Fluttertoast.showToast(
-        msg: 'admin.attendance.error.loadClinicsFailed'.tr(args: [e.toString()]),
+        msg: 'admin.attendance.error.loadClinicsFailed'.tr(
+          args: [e.toString()],
+        ),
         toastLength: Toast.LENGTH_LONG,
       );
     }
@@ -66,7 +67,7 @@ class _AdminAttendancePageState extends State<AdminAttendancePage> {
     final currentDate = _dateController.text.isNotEmpty
         ? DateTime.tryParse(_dateController.text) ?? DateTime.now()
         : DateTime.now();
-    
+
     final picked = await showDatePicker(
       context: context,
       initialDate: currentDate,
@@ -78,17 +79,21 @@ class _AdminAttendancePageState extends State<AdminAttendancePage> {
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: ColorScheme.light(
-              primary: isDark ? const Color(0xFF5C6BC0) : const Color(0xFF1A237E),
+              primary: isDark
+                  ? const Color(0xFF5C6BC0)
+                  : const Color(0xFF1A237E),
               onPrimary: Colors.white,
               surface: isDark ? const Color(0xFF1A2332) : Colors.white,
-              onSurface: isDark ? const Color(0xFFE8EAED) : const Color(0xFF0F172A),
+              onSurface: isDark
+                  ? const Color(0xFFE8EAED)
+                  : const Color(0xFF0F172A),
             ),
           ),
           child: child!,
         );
       },
     );
-    
+
     if (picked != null) {
       setState(() {
         _dateController.text = DateFormat('yyyy-MM-dd').format(picked);
@@ -114,34 +119,38 @@ class _AdminAttendancePageState extends State<AdminAttendancePage> {
     setState(() => _isLoading = true);
     try {
       // Prepare parameters
-      final String? dateParam = _dateController.text.trim().isNotEmpty 
-          ? _dateController.text.trim() 
+      final String? dateParam = _dateController.text.trim().isNotEmpty
+          ? _dateController.text.trim()
           : null;
-      
+
       final int? clinicIdParam = _selectedClinicId;
-      
+
       final String? statusParam = _selectedStatus;
-      
+
       // Debug log (remove in production)
-      debugPrint('Loading attendance with filters: date=$dateParam, clinicId=$clinicIdParam, status=$statusParam');
-      
+      debugPrint(
+        'Loading attendance with filters: date=$dateParam, clinicId=$clinicIdParam, status=$statusParam',
+      );
+
       final data = await _adminService.fetchAdminAttendance(
         date: dateParam,
         clinicId: clinicIdParam,
         status: statusParam,
       );
-      
+
       // Debug: Log dữ liệu để kiểm tra
       if (data.isNotEmpty) {
         debugPrint('Sample attendance data: ${data.first}');
-        debugPrint('Status field: attendanceStatus=${data.first['attendanceStatus']}, status=${data.first['status']}');
+        debugPrint(
+          'Status field: attendanceStatus=${data.first['attendanceStatus']}, status=${data.first['status']}',
+        );
       }
-      
+
       setState(() {
         _attendanceList = data;
         _isLoading = false;
       });
-      
+
       // Show success message if filters are applied
       if (dateParam != null || clinicIdParam != null || statusParam != null) {
         debugPrint('Loaded ${data.length} attendance records');
@@ -187,13 +196,11 @@ class _AdminAttendancePageState extends State<AdminAttendancePage> {
     final noteController = TextEditingController();
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final statusColor = _getStatusColor(newStatus);
-    
+
     final result = await showDialog<bool>(
       context: context,
       builder: (context) => Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         backgroundColor: isDark ? const Color(0xFF1E293B) : Colors.white,
         child: Container(
           padding: const EdgeInsets.all(24),
@@ -204,10 +211,7 @@ class _AdminAttendancePageState extends State<AdminAttendancePage> {
                 : LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
-                    colors: [
-                      Colors.white,
-                      const Color(0xFFF8FAFC),
-                    ],
+                    colors: [Colors.white, const Color(0xFFF8FAFC)],
                   ),
           ),
           child: Column(
@@ -287,7 +291,9 @@ class _AdminAttendancePageState extends State<AdminAttendancePage> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   filled: true,
-                  fillColor: isDark ? Colors.grey[900]!.withOpacity(0.3) : Colors.grey[50],
+                  fillColor: isDark
+                      ? Colors.grey[900]!.withOpacity(0.3)
+                      : Colors.grey[50],
                 ),
                 maxLines: 3,
               ),
@@ -315,10 +321,7 @@ class _AdminAttendancePageState extends State<AdminAttendancePage> {
                     child: Container(
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
-                          colors: [
-                            statusColor,
-                            statusColor.withOpacity(0.8),
-                          ],
+                          colors: [statusColor, statusColor.withOpacity(0.8)],
                         ),
                         borderRadius: BorderRadius.circular(12),
                         boxShadow: [
@@ -396,14 +399,12 @@ class _AdminAttendancePageState extends State<AdminAttendancePage> {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new_rounded),
-          onPressed: () => context.canPop() ? context.pop() : context.go('/admin'),
+          onPressed: () =>
+              context.canPop() ? context.pop() : context.go('/admin'),
         ),
         title: Text(
           'admin.attendance.title'.tr(),
-          style: TextStyle(
-            fontWeight: FontWeight.w700,
-            letterSpacing: -0.5,
-          ),
+          style: TextStyle(fontWeight: FontWeight.w700, letterSpacing: -0.5),
         ),
         actions: [
           IconButton(
@@ -455,24 +456,32 @@ class _AdminAttendancePageState extends State<AdminAttendancePage> {
                             prefixIcon: Icon(
                               Icons.calendar_today_rounded,
                               size: 20,
-                              color: isDark ? Colors.grey[400] : Colors.grey[600],
+                              color: isDark
+                                  ? Colors.grey[400]
+                                  : Colors.grey[600],
                             ),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
                               borderSide: BorderSide(
-                                color: isDark ? Colors.grey[700]! : Colors.grey[300]!,
+                                color: isDark
+                                    ? Colors.grey[700]!
+                                    : Colors.grey[300]!,
                               ),
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
                               borderSide: BorderSide(
-                                color: isDark ? Colors.grey[700]! : Colors.grey[300]!,
+                                color: isDark
+                                    ? Colors.grey[700]!
+                                    : Colors.grey[300]!,
                               ),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
                               borderSide: BorderSide(
-                                color: isDark ? const Color(0xFF5C6BC0) : const Color(0xFF1A237E),
+                                color: isDark
+                                    ? const Color(0xFF5C6BC0)
+                                    : const Color(0xFF1A237E),
                                 width: 2,
                               ),
                             ),
@@ -480,14 +489,21 @@ class _AdminAttendancePageState extends State<AdminAttendancePage> {
                             fillColor: isDark
                                 ? Colors.grey[900]!.withOpacity(0.3)
                                 : Colors.white,
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 14,
+                            ),
                             labelStyle: TextStyle(
                               fontSize: 13,
-                              color: isDark ? Colors.grey[400] : Colors.grey[600],
+                              color: isDark
+                                  ? Colors.grey[400]
+                                  : Colors.grey[600],
                             ),
                             hintStyle: TextStyle(
                               fontSize: 13,
-                              color: isDark ? Colors.grey[500] : Colors.grey[400],
+                              color: isDark
+                                  ? Colors.grey[500]
+                                  : Colors.grey[400],
                             ),
                           ),
                           child: Text(
@@ -497,8 +513,12 @@ class _AdminAttendancePageState extends State<AdminAttendancePage> {
                             style: TextStyle(
                               fontSize: 14,
                               color: _dateController.text.isNotEmpty
-                                  ? (isDark ? const Color(0xFFE8EAED) : const Color(0xFF0F172A))
-                                  : (isDark ? Colors.grey[500] : Colors.grey[400]),
+                                  ? (isDark
+                                        ? const Color(0xFFE8EAED)
+                                        : const Color(0xFF0F172A))
+                                  : (isDark
+                                        ? Colors.grey[500]
+                                        : Colors.grey[400]),
                             ),
                           ),
                         ),
@@ -507,7 +527,7 @@ class _AdminAttendancePageState extends State<AdminAttendancePage> {
                     const SizedBox(width: 10),
                     Expanded(
                       child: DropdownButtonFormField<int>(
-                        value: _selectedClinicId,
+                        initialValue: _selectedClinicId,
                         isExpanded: true,
                         decoration: InputDecoration(
                           labelText: 'admin.common.clinic'.tr(),
@@ -520,19 +540,25 @@ class _AdminAttendancePageState extends State<AdminAttendancePage> {
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
                             borderSide: BorderSide(
-                              color: isDark ? Colors.grey[700]! : Colors.grey[300]!,
+                              color: isDark
+                                  ? Colors.grey[700]!
+                                  : Colors.grey[300]!,
                             ),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
                             borderSide: BorderSide(
-                              color: isDark ? Colors.grey[700]! : Colors.grey[300]!,
+                              color: isDark
+                                  ? Colors.grey[700]!
+                                  : Colors.grey[300]!,
                             ),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
                             borderSide: BorderSide(
-                              color: isDark ? const Color(0xFF5C6BC0) : const Color(0xFF1A237E),
+                              color: isDark
+                                  ? const Color(0xFF5C6BC0)
+                                  : const Color(0xFF1A237E),
                               width: 2,
                             ),
                           ),
@@ -540,7 +566,10 @@ class _AdminAttendancePageState extends State<AdminAttendancePage> {
                           fillColor: isDark
                               ? Colors.grey[900]!.withOpacity(0.3)
                               : Colors.white,
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 14,
+                          ),
                           labelStyle: TextStyle(
                             fontSize: 13,
                             color: isDark ? Colors.grey[400] : Colors.grey[600],
@@ -552,7 +581,9 @@ class _AdminAttendancePageState extends State<AdminAttendancePage> {
                         ),
                         style: TextStyle(
                           fontSize: 14,
-                          color: isDark ? const Color(0xFFE8EAED) : const Color(0xFF0F172A),
+                          color: isDark
+                              ? const Color(0xFFE8EAED)
+                              : const Color(0xFF0F172A),
                         ),
                         items: _isLoadingClinics
                             ? [
@@ -561,7 +592,9 @@ class _AdminAttendancePageState extends State<AdminAttendancePage> {
                                   child: Text(
                                     'admin.common.loading'.tr(),
                                     style: TextStyle(
-                                      color: isDark ? Colors.grey[400] : Colors.grey[600],
+                                      color: isDark
+                                          ? Colors.grey[400]
+                                          : Colors.grey[600],
                                     ),
                                   ),
                                 ),
@@ -572,7 +605,9 @@ class _AdminAttendancePageState extends State<AdminAttendancePage> {
                                   child: Text(
                                     'admin.attendance.allClinics'.tr(),
                                     style: TextStyle(
-                                      color: isDark ? Colors.grey[400] : Colors.grey[600],
+                                      color: isDark
+                                          ? Colors.grey[400]
+                                          : Colors.grey[600],
                                     ),
                                     overflow: TextOverflow.ellipsis,
                                   ),
@@ -580,21 +615,30 @@ class _AdminAttendancePageState extends State<AdminAttendancePage> {
                                 ..._clinicsList.map((clinic) {
                                   final clinicId = clinic['id'];
                                   // Thử nhiều cách để lấy tên phòng khám
-                                  final clinicName = clinic['clinicName']?.toString() ?? 
-                                                   clinic['name']?.toString() ??
-                                                   clinic['clinicCode']?.toString() ??
-                                                   'admin.attendance.clinicName'.tr(namedArgs: {'id': '${clinicId ?? ''}'});
-                                  debugPrint('Clinic item: id=$clinicId, name=$clinicName, fullData=$clinic');
+                                  final clinicName =
+                                      clinic['clinicName']?.toString() ??
+                                      clinic['name']?.toString() ??
+                                      clinic['clinicCode']?.toString() ??
+                                      'admin.attendance.clinicName'.tr(
+                                        namedArgs: {'id': '${clinicId ?? ''}'},
+                                      );
+                                  debugPrint(
+                                    'Clinic item: id=$clinicId, name=$clinicName, fullData=$clinic',
+                                  );
                                   // Xử lý clinicId có thể là int hoặc dynamic
-                                  final int? clinicIdInt = clinicId is int 
-                                      ? clinicId 
-                                      : (clinicId != null ? int.tryParse(clinicId.toString()) : null);
+                                  final int? clinicIdInt = clinicId is int
+                                      ? clinicId
+                                      : (clinicId != null
+                                            ? int.tryParse(clinicId.toString())
+                                            : null);
                                   return DropdownMenuItem<int>(
                                     value: clinicIdInt,
                                     child: Text(
                                       clinicName,
                                       style: TextStyle(
-                                        color: isDark ? const Color(0xFFE8EAED) : const Color(0xFF0F172A),
+                                        color: isDark
+                                            ? const Color(0xFFE8EAED)
+                                            : const Color(0xFF0F172A),
                                       ),
                                       overflow: TextOverflow.ellipsis,
                                     ),
@@ -707,15 +751,21 @@ class _AdminAttendancePageState extends State<AdminAttendancePage> {
                   Icon(
                     Icons.info_outline_rounded,
                     size: 16,
-                    color: isDark ? const Color(0xFF7C3AED) : const Color(0xFF1A237E),
+                    color: isDark
+                        ? const Color(0xFF7C3AED)
+                        : const Color(0xFF1A237E),
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    'admin.attendance.foundResults'.tr(namedArgs: {'count': '${_attendanceList.length}'}),
+                    'admin.attendance.foundResults'.tr(
+                      namedArgs: {'count': '${_attendanceList.length}'},
+                    ),
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
-                      color: isDark ? const Color(0xFFE8EAED) : const Color(0xFF0F172A),
+                      color: isDark
+                          ? const Color(0xFFE8EAED)
+                          : const Color(0xFF0F172A),
                     ),
                   ),
                 ],
@@ -727,69 +777,81 @@ class _AdminAttendancePageState extends State<AdminAttendancePage> {
                 ? Center(
                     child: CircularProgressIndicator(
                       valueColor: AlwaysStoppedAnimation<Color>(
-                        isDark ? const Color(0xFF5C6BC0) : const Color(0xFF1A237E),
+                        isDark
+                            ? const Color(0xFF5C6BC0)
+                            : const Color(0xFF1A237E),
                       ),
                     ),
                   )
                 : _attendanceList.isEmpty
-                    ? Center(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(24),
-                              decoration: BoxDecoration(
-                                color: (isDark ? const Color(0xFF5C6BC0) : const Color(0xFF1A237E))
+                ? Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(24),
+                          decoration: BoxDecoration(
+                            color:
+                                (isDark
+                                        ? const Color(0xFF5C6BC0)
+                                        : const Color(0xFF1A237E))
                                     .withOpacity(isDark ? 0.15 : 0.1),
-                                shape: BoxShape.circle,
-                              ),
-                              child: Icon(
-                                Icons.access_time_rounded,
-                                size: 56,
-                                color: isDark ? const Color(0xFF7C3AED) : const Color(0xFF1A237E),
-                              ),
-                            ),
-                            const SizedBox(height: 20),
-                            Text(
-                              'admin.attendance.noData'.tr(),
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                color: isDark ? const Color(0xFFE8EAED) : const Color(0xFF0F172A),
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              'admin.attendance.tryChangeFilters'.tr(),
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: isDark ? Colors.grey[400] : Colors.grey[600],
-                              ),
-                            ),
-                          ],
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.access_time_rounded,
+                            size: 56,
+                            color: isDark
+                                ? const Color(0xFF7C3AED)
+                                : const Color(0xFF1A237E),
+                          ),
                         ),
-                      )
-                    : RefreshIndicator(
-                        onRefresh: _loadAttendance,
-                        color: isDark ? const Color(0xFF5C6BC0) : const Color(0xFF1A237E),
-                        child: ListView.builder(
-                          padding: const EdgeInsets.all(16),
-                          itemCount: _attendanceList.length,
-                          itemBuilder: (context, index) {
-                            final item = _attendanceList[index];
-                            return AttendanceCard(
-                              item: item,
-                              isDark: isDark,
-                              onUpdateStatus: (newStatus) =>
-                                  _updateStatus(item['id'] ?? item['attendanceId'], newStatus),
-                            );
-                          },
+                        const SizedBox(height: 20),
+                        Text(
+                          'admin.attendance.noData'.tr(),
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: isDark
+                                ? const Color(0xFFE8EAED)
+                                : const Color(0xFF0F172A),
+                          ),
                         ),
-                      ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'admin.attendance.tryChangeFilters'.tr(),
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: isDark ? Colors.grey[400] : Colors.grey[600],
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                : RefreshIndicator(
+                    onRefresh: _loadAttendance,
+                    color: isDark
+                        ? const Color(0xFF5C6BC0)
+                        : const Color(0xFF1A237E),
+                    child: ListView.builder(
+                      padding: const EdgeInsets.all(16),
+                      itemCount: _attendanceList.length,
+                      itemBuilder: (context, index) {
+                        final item = _attendanceList[index];
+                        return AttendanceCard(
+                          item: item,
+                          isDark: isDark,
+                          onUpdateStatus: (newStatus) => _updateStatus(
+                            item['id'] ?? item['attendanceId'],
+                            newStatus,
+                          ),
+                        );
+                      },
+                    ),
+                  ),
           ),
         ],
       ),
     );
   }
 }
-

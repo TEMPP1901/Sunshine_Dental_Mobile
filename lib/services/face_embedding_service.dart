@@ -1,13 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:camera/camera.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../screens/camera/face_camera_screen.dart';
 import 'api_service.dart';
 
 class FaceEmbeddingService {
@@ -25,12 +23,12 @@ class FaceEmbeddingService {
     try {
       // Mở custom camera screen với overlay hướng dẫn
       final result = await context.push<XFile>('/face-camera');
-      
+
       if (result == null) {
         // User cancelled
         return null;
       }
-      
+
       return result;
     } catch (e) {
       // Fallback về image_picker nếu có lỗi
@@ -44,7 +42,9 @@ class FaceEmbeddingService {
         );
         return image;
       } catch (fallbackError) {
-        throw Exception('Không thể mở camera. Vui lòng kiểm tra quyền truy cập camera.');
+        throw Exception(
+          'Không thể mở camera. Vui lòng kiểm tra quyền truy cập camera.',
+        );
       }
     }
   }
@@ -55,15 +55,14 @@ class FaceEmbeddingService {
     final fileName = imageFile.name;
 
     final formData = FormData.fromMap({
-      'file': await MultipartFile.fromFile(
-        file.path,
-        filename: fileName,
-      ),
+      'file': await MultipartFile.fromFile(file.path, filename: fileName),
     });
 
     try {
-      final response = await ApiService()
-          .postFormData('/api/hr/attendance/embedding', formData);
+      final response = await ApiService().postFormData(
+        '/api/hr/attendance/embedding',
+        formData,
+      );
 
       final embedding = response.data?['embedding']?.toString();
       if (embedding == null || embedding.isEmpty) {
@@ -73,7 +72,9 @@ class FaceEmbeddingService {
       // Validate embedding format: phải là JSON array
       final trimmed = embedding.trim();
       if (!trimmed.startsWith('[') || !trimmed.endsWith(']')) {
-        throw const FormatException('Invalid embedding format: must be JSON array');
+        throw const FormatException(
+          'Invalid embedding format: must be JSON array',
+        );
       }
 
       // Validate embedding không phải là mảng rỗng hoặc chỉ có whitespace
@@ -83,14 +84,18 @@ class FaceEmbeddingService {
           throw const FormatException('Invalid embedding: array is empty');
         }
         if (parsed.length != 512) {
-          throw FormatException('Invalid embedding: expected 512 dimensions, got ${parsed.length}');
+          throw FormatException(
+            'Invalid embedding: expected 512 dimensions, got ${parsed.length}',
+          );
         }
         // Kiểm tra không phải toàn số 0
-        final allZeros = parsed.every((value) => 
-          value is num && (value == 0 || value.abs() < 1e-6)
+        final allZeros = parsed.every(
+          (value) => value is num && (value == 0 || value.abs() < 1e-6),
         );
         if (allZeros) {
-          throw const FormatException('Invalid embedding: array contains only zeros. No face detected.');
+          throw const FormatException(
+            'Invalid embedding: array contains only zeros. No face detected.',
+          );
         }
       } catch (e) {
         if (e is FormatException) {
@@ -111,7 +116,8 @@ class FaceEmbeddingService {
         );
       }
       // Xử lý các lỗi khác
-      final serverMessage = dioError.response?.data?['message']?.toString() ??
+      final serverMessage =
+          dioError.response?.data?['message']?.toString() ??
           dioError.response?.data?['error']?.toString();
       throw Exception(
         serverMessage?.isNotEmpty == true

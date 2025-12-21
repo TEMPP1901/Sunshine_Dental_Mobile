@@ -41,14 +41,19 @@ class _MyAccountPageState extends State<MyAccountPage> {
     if (_user == null) return false;
     final roles = _user!['roles'];
     if (roles == null) return false;
-    
+
     List<String> normalizedRoles = [];
     if (roles is List) {
-      normalizedRoles = roles.map((role) => role.toString().toUpperCase()).toList();
+      normalizedRoles = roles
+          .map((role) => role.toString().toUpperCase())
+          .toList();
     } else if (roles is String) {
-      normalizedRoles = roles.split(',').map((role) => role.trim().toUpperCase()).toList();
+      normalizedRoles = roles
+          .split(',')
+          .map((role) => role.trim().toUpperCase())
+          .toList();
     }
-    
+
     // Các role cần chấm công: DOCTOR, HR, RECEPTION, ACCOUNTANT
     final attendanceRoles = ['DOCTOR', 'HR', 'RECEPTION', 'ACCOUNTANT'];
     return normalizedRoles.any((role) => attendanceRoles.contains(role));
@@ -301,7 +306,9 @@ class _MyAccountPageState extends State<MyAccountPage> {
                             end: Alignment.bottomRight,
                             colors: [
                               colorScheme.surface,
-                              colorScheme.surfaceContainerHighest.withOpacity(0.3),
+                              colorScheme.surfaceContainerHighest.withOpacity(
+                                0.3,
+                              ),
                             ],
                           ),
                         ),
@@ -314,7 +321,9 @@ class _MyAccountPageState extends State<MyAccountPage> {
                                   child: FilledButton(
                                     onPressed: _isLoading ? null : _saveChanges,
                                     style: FilledButton.styleFrom(
-                                      padding: const EdgeInsets.symmetric(vertical: 18),
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 18,
+                                      ),
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(16),
                                       ),
@@ -330,7 +339,8 @@ class _MyAccountPageState extends State<MyAccountPage> {
                                             ),
                                           )
                                         : Text(
-                                            'account.myAccount.saveChanges'.tr(),
+                                            'account.myAccount.saveChanges'
+                                                .tr(),
                                             style: const TextStyle(
                                               fontSize: 15,
                                               fontWeight: FontWeight.w600,
@@ -342,8 +352,12 @@ class _MyAccountPageState extends State<MyAccountPage> {
                                 if (_user?['hasPassword'] == true) ...[
                                   const SizedBox(width: 16),
                                   OutlinedButton.icon(
-                                    onPressed: () => context.go('/change-password'),
-                                    icon: const Icon(Icons.lock_reset_rounded, size: 20),
+                                    onPressed: () =>
+                                        context.go('/change-password'),
+                                    icon: const Icon(
+                                      Icons.lock_reset_rounded,
+                                      size: 20,
+                                    ),
                                     label: Text(
                                       'account.changePassword.title'.tr(),
                                       style: const TextStyle(
@@ -370,7 +384,8 @@ class _MyAccountPageState extends State<MyAccountPage> {
                               ],
                             ),
                             // Button cập nhật khuôn mặt chấm công (chỉ cho nhân viên)
-                            if (_buildUpdateFaceProfileButton(context) != null) ...[
+                            if (_buildUpdateFaceProfileButton(context) !=
+                                null) ...[
                               const SizedBox(height: 16),
                               SizedBox(
                                 width: double.infinity,
@@ -413,9 +428,9 @@ class _MyAccountPageState extends State<MyAccountPage> {
             Text(
               'account.myAccount.avatarTitle'.tr(),
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w700,
-                    color: colorScheme.onSurface,
-                  ),
+                fontWeight: FontWeight.w700,
+                color: colorScheme.onSurface,
+              ),
             ),
             const SizedBox(height: 20),
             CircleAvatar(
@@ -424,7 +439,7 @@ class _MyAccountPageState extends State<MyAccountPage> {
               child: CircleAvatar(
                 radius: 66,
                 backgroundImage: avatarImage,
-                backgroundColor: colorScheme.surfaceVariant,
+                backgroundColor: colorScheme.surfaceContainerHighest,
                 child: avatarImage == null
                     ? Icon(Icons.person, size: 64, color: colorScheme.primary)
                     : null,
@@ -437,8 +452,13 @@ class _MyAccountPageState extends State<MyAccountPage> {
               icon: const Icon(Icons.camera_alt_rounded),
               label: const Text('Chụp ảnh đăng ký khuôn mặt'),
               style: FilledButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 14,
+                  horizontal: 16,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
+                ),
                 backgroundColor: colorScheme.primary,
               ),
             ),
@@ -449,8 +469,13 @@ class _MyAccountPageState extends State<MyAccountPage> {
               icon: const Icon(Icons.photo_library_outlined),
               label: Text('account.myAccount.chooseAvatar'.tr()),
               style: OutlinedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 14,
+                  horizontal: 16,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
+                ),
                 side: BorderSide(color: colorScheme.primary),
               ),
             ),
@@ -461,8 +486,13 @@ class _MyAccountPageState extends State<MyAccountPage> {
                 icon: const Icon(Icons.cloud_upload_outlined),
                 label: Text('account.myAccount.uploadAvatar.button'.tr()),
                 style: OutlinedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 14,
+                    horizontal: 16,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
                   side: BorderSide(color: colorScheme.primary),
                 ),
               ),
@@ -476,9 +506,9 @@ class _MyAccountPageState extends State<MyAccountPage> {
   // Button để navigate đến màn hình cập nhật khuôn mặt chấm công (chỉ cho nhân viên)
   Widget? _buildUpdateFaceProfileButton(BuildContext context) {
     if (!_isEmployeeForAttendance()) return null;
-    
+
     final colorScheme = Theme.of(context).colorScheme;
-    
+
     return OutlinedButton.icon(
       onPressed: () => context.push('/update-face-profile'),
       icon: const Icon(Icons.face_retouching_natural_rounded, size: 20),
@@ -492,13 +522,8 @@ class _MyAccountPageState extends State<MyAccountPage> {
       ),
       style: OutlinedButton.styleFrom(
         padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 20),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-        side: BorderSide(
-          color: colorScheme.primary,
-          width: 1.5,
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        side: BorderSide(color: colorScheme.primary, width: 1.5),
       ),
     );
   }
@@ -521,14 +546,16 @@ class _MyAccountPageState extends State<MyAccountPage> {
         labelText: label,
         prefixIcon: Icon(icon, color: colorScheme.primary),
         filled: true,
-        fillColor: colorScheme.surfaceVariant.withOpacity(0.4),
+        fillColor: colorScheme.surfaceContainerHighest.withOpacity(0.4),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide(color: colorScheme.outlineVariant),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: colorScheme.outlineVariant.withOpacity(0.6)),
+          borderSide: BorderSide(
+            color: colorScheme.outlineVariant.withOpacity(0.6),
+          ),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),

@@ -30,9 +30,12 @@ class FilterBar extends StatelessWidget {
             decoration: InputDecoration(
               labelText: 'hr.attendance.date'.tr(),
               prefixIcon: const Icon(Icons.calendar_today_outlined, size: 18),
-              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 10,
+              ),
               filled: true,
-              fillColor: colorScheme.surfaceVariant.withOpacity(0.4),
+              fillColor: colorScheme.surfaceContainerHighest.withOpacity(0.4),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide.none,
@@ -47,9 +50,12 @@ class FilterBar extends StatelessWidget {
             decoration: InputDecoration(
               labelText: 'hr.common.clinic'.tr(),
               prefixIcon: const Icon(Icons.business_outlined, size: 18),
-              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 6,
+              ),
               filled: true,
-              fillColor: colorScheme.surfaceVariant.withOpacity(0.4),
+              fillColor: colorScheme.surfaceContainerHighest.withOpacity(0.4),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide.none,
@@ -67,12 +73,14 @@ class FilterBar extends StatelessWidget {
                     child: Text('hr.common.all'.tr()),
                   ),
                   ...clinics.map((c) {
-                    final id = int.tryParse((c['id'] ?? c['clinicId'] ?? '').toString());
-                    final name = c['clinicName']?.toString() ?? c['clinicCode']?.toString() ?? 'Clinic';
-                    return DropdownMenuItem<int?>(
-                      value: id,
-                      child: Text(name),
+                    final id = int.tryParse(
+                      (c['id'] ?? c['clinicId'] ?? '').toString(),
                     );
+                    final name =
+                        c['clinicName']?.toString() ??
+                        c['clinicCode']?.toString() ??
+                        'Clinic';
+                    return DropdownMenuItem<int?>(value: id, child: Text(name));
                   }),
                 ],
               ),
@@ -86,7 +94,9 @@ class FilterBar extends StatelessWidget {
           label: Text('hr.common.filter'.tr()),
           style: FilledButton.styleFrom(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
           ),
         ),
       ],
@@ -115,14 +125,23 @@ class StatsCard extends StatelessWidget {
           spacing: 10,
           runSpacing: 6,
           children: stats.entries
-              .map((e) => Chip(
-                    label: Text(
-                      '${e.key}: ${e.value}',
-                      style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+              .map(
+                (e) => Chip(
+                  label: Text(
+                    '${e.key}: ${e.value}',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 13,
                     ),
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                      backgroundColor: colorScheme.surfaceVariant.withOpacity(0.4),
-                  ))
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 8,
+                  ),
+                  backgroundColor: colorScheme.surfaceContainerHighest
+                      .withOpacity(0.4),
+                ),
+              )
               .toList(),
         ),
       ),
@@ -181,14 +200,17 @@ class AttendanceCard extends StatelessWidget {
                   child: Text(
                     employee,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 16,
-                        ),
+                      fontWeight: FontWeight.w700,
+                      fontSize: 16,
+                    ),
                   ),
                 ),
                 if (status.isNotEmpty)
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 6,
+                    ),
                     decoration: BoxDecoration(
                       color: color.withOpacity(0.12),
                       borderRadius: BorderRadius.circular(999),
@@ -227,4 +249,3 @@ class AttendanceCard extends StatelessWidget {
     );
   }
 }
-

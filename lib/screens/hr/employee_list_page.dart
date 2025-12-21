@@ -27,7 +27,8 @@ class _EmployeeListPageState extends State<EmployeeListPage> {
   int? _clinicId;
   int? _departmentId;
   int? _roleId;
-  String _statusFilter = "active"; // "all" | "active" | "inactive" | "resignation"
+  String _statusFilter =
+      "active"; // "all" | "active" | "inactive" | "resignation"
   List<Map<String, dynamic>> _clinics = [];
   List<Map<String, dynamic>> _departments = [];
   List<Map<String, dynamic>> _roles = [];
@@ -41,7 +42,8 @@ class _EmployeeListPageState extends State<EmployeeListPage> {
   }
 
   void _onScroll() {
-    if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 200) {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 200) {
       // Load more when near bottom (200px before end)
       if (!_loadingMore && _page + 1 < _totalPages) {
         _loadMore();
@@ -65,7 +67,7 @@ class _EmployeeListPageState extends State<EmployeeListPage> {
 
   Future<void> _load({int? page}) async {
     final targetPage = page ?? 0;
-    
+
     setState(() {
       _loading = true;
       _error = null;
@@ -87,14 +89,18 @@ class _EmployeeListPageState extends State<EmployeeListPage> {
         page: targetPage,
         size: 50,
       );
-      
-      List<Map<String, dynamic>> content = (data['content'] as List? ?? []).whereType<Map<String, dynamic>>().toList();
-      
+
+      List<Map<String, dynamic>> content = (data['content'] as List? ?? [])
+          .whereType<Map<String, dynamic>>()
+          .toList();
+
       // Nếu chọn nghỉ việc thì chỉ giữ lại những ai đã duyệt đơn nghỉ
       if (_statusFilter == "resignation") {
-        content = content.where((emp) => (emp['hasApprovedResignation'] == true)).toList();
+        content = content
+            .where((emp) => (emp['hasApprovedResignation'] == true))
+            .toList();
       }
-      
+
       final number = _coerceInt(data['number'] ?? data['page']);
       final totalPages = _coerceInt(data['totalPages']);
       int? totalElements = _coerceInt(data['totalElements']);
@@ -120,28 +126,27 @@ class _EmployeeListPageState extends State<EmployeeListPage> {
       int calculatedTotalPages = totalPages ?? 0;
       if (totalElements != null && totalElements > 0) {
         // Nếu backend trả về totalPages = 0 hoặc không hợp lý, tính lại
-        if (calculatedTotalPages == 0 || (calculatedTotalPages == 1 && totalElements > content.length)) {
+        if (calculatedTotalPages == 0 ||
+            (calculatedTotalPages == 1 && totalElements > content.length)) {
           calculatedTotalPages = (totalElements / 50).ceil();
           if (calculatedTotalPages == 0) calculatedTotalPages = 1;
         }
       }
-      
+
       setState(() {
         _items = content; // Always replace for _load
         _page = number ?? targetPage;
         _totalPages = calculatedTotalPages;
         _totalElements = totalElements ?? 0;
       });
-      
+
       // Tự động load thêm nếu còn thiếu items
-      if (totalElements != null && 
-          totalElements > content.length && 
+      if (totalElements != null &&
+          totalElements > content.length &&
           !_loadingMore) {
         // Delay một chút để UI render xong và setState hoàn tất
         Future.delayed(const Duration(milliseconds: 100), () {
-          if (mounted && 
-              _totalElements > _items.length && 
-              !_loadingMore) {
+          if (mounted && _totalElements > _items.length && !_loadingMore) {
             _loadMore();
           }
         });
@@ -157,11 +162,11 @@ class _EmployeeListPageState extends State<EmployeeListPage> {
     // Cho phép load nếu: không đang load, và (còn page hoặc vẫn thiếu items)
     if (_loadingMore) return;
     if (_page + 1 >= _totalPages && _totalElements <= _items.length) return;
-    
+
     setState(() => _loadingMore = true);
     try {
       final nextPage = _page + 1;
-      
+
       // Không gửi isActive nếu lọc theo nghỉ việc hoặc all
       bool? isActiveParam;
       if (_statusFilter != "resignation" && _statusFilter != "all") {
@@ -177,27 +182,33 @@ class _EmployeeListPageState extends State<EmployeeListPage> {
         page: nextPage,
         size: 50,
       );
-      
-      var content = (data['content'] as List? ?? []).whereType<Map<String, dynamic>>().toList();
-      
+
+      var content = (data['content'] as List? ?? [])
+          .whereType<Map<String, dynamic>>()
+          .toList();
+
       // Nếu chọn nghỉ việc thì chỉ giữ lại những ai đã duyệt đơn nghỉ
       if (_statusFilter == "resignation") {
-        content = content.where((emp) => (emp['hasApprovedResignation'] == true)).toList();
+        content = content
+            .where((emp) => (emp['hasApprovedResignation'] == true))
+            .toList();
       }
-      
+
       final number = _coerceInt(data['number'] ?? data['page']);
       final totalPages = _coerceInt(data['totalPages']);
       final totalElements = _coerceInt(data['totalElements']);
-      
+
       // Tính toán lại totalPages nếu cần
       int calculatedTotalPages = totalPages ?? _totalPages;
       if (totalElements != null && totalElements > 0) {
-        if (calculatedTotalPages == 0 || (calculatedTotalPages == 1 && totalElements > _items.length + content.length)) {
+        if (calculatedTotalPages == 0 ||
+            (calculatedTotalPages == 1 &&
+                totalElements > _items.length + content.length)) {
           calculatedTotalPages = (totalElements / 50).ceil();
           if (calculatedTotalPages == 0) calculatedTotalPages = 1;
         }
       }
-      
+
       setState(() {
         _items.addAll(content);
         _page = number ?? nextPage;
@@ -206,12 +217,12 @@ class _EmployeeListPageState extends State<EmployeeListPage> {
           _totalElements = totalElements;
         }
       });
-      
+
       // Tiếp tục load thêm nếu vẫn còn thiếu items
-      if (totalElements != null && 
-          totalElements > _items.length && 
+      if (totalElements != null &&
+          totalElements > _items.length &&
           calculatedTotalPages > 1 &&
-          _page + 1 < calculatedTotalPages && 
+          _page + 1 < calculatedTotalPages &&
           !_loadingMore) {
         Future.delayed(const Duration(milliseconds: 100), () {
           if (mounted && _page + 1 < _totalPages && !_loadingMore) {
@@ -239,7 +250,11 @@ class _EmployeeListPageState extends State<EmployeeListPage> {
     final id = item['id'] ?? item['employeeId'];
     if (id == null) return;
     try {
-      await _hr.toggleEmployeeStatus(employeeId: int.parse(id.toString()), isActive: target, reason: 'Mobile toggle');
+      await _hr.toggleEmployeeStatus(
+        employeeId: int.parse(id.toString()),
+        isActive: target,
+        reason: 'Mobile toggle',
+      );
       Fluttertoast.showToast(msg: 'hr.employees.statusUpdated'.tr());
       _load();
     } catch (e) {
@@ -271,7 +286,7 @@ class _EmployeeListPageState extends State<EmployeeListPage> {
 
   Widget _buildBody() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     if (_loading) {
       return Center(
         child: Column(
@@ -328,46 +343,61 @@ class _EmployeeListPageState extends State<EmployeeListPage> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
-                color: isDark 
-                  ? const Color(0xFF6D28D9).withOpacity(0.15)
-                  : const Color(0xFF6D28D9).withOpacity(0.08),
+                color: isDark
+                    ? const Color(0xFF6D28D9).withOpacity(0.15)
+                    : const Color(0xFF6D28D9).withOpacity(0.08),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: const Color(0xFF6D28D9).withOpacity(isDark ? 0.2 : 0.15),
+                  color: const Color(
+                    0xFF6D28D9,
+                  ).withOpacity(isDark ? 0.2 : 0.15),
                   width: 1,
                 ),
               ),
               child: Row(
                 children: [
                   Icon(
-                    Icons.people_rounded, 
-                    size: 18, 
-                    color: isDark ? const Color(0xFF7C3AED) : const Color(0xFF6D28D9),
+                    Icons.people_rounded,
+                    size: 18,
+                    color: isDark
+                        ? const Color(0xFF7C3AED)
+                        : const Color(0xFF6D28D9),
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    'hr.employees.totalEmployees'.tr(namedArgs: {'count': _totalElements.toString()}),
+                    'hr.employees.totalEmployees'.tr(
+                      namedArgs: {'count': _totalElements.toString()},
+                    ),
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w700,
-                      color: isDark ? const Color(0xFF7C3AED) : const Color(0xFF6D28D9),
+                      color: isDark
+                          ? const Color(0xFF7C3AED)
+                          : const Color(0xFF6D28D9),
                     ),
                   ),
                 ],
               ),
             ),
             const SizedBox(height: 16),
-            ..._items.map((e) => EmployeeCard(
-              employee: e,
-              onToggleStatus: () => _toggleStatus(e, (e['active'] ?? e['isActive'] ?? true) != true),
-            )),
+            ..._items.map(
+              (e) => EmployeeCard(
+                employee: e,
+                onToggleStatus: () => _toggleStatus(
+                  e,
+                  (e['active'] ?? e['isActive'] ?? true) != true,
+                ),
+              ),
+            ),
             if (_loadingMore)
               Padding(
                 padding: const EdgeInsets.all(20),
                 child: Center(
                   child: CircularProgressIndicator(
                     valueColor: AlwaysStoppedAnimation<Color>(
-                      isDark ? const Color(0xFF818CF8) : const Color(0xFF6366F1),
+                      isDark
+                          ? const Color(0xFF818CF8)
+                          : const Color(0xFF6366F1),
                     ),
                   ),
                 ),
@@ -379,21 +409,30 @@ class _EmployeeListPageState extends State<EmployeeListPage> {
                   child: TextButton.icon(
                     onPressed: _loadMore,
                     icon: Icon(
-                      Icons.expand_more_rounded, 
+                      Icons.expand_more_rounded,
                       size: 20,
-                      color: isDark ? const Color(0xFF7C3AED) : const Color(0xFF6D28D9),
+                      color: isDark
+                          ? const Color(0xFF7C3AED)
+                          : const Color(0xFF6D28D9),
                     ),
                     label: Text(
                       'hr.common.loadMore'.tr(),
                       style: TextStyle(
-                        fontSize: 15, 
+                        fontSize: 15,
                         fontWeight: FontWeight.w600,
-                        color: isDark ? const Color(0xFF7C3AED) : const Color(0xFF6D28D9),
+                        color: isDark
+                            ? const Color(0xFF7C3AED)
+                            : const Color(0xFF6D28D9),
                       ),
                     ),
                     style: TextButton.styleFrom(
-                      foregroundColor: isDark ? const Color(0xFF7C3AED) : const Color(0xFF6D28D9),
-                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                      foregroundColor: isDark
+                          ? const Color(0xFF7C3AED)
+                          : const Color(0xFF6D28D9),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 24,
+                        vertical: 12,
+                      ),
                     ),
                   ),
                 ),
@@ -416,17 +455,16 @@ class _EmployeeListPageState extends State<EmployeeListPage> {
   Widget _buildFilters() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final surfaceColor = isDark ? const Color(0xFF1E293B) : Colors.white;
-    final surfaceLightColor = isDark ? const Color(0xFF334155) : const Color(0xFFF8FAFC);
-    
+    final surfaceLightColor = isDark
+        ? const Color(0xFF334155)
+        : const Color(0xFFF8FAFC);
+
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            surfaceColor,
-            surfaceLightColor,
-          ],
+          colors: [surfaceColor, surfaceLightColor],
         ),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
@@ -464,21 +502,20 @@ class _EmployeeListPageState extends State<EmployeeListPage> {
                           const Color(0xFF334155).withOpacity(0.9),
                           const Color(0xFF1E293B).withOpacity(0.95),
                         ]
-                      : [
-                          Colors.white,
-                          const Color(0xFFF8FAFC),
-                        ],
+                      : [Colors.white, const Color(0xFFF8FAFC)],
                 ),
                 borderRadius: BorderRadius.circular(18),
                 border: Border.all(
-                  color: isDark 
-                    ? const Color(0xFF6366F1).withOpacity(0.5)
-                    : const Color(0xFFE2E8F0),
+                  color: isDark
+                      ? const Color(0xFF6366F1).withOpacity(0.5)
+                      : const Color(0xFFE2E8F0),
                   width: 2,
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0xFF6D28D9).withOpacity(isDark ? 0.2 : 0.08),
+                    color: const Color(
+                      0xFF6D28D9,
+                    ).withOpacity(isDark ? 0.2 : 0.08),
                     blurRadius: 16,
                     offset: const Offset(0, 4),
                     spreadRadius: -2,
@@ -488,16 +525,16 @@ class _EmployeeListPageState extends State<EmployeeListPage> {
               child: TextField(
                 controller: _searchCtrl,
                 style: TextStyle(
-                  fontSize: 16, 
-                  fontWeight: FontWeight.w600, 
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
                   color: isDark ? Colors.white : const Color(0xFF1E293B),
                   letterSpacing: 0.3,
                 ),
                 decoration: InputDecoration(
                   hintText: 'hr.employees.searchPlaceholder'.tr(),
                   hintStyle: TextStyle(
-                    color: isDark ? Colors.grey[400] : Colors.grey[500], 
-                    fontSize: 15, 
+                    color: isDark ? Colors.grey[400] : Colors.grey[500],
+                    fontSize: 15,
                     fontWeight: FontWeight.w500,
                     letterSpacing: 0.2,
                   ),
@@ -519,19 +556,27 @@ class _EmployeeListPageState extends State<EmployeeListPage> {
                         ),
                       ],
                     ),
-                    child: const Icon(Icons.search_rounded, color: Colors.white, size: 22),
+                    child: const Icon(
+                      Icons.search_rounded,
+                      color: Colors.white,
+                      size: 22,
+                    ),
                   ),
                   suffixIcon: _searchCtrl.text.isNotEmpty
                       ? IconButton(
                           icon: Container(
                             padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
-                              color: isDark ? Colors.grey[700]!.withOpacity(0.7) : Colors.grey[200]!.withOpacity(0.9),
+                              color: isDark
+                                  ? Colors.grey[700]!.withOpacity(0.7)
+                                  : Colors.grey[200]!.withOpacity(0.9),
                               shape: BoxShape.circle,
                             ),
                             child: Icon(
-                              Icons.close_rounded, 
-                              color: isDark ? Colors.grey[300] : Colors.grey[700], 
+                              Icons.close_rounded,
+                              color: isDark
+                                  ? Colors.grey[300]
+                                  : Colors.grey[700],
                               size: 18,
                             ),
                           ),
@@ -543,7 +588,10 @@ class _EmployeeListPageState extends State<EmployeeListPage> {
                         )
                       : null,
                   border: InputBorder.none,
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 20,
+                  ),
                 ),
                 onChanged: (_) => setState(() {}),
                 onSubmitted: (_) => _load(page: 0),
@@ -593,7 +641,9 @@ class _EmployeeListPageState extends State<EmployeeListPage> {
                 Expanded(
                   child: Container(
                     decoration: BoxDecoration(
-                      color: isDark ? const Color(0xFF334155) : const Color(0xFFF8FAFC),
+                      color: isDark
+                          ? const Color(0xFF334155)
+                          : const Color(0xFFF8FAFC),
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(
                         color: isDark ? Colors.grey[700]! : Colors.grey[300]!,
@@ -601,12 +651,12 @@ class _EmployeeListPageState extends State<EmployeeListPage> {
                       ),
                     ),
                     child: DropdownButtonFormField<String>(
-                      value: _statusFilter,
+                      initialValue: _statusFilter,
                       isExpanded: true,
                       decoration: InputDecoration(
                         labelText: 'hr.common.status'.tr(),
                         labelStyle: TextStyle(
-                          color: isDark ? Colors.grey[300] : Colors.grey[700], 
+                          color: isDark ? Colors.grey[300] : Colors.grey[700],
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
                         ),
@@ -614,14 +664,19 @@ class _EmployeeListPageState extends State<EmployeeListPage> {
                         border: InputBorder.none,
                         enabledBorder: InputBorder.none,
                         focusedBorder: InputBorder.none,
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 16,
+                        ),
                       ),
                       style: TextStyle(
-                        fontSize: 14, 
+                        fontSize: 14,
                         fontWeight: FontWeight.w600,
                         color: isDark ? Colors.white : const Color(0xFF1E293B),
                       ),
-                      dropdownColor: isDark ? const Color(0xFF1E293B) : Colors.white,
+                      dropdownColor: isDark
+                          ? const Color(0xFF1E293B)
+                          : Colors.white,
                       icon: Icon(
                         Icons.keyboard_arrow_down_rounded,
                         color: isDark ? Colors.grey[400] : Colors.grey[600],
@@ -630,26 +685,90 @@ class _EmployeeListPageState extends State<EmployeeListPage> {
                       items: [
                         DropdownMenuItem(
                           value: "all",
-                          child: Text('hr.common.all'.tr(), overflow: TextOverflow.ellipsis, maxLines: 1, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+                          child: Text(
+                            'hr.common.all'.tr(),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
                         ),
                         DropdownMenuItem(
                           value: "active",
-                          child: Text('hr.common.active'.tr(), overflow: TextOverflow.ellipsis, maxLines: 1, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+                          child: Text(
+                            'hr.common.active'.tr(),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
                         ),
                         DropdownMenuItem(
                           value: "inactive",
-                          child: Text('hr.common.inactive'.tr(), overflow: TextOverflow.ellipsis, maxLines: 1, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+                          child: Text(
+                            'hr.common.inactive'.tr(),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
                         ),
                         DropdownMenuItem(
                           value: "resignation",
-                          child: Text('hr.common.resignation'.tr(), overflow: TextOverflow.ellipsis, maxLines: 1, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+                          child: Text(
+                            'hr.common.resignation'.tr(),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
                         ),
                       ],
                       selectedItemBuilder: (context) => [
-                        Text('hr.common.all'.tr(), overflow: TextOverflow.ellipsis, maxLines: 1, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
-                        Text('hr.common.active'.tr(), overflow: TextOverflow.ellipsis, maxLines: 1, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
-                        Text('hr.common.inactive'.tr(), overflow: TextOverflow.ellipsis, maxLines: 1, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
-                        Text('hr.common.resignation'.tr(), overflow: TextOverflow.ellipsis, maxLines: 1, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+                        Text(
+                          'hr.common.all'.tr(),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        Text(
+                          'hr.common.active'.tr(),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        Text(
+                          'hr.common.inactive'.tr(),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        Text(
+                          'hr.common.resignation'.tr(),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                       ],
                       onChanged: (v) {
                         if (v != null) {
@@ -674,7 +793,7 @@ class _EmployeeListPageState extends State<EmployeeListPage> {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(
-                        color: isDark ? Colors.grey[700]! : Colors.grey[300]!, 
+                        color: isDark ? Colors.grey[700]! : Colors.grey[300]!,
                         width: 2,
                       ),
                     ),
@@ -703,16 +822,20 @@ class _EmployeeListPageState extends State<EmployeeListPage> {
                               Icon(
                                 Icons.refresh_rounded,
                                 size: 18,
-                                color: isDark ? Colors.grey[300] : const Color(0xFF64748B),
+                                color: isDark
+                                    ? Colors.grey[300]
+                                    : const Color(0xFF64748B),
                               ),
                               const SizedBox(width: 8),
                               Flexible(
                                 child: Text(
                                   'hr.common.reset'.tr(),
                                   style: TextStyle(
-                                    fontSize: 15, 
-                                    fontWeight: FontWeight.w700, 
-                                    color: isDark ? Colors.grey[300] : const Color(0xFF64748B),
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w700,
+                                    color: isDark
+                                        ? Colors.grey[300]
+                                        : const Color(0xFF64748B),
                                   ),
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -754,11 +877,20 @@ class _EmployeeListPageState extends State<EmployeeListPage> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Icon(Icons.filter_alt_rounded, size: 20, color: Colors.white),
+                              const Icon(
+                                Icons.filter_alt_rounded,
+                                size: 20,
+                                color: Colors.white,
+                              ),
                               const SizedBox(width: 8),
                               Text(
                                 'hr.common.filter'.tr(),
-                                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: Colors.white, letterSpacing: 0.5),
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w800,
+                                  color: Colors.white,
+                                  letterSpacing: 0.5,
+                                ),
                               ),
                             ],
                           ),
@@ -774,7 +906,4 @@ class _EmployeeListPageState extends State<EmployeeListPage> {
       ),
     );
   }
-
 }
-
-

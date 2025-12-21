@@ -7,7 +7,7 @@ class CartProvider extends ChangeNotifier {
 
   CartModel? _cart;
   bool _isLoading = false;
-  String _errorMessage = '';
+  final String _errorMessage = '';
 
   // Biến kiểm soát Animation badge (tăng lên mỗi khi add/remove)
   int _badgeKey = 0;

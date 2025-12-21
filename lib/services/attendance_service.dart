@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -308,7 +307,7 @@ class AttendanceService {
         'explanationType': explanationType,
         'reason': reason,
       };
-      
+
       // Nếu attendanceId = 0 (chưa có attendance record), cần gửi thêm clinicId, workDate, shiftType
       if (attendanceId == 0) {
         if (clinicId != null) {
@@ -321,7 +320,7 @@ class AttendanceService {
           requestData['shiftType'] = shiftType;
         }
       }
-      
+
       await _apiService.post(
         '/api/hr/attendance/explanations/submit',
         data: requestData,
@@ -350,17 +349,17 @@ class AttendanceService {
     if (userId == null) {
       throw Exception('User ID is required for check-in');
     }
-    
+
     // Validate embedding trước khi gửi
     if (faceEmbedding.isEmpty || faceEmbedding.trim().isEmpty) {
       throw Exception('Face embedding is required for check-in');
     }
-    
+
     final trimmedEmbedding = faceEmbedding.trim();
     if (!trimmedEmbedding.startsWith('[') || !trimmedEmbedding.endsWith(']')) {
       throw Exception('Invalid face embedding format');
     }
-    
+
     try {
       final payload = <String, dynamic>{
         'userId': userId,
@@ -381,7 +380,7 @@ class AttendanceService {
     } on DioException catch (dioError) {
       // Lấy message từ server response
       final serverMessage = dioError.response?.data?['message']?.toString();
-      
+
       // Kiểm tra nếu là lỗi face verification (401 Unauthorized)
       if (dioError.response?.statusCode == 401) {
         final errorType = dioError.response?.data?['error']?.toString();
@@ -394,7 +393,7 @@ class AttendanceService {
           );
         }
       }
-      
+
       // Các lỗi khác
       throw Exception(
         (serverMessage != null && serverMessage.isNotEmpty)
@@ -417,12 +416,12 @@ class AttendanceService {
     if (faceEmbedding.isEmpty || faceEmbedding.trim().isEmpty) {
       throw Exception('Face embedding is required for check-out');
     }
-    
+
     final trimmedEmbedding = faceEmbedding.trim();
     if (!trimmedEmbedding.startsWith('[') || !trimmedEmbedding.endsWith(']')) {
       throw Exception('Invalid face embedding format');
     }
-    
+
     try {
       final payload = <String, dynamic>{
         'attendanceId': attendanceId,
@@ -440,7 +439,7 @@ class AttendanceService {
     } on DioException catch (dioError) {
       // Lấy message từ server response
       final serverMessage = dioError.response?.data?['message']?.toString();
-      
+
       // Kiểm tra nếu là lỗi face verification (401 Unauthorized)
       if (dioError.response?.statusCode == 401) {
         final errorType = dioError.response?.data?['error']?.toString();
@@ -453,7 +452,7 @@ class AttendanceService {
           );
         }
       }
-      
+
       // Các lỗi khác
       throw Exception(
         (serverMessage != null && serverMessage.isNotEmpty)
@@ -568,10 +567,12 @@ class AttendanceService {
       } catch (e) {
         // Log error để debug
         debugPrint('Error extracting embedding: $e');
-        
+
         // Throw lại với message rõ ràng hơn
         if (e is FormatException) {
-          throw Exception('Không thể nhận diện khuôn mặt từ ảnh. Vui lòng đảm bảo:\n- Khuôn mặt rõ ràng, nhìn thẳng vào camera\n- Ánh sáng đủ\n- Không có vật che mặt');
+          throw Exception(
+            'Không thể nhận diện khuôn mặt từ ảnh. Vui lòng đảm bảo:\n- Khuôn mặt rõ ràng, nhìn thẳng vào camera\n- Ánh sáng đủ\n- Không có vật che mặt',
+          );
         }
         throw Exception('Lỗi khi xử lý ảnh khuôn mặt: ${e.toString()}');
       }

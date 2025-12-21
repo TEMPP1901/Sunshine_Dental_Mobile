@@ -6,6 +6,22 @@
   },
   "signInPrompt": "Bạn cần đăng nhập để xem hồ sơ của mình.",
   "guest": "Khách",
+  "section": {
+    "patient": "Bệnh nhân",
+    "doctor": "Dành cho Bác sĩ"
+  },
+  "patient": {
+    "overview": "Tổng quan sức khỏe",
+    "overviewSub": "Xem hạng & chỉ số",
+    "appointments": "Lịch hẹn của tôi",
+    "appointmentsSub": "Quản lý & Hủy lịch",
+    "records": "Hồ sơ bệnh án",
+    "recordsSub": "Lịch sử khám & điều trị"
+  },
+  "doctor": {
+    "schedule": "Lịch làm việc",
+    "scheduleSub": "Xem ca trực & Lịch hẹn khách"
+  },
   "myAccountSubtitle": "Xem và cập nhật thông tin cá nhân",
   "changePassword": {
     "title": "Đổi mật khẩu",
@@ -92,4 +108,3 @@
     "title": "Ngôn ngữ"
   }
 }
-

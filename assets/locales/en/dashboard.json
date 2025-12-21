@@ -1,0 +1,27 @@
+{
+  "title": "Health Overview",
+  "error": "Failed to load data",
+  "retry": "Retry",
+  "spent": "Total Spent",
+  "nextTier": "Need {amount} more to upgrade",
+  "discount": "Member Offer: {percent}% OFF",
+  "quickAccess": "Quick Access",
+  "appointments": "Appointments",
+  "records": "Records",
+  "upcoming": "Upcoming Appointment",
+  "rank": {
+    "diamond": "💎 Diamond",
+    "gold": "🥇 Gold",
+    "silver": "🥈 Silver",
+    "member": "👋 Member"
+  },
+  "wellness": {
+    "safe": "Safe",
+    "warning": "Check Needed",
+    "overdue": "Overdue",
+    "new": "New Member",
+    "daysUnchecked": "days unchecked",
+    "bookNow": "Book Now",
+    "bookingRedirect": "Redirecting to Booking page"
+  }
+}

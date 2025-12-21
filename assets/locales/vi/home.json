@@ -23,7 +23,15 @@
     "bookingWith": "Đặt lịch với {{name}}",
     "bookingNote": "Bạn sẽ được chuyển đến trang đặt lịch để chọn ngày và giờ.",
     "bookingRedirect": "Đang chuyển đến trang đặt lịch...",
-    "confirmBooking": "Tiếp tục"
+    "confirmBooking": "Tiếp tục",
+
+    "specialty1": "Chỉnh nha (Niềng răng)",
+    "specialty2": "Cấy ghép Implant",
+    "specialty3": "Nha khoa thẩm mỹ",
+    "exp1": "10 năm KN",
+    "exp2": "8 năm KN",
+    "exp3": "5 năm KN",
+    "bookBtn": "Đặt lịch"
   },
   "nav": {
     "home": "Trang chủ",
@@ -35,6 +43,17 @@
   "trustedBy": {
     "heading": "Được tin tưởng bởi",
     "logoAlt": "Logo đối tác {{index}}"
-  }
+  },
+  "service": {
+      "ortho": "Niềng răng",
+      "orthoDesc": "Chỉnh nha thẩm mỹ",
+      "porcelain": "Bọc sứ",
+      "porcelainDesc": "Răng trắng sáng",
+      "implant": "Trồng Implant",
+      "implantDesc": "Phục hồi mất răng",
+      "whitening": "Tẩy trắng",
+      "whiteningDesc": "Nụ cười rạng rỡ",
+      "extraction": "Nhổ răng",
+      "extractionDesc": "Không đau"
+    }
 }
-

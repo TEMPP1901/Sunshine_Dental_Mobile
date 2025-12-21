@@ -10,18 +10,37 @@ import 'steps/step_date_standard.dart';
 import 'steps/step_date_vip.dart';
 import 'steps/step_summary.dart';
 
-class BookingScreen extends StatelessWidget {
-  const BookingScreen({super.key});
+// ⚠️ Đã chuyển thành StatefulWidget để nhận tham số từ AI
+class BookingScreen extends StatefulWidget {
+  final int? prefillServiceId;
+  final int? prefillDoctorId;
 
+  const BookingScreen({super.key, this.prefillServiceId, this.prefillDoctorId});
+
+  @override
+  State<BookingScreen> createState() => _BookingScreenState();
+}
+
+class _BookingScreenState extends State<BookingScreen> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => BookingProvider(),
+      create: (_) {
+        // Khởi tạo Provider
+        final provider = BookingProvider();
+
+        // 🟢 KÍCH HOẠT LOGIC AI NGAY KHI TẠO PROVIDER
+        if (widget.prefillServiceId != null || widget.prefillDoctorId != null) {
+          provider.initializeFromAi(
+            serviceId: widget.prefillServiceId,
+            doctorId: widget.prefillDoctorId,
+          );
+        }
+        return provider;
+      },
       child: Consumer<BookingProvider>(
         builder: (context, provider, child) {
           // Logic xác định tổng số bước
-          // Standard: Type(0) -> Service(1) -> Date(2) -> Summary(3) => Total 4
-          // VIP: Type(0) -> Service(1) -> Doctor(2) -> DateVIP(3) -> Summary(4) => Total 5
           int totalSteps = (provider.appointmentType == 'STANDARD') ? 4 : 5;
 
           return Scaffold(
@@ -38,24 +57,31 @@ class BookingScreen extends StatelessWidget {
                 },
               ),
             ),
-            body: Column(
-              children: [
-                // STEPPER INDICATOR
-                _buildStepper(provider.currentStep, totalSteps),
+            // Hiển thị Loading khi AI đang xử lý dữ liệu
+            body: provider.isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : Column(
+                    children: [
+                      // STEPPER INDICATOR
+                      _buildStepper(provider.currentStep, totalSteps),
 
-                // STEP CONTENT
-                Expanded(
-                  child: _buildStepContent(provider.currentStep, provider.appointmentType),
-                ),
-              ],
-            ),
+                      // STEP CONTENT
+                      Expanded(
+                        child: _buildStepContent(
+                          provider.currentStep,
+                          provider.appointmentType,
+                        ),
+                      ),
+                    ],
+                  ),
           );
         },
       ),
     );
   }
 
-  // Widget hiển thị thanh tiến trình (1 - 2 - 3 - 4...)
+  // --- CÁC WIDGET UI BÊN DƯỚI GIỮ NGUYÊN HOÀN TOÀN TỪ CODE CŨ ---
+
   Widget _buildStepper(int currentStep, int totalSteps) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16),
@@ -96,34 +122,26 @@ class BookingScreen extends StatelessWidget {
     );
   }
 
-  // 👇 LOGIC QUAN TRỌNG: Điều phối màn hình dựa trên Step và Type
   Widget _buildStepContent(int step, String type) {
     switch (step) {
       case 0:
-        return const StepType(); // Luôn là chọn loại đầu tiên
-
+        return const StepType();
       case 1:
-        return const StepServiceClinic(); // Luôn là chọn cơ sở/dịch vụ thứ hai
-
+        return const StepServiceClinic();
       case 2:
-      // RẼ NHÁNH TẠI ĐÂY
         if (type == 'STANDARD') {
-          return const StepDateStandard(); // Standard -> Chọn ngày thường
+          return const StepDateStandard();
         } else {
-          return const StepDoctor(); // VIP -> Chọn bác sĩ
+          return const StepDoctor();
         }
-
       case 3:
         if (type == 'STANDARD') {
-          return const StepSummary(); // Standard -> Tổng kết luôn
+          return const StepSummary();
         } else {
-          return const StepDateVip(); // VIP -> Chọn ngày giờ chính xác
+          return const StepDateVip();
         }
-
       case 4:
-      // Chỉ VIP mới tới bước 4 này
         return const StepSummary();
-
       default:
         return const SizedBox.shrink();
     }

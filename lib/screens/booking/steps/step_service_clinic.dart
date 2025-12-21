@@ -64,15 +64,22 @@ class _StepServiceClinicState extends State<StepServiceClinic> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text("1. Chọn cơ sở", style: TextStyle(fontWeight: FontWeight.bold)),
+          const Text(
+            "1. Chọn cơ sở",
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
           const SizedBox(height: 8),
           DropdownButtonFormField<BookingClinic>(
-            value: selectedClinicValue,
+            initialValue: selectedClinicValue,
             hint: const Text("Chọn phòng khám"),
-            items: clinics.map((c) => DropdownMenuItem(
-              value: c,
-              child: Text(c.clinicName, overflow: TextOverflow.ellipsis),
-            )).toList(),
+            items: clinics
+                .map(
+                  (c) => DropdownMenuItem(
+                    value: c,
+                    child: Text(c.clinicName, overflow: TextOverflow.ellipsis),
+                  ),
+                )
+                .toList(),
             onChanged: (val) {
               if (val != null) provider.setClinic(val);
             },
@@ -80,32 +87,47 @@ class _StepServiceClinicState extends State<StepServiceClinic> {
           ),
 
           const SizedBox(height: 24),
-          const Text("2. Chọn dịch vụ", style: TextStyle(fontWeight: FontWeight.bold)),
+          const Text(
+            "2. Chọn dịch vụ",
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
           const SizedBox(height: 8),
 
           // List Services (Accordion)
-          ...services.map((service) => ExpansionTile(
-            title: Text(service.serviceName),
-            children: service.variants.map((variant) {
-              bool isSelected = provider.selectedServiceVariant?.variantId == variant.variantId;
-              return ListTile(
-                title: Text(variant.variantName),
-                subtitle: Text("${variant.price} VND - ${variant.duration} phút"),
-                trailing: isSelected ? const Icon(Icons.check, color: Colors.blue) : null,
-                selected: isSelected,
-                onTap: () => provider.setService(service, variant),
-              );
-            }).toList(),
-          )),
+          ...services.map(
+            (service) => ExpansionTile(
+              title: Text(service.serviceName),
+              children: service.variants.map((variant) {
+                bool isSelected =
+                    provider.selectedServiceVariant?.variantId ==
+                    variant.variantId;
+                return ListTile(
+                  title: Text(variant.variantName),
+                  subtitle: Text(
+                    "${variant.price} VND - ${variant.duration} phút",
+                  ),
+                  trailing: isSelected
+                      ? const Icon(Icons.check, color: Colors.blue)
+                      : null,
+                  selected: isSelected,
+                  onTap: () => provider.setService(service, variant),
+                );
+              }).toList(),
+            ),
+          ),
 
           const SizedBox(height: 20),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(minimumSize: const Size.fromHeight(50)),
-            onPressed: (provider.selectedClinic != null && provider.selectedServiceVariant != null)
+            style: ElevatedButton.styleFrom(
+              minimumSize: const Size.fromHeight(50),
+            ),
+            onPressed:
+                (provider.selectedClinic != null &&
+                    provider.selectedServiceVariant != null)
                 ? provider.nextStep
                 : null,
             child: const Text("Tiếp tục"),
-          )
+          ),
         ],
       ),
     );

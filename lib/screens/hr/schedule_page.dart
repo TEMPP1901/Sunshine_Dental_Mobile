@@ -1,6 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 import 'common/hr_app_bar.dart';
 import 'common/empty_error_state.dart';
@@ -28,7 +27,8 @@ class _HrSchedulePageState extends State<HrSchedulePage> {
     _load();
   }
 
-  String _fmt(DateTime d) => '${d.year.toString().padLeft(4, '0')}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
+  String _fmt(DateTime d) =>
+      '${d.year.toString().padLeft(4, '0')}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
 
   Future<void> _load() async {
     setState(() {
@@ -52,20 +52,22 @@ class _HrSchedulePageState extends State<HrSchedulePage> {
       // Parse error message để hiển thị thân thiện hơn
       String errorMessage = 'hr.schedules.error.loadFailed'.tr();
       final errorStr = e.toString();
-      
+
       if (errorStr.contains('401') || errorStr.contains('Unauthorized')) {
         errorMessage = 'hr.schedules.error.unauthorized'.tr();
       } else if (errorStr.contains('403') || errorStr.contains('Forbidden')) {
         errorMessage = 'hr.schedules.error.forbidden'.tr();
       } else if (errorStr.contains('404') || errorStr.contains('Not Found')) {
         errorMessage = 'hr.schedules.error.notFound'.tr();
-      } else if (errorStr.contains('500') || errorStr.contains('Internal Server Error')) {
+      } else if (errorStr.contains('500') ||
+          errorStr.contains('Internal Server Error')) {
         errorMessage = 'hr.schedules.error.serverError'.tr();
-      } else if (errorStr.contains('Network') || errorStr.contains('Connection')) {
+      } else if (errorStr.contains('Network') ||
+          errorStr.contains('Connection')) {
         errorMessage = 'hr.schedules.error.networkError'.tr();
       }
       // Nếu không match với các lỗi đã biết, giữ nguyên message mặc định
-      
+
       if (mounted) {
         setState(() => _error = errorMessage);
       }
@@ -89,10 +91,7 @@ class _HrSchedulePageState extends State<HrSchedulePage> {
         titleText: 'hr.schedules.title'.tr(),
         onRefresh: _loading ? null : _load,
       ),
-      body: RefreshIndicator(
-        onRefresh: _load,
-        child: _buildBody(),
-      ),
+      body: RefreshIndicator(onRefresh: _load, child: _buildBody()),
     );
   }
 
@@ -114,10 +113,10 @@ class _HrSchedulePageState extends State<HrSchedulePage> {
         _buildDateFilter(),
         const SizedBox(height: 12),
         ScheduleSection(
-          title: _isCustomDate && _selectedDate != null 
-            ? 'hr.schedules.scheduleForDate'.tr(args: [_fmt(_selectedDate!)]) 
-            : 'hr.schedules.currentWeek'.tr(), 
-          data: _current, 
+          title: _isCustomDate && _selectedDate != null
+              ? 'hr.schedules.scheduleForDate'.tr(args: [_fmt(_selectedDate!)])
+              : 'hr.schedules.currentWeek'.tr(),
+          data: _current,
           icon: Icons.calendar_today_rounded,
         ),
         const SizedBox(height: 20),
@@ -125,18 +124,17 @@ class _HrSchedulePageState extends State<HrSchedulePage> {
     );
   }
 
-
   Widget _buildDateFilter() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final surfaceColor = isDark ? const Color(0xFF1E293B) : Colors.white;
-    
+
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: surfaceColor,
         borderRadius: BorderRadius.circular(18),
         border: Border.all(
-          color: isDark 
+          color: isDark
               ? Colors.grey[800]!.withOpacity(0.5)
               : Colors.grey[200]!.withOpacity(0.8),
           width: 1,
@@ -158,18 +156,22 @@ class _HrSchedulePageState extends State<HrSchedulePage> {
               Container(
                 padding: const EdgeInsets.all(6),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF6D28D9).withOpacity(isDark ? 0.2 : 0.1),
+                  color: const Color(
+                    0xFF6D28D9,
+                  ).withOpacity(isDark ? 0.2 : 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
                   Icons.filter_alt_rounded,
-                  color: isDark ? const Color(0xFF7C3AED) : const Color(0xFF6D28D9),
+                  color: isDark
+                      ? const Color(0xFF7C3AED)
+                      : const Color(0xFF6D28D9),
                   size: 16,
                 ),
               ),
               const SizedBox(width: 12),
               Expanded(
-                  child: Text(
+                child: Text(
                   'hr.schedules.selectDateToView'.tr(),
                   style: TextStyle(
                     fontSize: 14,
@@ -197,16 +199,23 @@ class _HrSchedulePageState extends State<HrSchedulePage> {
                     },
                     borderRadius: BorderRadius.circular(12),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 11, horizontal: 14),
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 11,
+                        horizontal: 14,
+                      ),
                       decoration: BoxDecoration(
-                        color: !_isCustomDate 
-                          ? const Color(0xFF6D28D9).withOpacity(isDark ? 0.15 : 0.08)
-                          : Colors.transparent,
+                        color: !_isCustomDate
+                            ? const Color(
+                                0xFF6D28D9,
+                              ).withOpacity(isDark ? 0.15 : 0.08)
+                            : Colors.transparent,
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: !_isCustomDate 
-                            ? const Color(0xFF6D28D9).withOpacity(0.4)
-                            : (isDark ? Colors.grey[700]!.withOpacity(0.3) : Colors.grey[300]!.withOpacity(0.5)),
+                          color: !_isCustomDate
+                              ? const Color(0xFF6D28D9).withOpacity(0.4)
+                              : (isDark
+                                    ? Colors.grey[700]!.withOpacity(0.3)
+                                    : Colors.grey[300]!.withOpacity(0.5)),
                           width: 1,
                         ),
                       ),
@@ -216,19 +225,25 @@ class _HrSchedulePageState extends State<HrSchedulePage> {
                           Icon(
                             Icons.calendar_today_rounded,
                             size: 15,
-                            color: !_isCustomDate 
-                              ? const Color(0xFF6D28D9)
-                              : (isDark ? Colors.grey[500] : Colors.grey[700]),
+                            color: !_isCustomDate
+                                ? const Color(0xFF6D28D9)
+                                : (isDark
+                                      ? Colors.grey[500]
+                                      : Colors.grey[700]),
                           ),
                           const SizedBox(width: 6),
                           Text(
                             'hr.schedules.currentWeek'.tr(),
                             style: TextStyle(
                               fontSize: 13,
-                              fontWeight: !_isCustomDate ? FontWeight.w600 : FontWeight.w500,
-                              color: !_isCustomDate 
-                                ? const Color(0xFF6D28D9)
-                                : (isDark ? Colors.grey[300] : Colors.grey[700]),
+                              fontWeight: !_isCustomDate
+                                  ? FontWeight.w600
+                                  : FontWeight.w500,
+                              color: !_isCustomDate
+                                  ? const Color(0xFF6D28D9)
+                                  : (isDark
+                                        ? Colors.grey[300]
+                                        : Colors.grey[700]),
                             ),
                           ),
                         ],
@@ -245,42 +260,55 @@ class _HrSchedulePageState extends State<HrSchedulePage> {
                     onTap: () => _pickDate(),
                     borderRadius: BorderRadius.circular(12),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 11, horizontal: 14),
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 11,
+                        horizontal: 14,
+                      ),
                       decoration: BoxDecoration(
-                        color: _isCustomDate 
-                          ? const Color(0xFF6D28D9).withOpacity(isDark ? 0.15 : 0.08)
-                          : Colors.transparent,
+                        color: _isCustomDate
+                            ? const Color(
+                                0xFF6D28D9,
+                              ).withOpacity(isDark ? 0.15 : 0.08)
+                            : Colors.transparent,
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: _isCustomDate 
-                            ? const Color(0xFF6D28D9).withOpacity(0.4)
-                            : (isDark ? Colors.grey[700]!.withOpacity(0.3) : Colors.grey[300]!.withOpacity(0.5)),
+                          color: _isCustomDate
+                              ? const Color(0xFF6D28D9).withOpacity(0.4)
+                              : (isDark
+                                    ? Colors.grey[700]!.withOpacity(0.3)
+                                    : Colors.grey[300]!.withOpacity(0.5)),
                           width: 1,
                         ),
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                        Icon(
-                          Icons.date_range_rounded,
-                          size: 15,
-                          color: _isCustomDate 
-                            ? const Color(0xFF6D28D9)
-                            : (isDark ? Colors.grey[500] : Colors.grey[700]),
-                        ),
-                        const SizedBox(width: 6),
-                        Expanded(
-                          child: Text(
-                            _selectedDate != null 
-                              ? _fmt(_selectedDate!)
-                              : 'hr.schedules.selectDate'.tr(),
-                            style: TextStyle(
-                              fontSize: 13,
-                              fontWeight: _isCustomDate ? FontWeight.w600 : FontWeight.w500,
-                              color: _isCustomDate 
+                          Icon(
+                            Icons.date_range_rounded,
+                            size: 15,
+                            color: _isCustomDate
                                 ? const Color(0xFF6D28D9)
-                                : (isDark ? Colors.grey[300] : Colors.grey[700]),
-                            ),
+                                : (isDark
+                                      ? Colors.grey[500]
+                                      : Colors.grey[700]),
+                          ),
+                          const SizedBox(width: 6),
+                          Expanded(
+                            child: Text(
+                              _selectedDate != null
+                                  ? _fmt(_selectedDate!)
+                                  : 'hr.schedules.selectDate'.tr(),
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: _isCustomDate
+                                    ? FontWeight.w600
+                                    : FontWeight.w500,
+                                color: _isCustomDate
+                                    ? const Color(0xFF6D28D9)
+                                    : (isDark
+                                          ? Colors.grey[300]
+                                          : Colors.grey[700]),
+                              ),
                               textAlign: TextAlign.center,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
@@ -316,5 +344,3 @@ class _HrSchedulePageState extends State<HrSchedulePage> {
     }
   }
 }
-
-

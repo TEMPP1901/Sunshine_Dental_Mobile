@@ -1,4 +1,5 @@
 {
+  "appName": "Sunshine Dental",
   "signInRequired": "Vui lòng đăng nhập để tiếp tục",
   "understood": "Tôi đã hiểu",
   "cancel": "Hủy",
@@ -6,6 +7,17 @@
   "submit": "Gửi",
   "retry": "Thử lại",
   "seeAll": "Xem tất cả",
+  "save": "Lưu",
+  "edit": "Sửa",
+  "delete": "Xóa",
+  "close": "Đóng",
+  "back": "Quay lại",
+  "continue": "Tiếp tục",
+  "loading": "Đang tải...",
+  "success": "Thành công",
+  "error": "Đã có lỗi xảy ra",
+  "required": "Vui lòng nhập {}",
+  "selectDate": "Chọn ngày",
   "roles": {
     "USER": "Người dùng",
     "ADMIN": "Quản trị viên",
@@ -13,7 +25,7 @@
     "DOCTOR": "Bác sĩ",
     "RECEPTION": "Lễ tân",
     "RECEPTIONIST": "Lễ tân",
-    "ACCOUNTANT": "Kế toán"
+    "ACCOUNTANT": "Kế toán",
+    "PATIENT": "Bệnh nhân"
   }
 }
-

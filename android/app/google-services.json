@@ -1,26 +1,44 @@
 {
   "project_info": {
-    "project_number": "413328154690",
-    "project_id": "sunshinedental-b30ef",
-    "storage_bucket": "sunshinedental-b30ef.firebasestorage.app"
+    "project_number": "298873932956",
+    "project_id": "dental-clinic-df8a7",
+    "storage_bucket": "dental-clinic-df8a7.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:413328154690:android:b9e4d768bcff859fe6cddb",
+        "mobilesdk_app_id": "1:298873932956:android:4c6ce3f66db05f56173159",
         "android_client_info": {
           "package_name": "com.SDC_Mobile.sunshine_denttal_mobile"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "298873932956-t0d750adq5ebo00pba6oplcanq2inld7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.SDC_Mobile.sunshine_denttal_mobile",
+            "certificate_hash": "c834664a5273b9f4448a8bc09eb24190c09a40df"
+          }
+        },
+        {
+          "client_id": "298873932956-gdvvdjfmiu888ekeg2du1fdqlm0hqgab.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
-          "current_key": "AIzaSyDkv7ROEByRHAPKvz3ocJLEYwBBLNOFbr4"
+          "current_key": "AIzaSyAxUokUddxpwqIdnp4y-9W_Kzb_OsOpnkQ"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "298873932956-gdvvdjfmiu888ekeg2du1fdqlm0hqgab.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:dio/dio.dart';
 import '../../services/api_service.dart';
-import '../camera/face_camera_screen.dart';
 import 'package:image_picker/image_picker.dart';
 
 /// Màn hình đăng ký face profile bắt buộc cho nhân viên mới
@@ -50,7 +49,10 @@ class _FaceRegistrationPageState extends State<FaceRegistrationPage> {
     try {
       final file = File(imageFile.path);
       final formData = FormData.fromMap({
-        'file': await MultipartFile.fromFile(file.path, filename: imageFile.name),
+        'file': await MultipartFile.fromFile(
+          file.path,
+          filename: imageFile.name,
+        ),
       });
 
       final response = await ApiService().dio.post(
@@ -108,7 +110,7 @@ class _FaceRegistrationPageState extends State<FaceRegistrationPage> {
     return PopScope(
       canPop: false, // Không cho phép quay lại
       child: Scaffold(
-        backgroundColor: colorScheme.background,
+        backgroundColor: colorScheme.surface,
         body: SafeArea(
           child: Padding(
             padding: const EdgeInsets.all(24.0),
@@ -125,21 +127,21 @@ class _FaceRegistrationPageState extends State<FaceRegistrationPage> {
                 Text(
                   'Đăng ký khuôn mặt chấm công',
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: colorScheme.onSurface,
-                      ),
+                    fontWeight: FontWeight.bold,
+                    color: colorScheme.onSurface,
+                  ),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 16),
                 Text(
                   'Để sử dụng hệ thống chấm công, bạn cần đăng ký khuôn mặt của mình.\nVui lòng chụp ảnh khuôn mặt theo hướng dẫn.',
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        color: colorScheme.onSurface.withOpacity(0.7),
-                      ),
+                    color: colorScheme.onSurface.withOpacity(0.7),
+                  ),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 48),
-                
+
                 // Preview ảnh đã chụp (nếu có)
                 if (_capturedImage != null) ...[
                   Container(
@@ -172,9 +174,14 @@ class _FaceRegistrationPageState extends State<FaceRegistrationPage> {
                           ),
                         )
                       : const Icon(Icons.camera_alt_rounded),
-                  label: Text(_isUploading ? 'Đang xử lý...' : 'Chụp ảnh đăng ký'),
+                  label: Text(
+                    _isUploading ? 'Đang xử lý...' : 'Chụp ảnh đăng ký',
+                  ),
                   style: FilledButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 32),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 16,
+                      horizontal: 32,
+                    ),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
                     ),
@@ -184,8 +191,8 @@ class _FaceRegistrationPageState extends State<FaceRegistrationPage> {
                 Text(
                   'Lưu ý: Đảm bảo khuôn mặt rõ ràng, nhìn thẳng vào camera',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: colorScheme.onSurface.withOpacity(0.6),
-                      ),
+                    color: colorScheme.onSurface.withOpacity(0.6),
+                  ),
                   textAlign: TextAlign.center,
                 ),
               ],
@@ -196,4 +203,3 @@ class _FaceRegistrationPageState extends State<FaceRegistrationPage> {
     );
   }
 }
-

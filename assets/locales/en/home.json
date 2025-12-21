@@ -23,7 +23,15 @@
     "bookingWith": "Book appointment with {{name}}",
     "bookingNote": "You will be redirected to the booking page to select date and time.",
     "bookingRedirect": "Redirecting to booking page...",
-    "confirmBooking": "Continue"
+    "confirmBooking": "Continue",
+    
+    "specialty1": "Orthodontics (Braces)",
+    "specialty2": "Dental Implants",
+    "specialty3": "Cosmetic Dentistry",
+    "exp1": "10 years exp",
+    "exp2": "8 years exp",
+    "exp3": "5 years exp",
+    "bookBtn": "Book Now"
   },
   "nav": {
     "home": "Home",
@@ -35,6 +43,17 @@
   "trustedBy": {
     "heading": "Trusted By",
     "logoAlt": "Trusted Logo {{index}}"
-  }
+  },
+  "service": {
+      "ortho": "Orthodontics",
+      "orthoDesc": "Aesthetic Braces",
+      "porcelain": "Porcelain Crowns",
+      "porcelainDesc": "Bright White Smile",
+      "implant": "Dental Implants",
+      "implantDesc": "Restore Missing Teeth",
+      "whitening": "Whitening",
+      "whiteningDesc": "Radiant Smile",
+      "extraction": "Extraction",
+      "extractionDesc": "Painless Procedure"
+    }
 }
-

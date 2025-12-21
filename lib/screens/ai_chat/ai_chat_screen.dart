@@ -4,6 +4,8 @@ import '../../services/ai/ai_service.dart';
 import 'widgets/chat_bubble.dart';
 import 'widgets/service_suggestion_card.dart';
 import 'widgets/doctor_suggestion_card.dart';
+// Import màn hình Booking để điều hướng
+import '../booking/booking_screen.dart';
 
 class AIChatScreen extends StatefulWidget {
   const AIChatScreen({super.key});
@@ -104,16 +106,33 @@ class _AIChatScreenState extends State<AIChatScreen> {
   // --- Logic điều hướng (Navigation) ---
   void _navigateToBookingService(int serviceId) {
     debugPrint("Navigating to Booking with Service ID: $serviceId");
-    ScaffoldMessenger.of(
+
+    // Nếu muốn đóng chat khi chuyển trang thì bỏ comment dòng dưới
+    // Navigator.pop(context);
+
+    Navigator.push(
       context,
-    ).showSnackBar(SnackBar(content: Text("Đặt dịch vụ ID: $serviceId")));
+      MaterialPageRoute(
+        builder: (context) => BookingScreen(
+          prefillServiceId: serviceId, // Truyền ID dịch vụ để auto-fill
+        ),
+      ),
+    );
   }
 
   void _navigateToBookingDoctor(int doctorId) {
     debugPrint("Navigating to Booking with Doctor ID: $doctorId");
-    ScaffoldMessenger.of(
+
+    // Navigator.pop(context);
+
+    Navigator.push(
       context,
-    ).showSnackBar(SnackBar(content: Text("Đặt bác sĩ ID: $doctorId")));
+      MaterialPageRoute(
+        builder: (context) => BookingScreen(
+          prefillDoctorId: doctorId, // Truyền ID bác sĩ để auto-fill
+        ),
+      ),
+    );
   }
 
   @override

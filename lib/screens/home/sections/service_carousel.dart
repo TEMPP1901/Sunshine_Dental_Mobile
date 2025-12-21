@@ -1,152 +1,114 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import '../../../services/api_service.dart';
+import 'package:go_router/go_router.dart';
+import 'package:easy_localization/easy_localization.dart';
 
-class ServiceCarousel extends StatefulWidget {
+class ServiceCarousel extends StatelessWidget {
   const ServiceCarousel({super.key});
-
-  @override
-  State<ServiceCarousel> createState() => _ServiceCarouselState();
-}
-
-class _ServiceCarouselState extends State<ServiceCarousel> {
-  bool _isLoading = true;
-  List<Map<String, dynamic>> _products = [];
-  String? _error;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadProducts();
-  }
-
-  Future<void> _loadProducts() async {
-    setState(() {
-      _isLoading = true;
-      _error = null;
-    });
-
-    try {
-      final response = await ApiService().get('/api/products');
-      final List<dynamic> products = response.data;
-
-      final filteredProducts = products
-          .where((p) => p['isActive'] == true)
-          .take(8)
-          .map((p) => p as Map<String, dynamic>)
-          .toList();
-
-      if (!mounted) return;
-      setState(() {
-        _products = filteredProducts;
-        _isLoading = false;
-      });
-    } catch (e) {
-      if (!mounted) return;
-      setState(() {
-        _error = e.toString();
-        _isLoading = false;
-        _products = [];
-      });
-    }
-  }
-
-  String _getImageUrl(Map<String, dynamic> product) {
-    final images = product['image'];
-    if (images != null && images is List && images.isNotEmpty) {
-      final firstImage = images[0];
-      if (firstImage is Map) {
-        final imageUrl =
-            firstImage['imageUrl']?.toString() ?? firstImage['url']?.toString();
-        if (imageUrl != null && imageUrl.isNotEmpty) {
-          return ApiService.resolveUrl(imageUrl);
-        }
-      }
-    }
-    return '';
-  }
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    if (_isLoading) {
-      return SizedBox(
-        height: 110,
-        child: Center(
-          child: CircularProgressIndicator(color: colorScheme.primary),
-        ),
-      );
-    }
-
-    if (_error != null || _products.isEmpty) {
-      return const SizedBox.shrink();
-    }
+    // Dữ liệu tĩnh (Hardcode)
+    final List<Map<String, dynamic>> services = [
+      {
+        'name': 'home.service.ortho'.tr(), // "Niềng răng"
+        'icon': '🦷',
+        'color': const Color(0xFFE3F2FD),
+        'desc': 'home.service.orthoDesc'.tr(), // "Chỉnh nha thẩm mỹ"
+      },
+      {
+        'name': 'home.service.porcelain'.tr(), // "Bọc sứ"
+        'icon': '✨',
+        'color': const Color(0xFFFFF3E0),
+        'desc': 'home.service.porcelainDesc'.tr(), // "Răng trắng sáng"
+      },
+      {
+        'name': 'home.service.implant'.tr(), // "Trồng Implant"
+        'icon': '🔩',
+        'color': const Color(0xFFE8F5E9),
+        'desc': 'home.service.implantDesc'.tr(), // "Phục hồi mất răng"
+      },
+      {
+        'name': 'home.service.whitening'.tr(), // "Tẩy trắng"
+        'icon': '💎',
+        'color': const Color(0xFFF3E5F5),
+        'desc': 'home.service.whiteningDesc'.tr(), // "Nụ cười rạng rỡ"
+      },
+      {
+        'name': 'home.service.extraction'.tr(), // "Nhổ răng"
+        'icon': '💉',
+        'color': const Color(0xFFFFEBEE),
+        'desc': 'home.service.extractionDesc'.tr(), // "Không đau"
+      },
+    ];
 
     return SizedBox(
-      height: 110,
+      height: 140, // Chiều cao đủ cho Card
       child: ListView.separated(
+        padding: const EdgeInsets.symmetric(horizontal: 24),
         scrollDirection: Axis.horizontal,
-        itemCount: _products.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 12),
+        itemCount: services.length,
+        separatorBuilder: (_, __) => const SizedBox(width: 16),
         itemBuilder: (context, index) {
-          final product = _products[index];
-          final productName = product['productName']?.toString() ?? 'Service';
-          final imageUrl = _getImageUrl(product);
-
-          return SizedBox(
-            width: 100,
-            child: Card(
-              elevation: 4,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
+          final s = services[index];
+          return Container(
+            width: 110, // Chiều rộng mỗi card
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: Colors.grey.shade100),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Material(
+              color: Colors.transparent,
               child: InkWell(
-                onTap: () {
-                  Fluttertoast.showToast(msg: 'Selected $productName');
-                },
                 borderRadius: BorderRadius.circular(20),
+                onTap: () {
+                  context.push('/products');
+                  Fluttertoast.showToast(msg: "Đã chọn: ${s['name']}");
+                },
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 10,
-                  ),
+                  padding: const EdgeInsets.all(12.0),
                   child: Column(
-                    mainAxisSize: MainAxisSize.min,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      CircleAvatar(
-                        radius: 22,
-                        backgroundColor: colorScheme.primaryContainer
-                            .withOpacity(0.5),
-                        backgroundImage: imageUrl.isNotEmpty
-                            ? NetworkImage(
-                                imageUrl,
-                                headers: ApiService.authHeaders(),
-                              )
-                            : null,
-                        child: imageUrl.isEmpty
-                            ? Icon(
-                                Icons.healing_outlined,
-                                color: colorScheme.primary,
-                                size: 22,
-                              )
-                            : null,
-                      ),
-                      const SizedBox(height: 6),
-                      Flexible(
-                        child: Text(
-                          productName,
-                          style: Theme.of(context).textTheme.bodySmall
-                              ?.copyWith(
-                                fontWeight: FontWeight.w600,
-                                color: colorScheme.onSurface,
-                                fontSize: 11,
-                              ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          textAlign: TextAlign.center,
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: s['color'],
+                          shape: BoxShape.circle,
                         ),
+                        child: Text(
+                          s['icon'],
+                          style: const TextStyle(fontSize: 24),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        s['name'],
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 13,
+                          color: const Color(0xFF0D1B3E), // Màu chữ đậm
+                        ),
+                        maxLines: 1,
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        s['desc'],
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 10, color: Colors.grey[500]),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ],
                   ),

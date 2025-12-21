@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:easy_localization/easy_localization.dart'; // Import i18n
 import '../../../../models/patient/patient_models.dart';
-import '../../../../services/api_service.dart'; // Để resolve ảnh
+import '../../../../services/api_service.dart';
 
 class RankCard extends StatelessWidget {
   final PatientDashboardDTO data;
@@ -10,7 +10,12 @@ class RankCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final currencyFormat = NumberFormat.currency(locale: 'vi_VN', symbol: 'đ');
+    // Format tiền tệ dựa trên locale hiện tại
+    final currencyFormat = NumberFormat.currency(
+      locale: context.locale.languageCode == 'vi' ? 'vi_VN' : 'en_US',
+      symbol: context.locale.languageCode == 'vi' ? 'đ' : '\$',
+    );
+
     double progress = data.nextTierGoal > 0
         ? (data.totalSpent / data.nextTierGoal).clamp(0.0, 1.0)
         : 1.0;
@@ -96,7 +101,7 @@ class RankCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "Chi tiêu tích lũy",
+                    'dashboard.spent'.tr(), // "Chi tiêu tích lũy"
                     style: TextStyle(
                       color: Colors.white.withOpacity(0.8),
                       fontSize: 12,
@@ -125,7 +130,13 @@ class RankCard extends StatelessWidget {
               const SizedBox(height: 8),
               if (data.nextTierGoal > data.totalSpent)
                 Text(
-                  "Cần thêm ${currencyFormat.format(data.nextTierGoal - data.totalSpent)} để thăng hạng",
+                  'dashboard.nextTier'.tr(
+                    args: [
+                      currencyFormat.format(
+                        data.nextTierGoal - data.totalSpent,
+                      ),
+                    ],
+                  ),
                   style: TextStyle(
                     color: Colors.white.withOpacity(0.7),
                     fontSize: 11,
@@ -142,13 +153,13 @@ class RankCard extends StatelessWidget {
   String _getRankLabel(String tier) {
     switch (tier) {
       case 'DIAMOND':
-        return '💎 Kim Cương';
+        return 'dashboard.rank.diamond'.tr();
       case 'GOLD':
-        return '🥇 Vàng';
+        return 'dashboard.rank.gold'.tr();
       case 'SILVER':
-        return '🥈 Bạc';
+        return 'dashboard.rank.silver'.tr();
       default:
-        return '👋 Thành viên';
+        return 'dashboard.rank.member'.tr();
     }
   }
 }

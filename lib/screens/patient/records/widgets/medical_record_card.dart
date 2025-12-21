@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart'; // Import i18n
 import '../../../../models/patient/patient_models.dart';
-import 'medical_record_detail_dialog.dart'; // Import dialog vừa tạo
+import 'medical_record_detail_dialog.dart';
 
 class MedicalRecordCard extends StatelessWidget {
   final MedicalRecord record;
@@ -14,9 +15,7 @@ class MedicalRecordCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 16),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: InkWell(
-        // Bọc bằng InkWell để bắt sự kiện click
         onTap: () {
-          // Hiện Dialog khi bấm vào
           showDialog(
             context: context,
             builder: (context) => MedicalRecordDetailDialog(record: record),
@@ -54,7 +53,10 @@ class MedicalRecordCard extends StatelessWidget {
               ),
               const SizedBox(height: 12),
               Text(
-                "Chẩn đoán: ${record.diagnosis}",
+                "records.card.diagnosis".tr(
+                  namedArgs: {'val': record.diagnosis},
+                ),
+                // "Chẩn đoán: ..."
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
@@ -69,7 +71,10 @@ class MedicalRecordCard extends StatelessWidget {
                   const SizedBox(width: 4),
                   Expanded(
                     child: Text(
-                      "BS. ${record.doctorName}",
+                      "records.card.doctor".tr(
+                        namedArgs: {'name': record.doctorName},
+                      ),
+                      // "BS. ..."
                       style: const TextStyle(color: Colors.grey),
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -78,7 +83,10 @@ class MedicalRecordCard extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                "Điều trị: ${record.treatment}",
+                "records.card.treatment".tr(
+                  namedArgs: {'val': record.treatment},
+                ),
+                // "Điều trị: ..."
                 style: TextStyle(color: Colors.grey.shade700),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,

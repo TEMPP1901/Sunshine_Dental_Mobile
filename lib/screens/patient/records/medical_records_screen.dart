@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
+import 'package:easy_localization/easy_localization.dart'; // Import i18n
 import '../../../../services/patient/patient_service.dart';
 import '../../../../models/patient/patient_models.dart';
-import 'widgets/medical_record_card.dart'; // Import widget vừa tạo
+import 'widgets/medical_record_card.dart';
 
 class MedicalRecordsScreen extends StatefulWidget {
   const MedicalRecordsScreen({super.key});
@@ -29,7 +29,6 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
   }
 
   Future<void> _fetchData() async {
-    // API dashboard trả về luôn medicalHistory
     final data = await _service.getDashboardSummary();
     if (mounted) {
       setState(() {
@@ -46,6 +45,7 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
     final query = _searchController.text.toLowerCase();
     String? dateStr;
     if (_filterDate != null) {
+      // Giả sử API trả về dd/MM/yyyy
       dateStr = DateFormat('dd/MM/yyyy').format(_filterDate!);
     }
 
@@ -87,7 +87,10 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
-        title: const Text("Lịch Sử Khám Bệnh"),
+        title: Text(
+          "records.title".tr(), // "Lịch Sử Khám Bệnh"
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
         elevation: 0,
         backgroundColor: Colors.white,
         leading: IconButton(
@@ -108,7 +111,7 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                   controller: _searchController,
                   onChanged: (_) => _filterData(),
                   decoration: InputDecoration(
-                    hintText: "Tìm theo bác sĩ, chẩn đoán...",
+                    hintText: "records.searchHint".tr(), // "Tìm theo bác sĩ..."
                     prefixIcon: const Icon(Icons.search),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -130,7 +133,7 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                       icon: const Icon(Icons.calendar_today, size: 16),
                       label: Text(
                         _filterDate == null
-                            ? "Lọc theo ngày"
+                            ? "records.filterDate".tr()
                             : DateFormat('dd/MM/yyyy').format(_filterDate!),
                       ),
                       style: OutlinedButton.styleFrom(
@@ -149,11 +152,15 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                       IconButton(
                         onPressed: _clearFilter,
                         icon: const Icon(Icons.clear, color: Colors.red),
-                        tooltip: "Xóa lọc",
+                        tooltip: "records.clearFilter".tr(),
                       ),
                     const Spacer(),
                     Text(
-                      "${_filteredHistory.length} hồ sơ",
+                      "records.count".tr(
+                        namedArgs: {
+                          'count': _filteredHistory.length.toString(),
+                        },
+                      ), // "{count} hồ sơ"
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         color: Colors.blue,
@@ -192,13 +199,13 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
           Icon(Icons.history_edu, size: 64, color: Colors.grey[300]),
           const SizedBox(height: 16),
           Text(
-            "Không tìm thấy hồ sơ nào",
+            "records.empty".tr(), // "Không tìm thấy hồ sơ nào"
             style: TextStyle(color: Colors.grey[500], fontSize: 16),
           ),
           if (_filterDate != null || _searchController.text.isNotEmpty)
             TextButton(
               onPressed: _clearFilter,
-              child: const Text("Xóa bộ lọc"),
+              child: Text("records.clearFilter".tr()), // "Xóa bộ lọc"
             ),
         ],
       ),

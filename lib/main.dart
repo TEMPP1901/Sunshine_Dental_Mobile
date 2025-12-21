@@ -5,16 +5,19 @@ import 'package:flutter/services.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_core/firebase_core.dart';
+
+// Import Providers
 import 'package:sunshine_denttal_mobile/providers/huybro_cart/cart_provider.dart';
 import 'package:sunshine_denttal_mobile/providers/huybro_checkout/checkout_provider.dart';
 import 'package:sunshine_denttal_mobile/providers/huybro_products/product_provider.dart';
-import 'app/router.dart';
 import 'providers/user_provider.dart';
 import 'providers/theme_provider.dart';
 import 'providers/language_provider.dart';
 import 'providers/attendance_provider.dart';
 
-import 'package:firebase_core/firebase_core.dart';
+// Import Services & Router
+import 'app/router.dart';
 import 'services/notification_service.dart';
 
 void main() async {
@@ -23,7 +26,7 @@ void main() async {
   // Khởi tạo Firebase
   await Firebase.initializeApp();
 
-  // Khởi tạo Notification Service (không block UI)
+  // Khởi tạo Notification Service
   NotificationService()
       .initialize()
       .then((_) {
@@ -33,41 +36,35 @@ void main() async {
         debugPrint('Failed to initialize NotificationService: $e');
       });
 
-  // Xử lý lỗi trong framework Flutter
+  // Xử lý lỗi
   FlutterError.onError = (FlutterErrorDetails details) {
     FlutterError.presentError(details);
     debugPrint('Flutter Error: ${details.exception}');
-    debugPrint('Stack trace: ${details.stack}');
   };
-
-  // Xử lý lỗi ngoài phạm vi Flutter framework
   PlatformDispatcher.instance.onError = (error, stack) {
     debugPrint('Platform Error: $error');
-    debugPrint('Stack trace: $stack');
     return true;
   };
 
-  // Khởi tạo EasyLocalization với loader tùy chỉnh
+  // Khởi tạo EasyLocalization
   await EasyLocalization.ensureInitialized();
 
-  // Lấy ngôn ngữ đã lưu từ SharedPreferences
   final prefs = await SharedPreferences.getInstance();
   final languageCode = prefs.getString('language') ?? 'en';
-  final savedLocale = Locale(languageCode);
 
   runApp(
     EasyLocalization(
       supportedLocales: const [Locale('en'), Locale('vi')],
       path: 'assets/locales',
       fallbackLocale: const Locale('en'),
-      startLocale: savedLocale,
-      assetLoader: const MultiAssetLoader(),
+      startLocale: Locale(languageCode),
+      assetLoader: const MultiAssetLoader(), // Sử dụng Loader tối ưu
       child: const MyApp(),
     ),
   );
 }
 
-// Loader thực hiện merge nhiều file json ngôn ngữ lại với nhau
+// [TỐI ƯU] Loader tải song song để giảm delay
 class MultiAssetLoader extends AssetLoader {
   const MultiAssetLoader();
 
@@ -75,7 +72,7 @@ class MultiAssetLoader extends AssetLoader {
   Future<Map<String, dynamic>> load(String path, Locale locale) async {
     final Map<String, dynamic> merged = {};
 
-    // Danh sách các file ngôn ngữ cho từng màn hình
+    // DANH SÁCH FILE JSON ĐẦY ĐỦ
     final files = [
       'common',
       'login',
@@ -86,31 +83,33 @@ class MultiAssetLoader extends AssetLoader {
       'contact',
       'account',
       'attendance',
-      'profile',
+      'profile', // File chung
       'leaveRequest',
       'onboarding',
       'splash',
       'web',
       'admin',
       'hr',
+      'dashboard', // Mới thêm
+      'records', // Mới thêm
+      'appointments', // Mới thêm
+      'profilePatient', // Mới thêm (fix lỗi profile)
     ];
 
-    // Lần lượt đọc từng file và merge vào map chính
-    for (final file in files) {
-      try {
-        final String jsonString = await rootBundle.loadString(
-          'assets/locales/${locale.languageCode}/$file.json',
-        );
-        final Map<String, dynamic> jsonData = json.decode(jsonString);
-        merged[file] = jsonData;
-        debugPrint('[MultiAssetLoader] Loaded: $file.json for ${locale.languageCode}');
-      } catch (e) {
-        // Log lỗi để debug
-        debugPrint('[MultiAssetLoader] Failed to load $file.json for ${locale.languageCode}: $e');
-        // Bỏ qua file không tồn tại
-        continue;
-      }
-    }
+    // Sử dụng Future.wait để tải tất cả file cùng lúc
+    await Future.wait(
+      files.map((file) async {
+        try {
+          final String jsonString = await rootBundle.loadString(
+            'assets/locales/${locale.languageCode}/$file.json',
+          );
+          final Map<String, dynamic> jsonData = json.decode(jsonString);
+          merged[file] = jsonData;
+        } catch (e) {
+          debugPrint('[MultiAssetLoader] Skip $file.json: $e');
+        }
+      }),
+    );
 
     return merged;
   }
@@ -133,22 +132,21 @@ class MyApp extends StatelessWidget {
       ],
       child: Consumer2<ThemeProvider, LanguageProvider>(
         builder: (context, themeProvider, languageProvider, _) {
-          // Khi đổi ngôn ngữ thì set lại locale cho context
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (context.mounted && context.locale != languageProvider.locale) {
-              context.setLocale(languageProvider.locale);
-            }
-          });
-
           return MaterialApp.router(
             title: 'Sunshine Dental Care',
             debugShowCheckedModeBanner: false,
+
+            // [QUAN TRỌNG] Cấu hình Localization chuẩn
             localizationsDelegates: context.localizationDelegates,
             supportedLocales: context.supportedLocales,
-            locale: languageProvider.locale,
+            locale: context
+                .locale, // Lắng nghe thay đổi từ EasyLocalization context
+
             routerConfig: appRouter,
+
+            // --- THEME CONFIGURATION ---
             theme: ThemeData(
-              primaryColor: const Color(0xFF1A237E), // Màu xanh navy
+              primaryColor: const Color(0xFF1A237E),
               scaffoldBackgroundColor: const Color(0xFFF5F5F7),
               colorScheme:
                   ColorScheme.fromSeed(
@@ -168,12 +166,11 @@ class MyApp extends StatelessWidget {
                 elevation: 0,
                 surfaceTintColor: Colors.transparent,
               ),
-              cardColor: Colors.white,
               cardTheme: CardThemeData(
                 color: Colors.white,
                 elevation: 0,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12), // Bo góc thẻ card
+                  borderRadius: BorderRadius.circular(12),
                   side: const BorderSide(color: Color(0xFFECEFF1), width: 1),
                 ),
               ),
@@ -202,33 +199,32 @@ class MyApp extends StatelessWidget {
               ),
               useMaterial3: true,
             ),
+
             darkTheme: ThemeData(
               primaryColor: const Color(0xFF5C6BC0),
-              scaffoldBackgroundColor: const Color(0xFF0F1419), // Cải thiện background
-              colorScheme: ColorScheme.fromSeed(
-                seedColor: const Color(0xFF5C6BC0),
-                brightness: Brightness.dark,
-              ).copyWith(
-                primary: const Color(0xFF5C6BC0),
-                surface: const Color(0xFF1A2332), // Đồng bộ với card color
-                surfaceContainerLow: const Color(0xFF1A2332),
-                surfaceContainerHighest: const Color(0xFF2A3441),
-                onSurface: const Color(0xFFE8EAED), // Cải thiện contrast
-                onBackground: const Color(0xFFE8EAED),
-                onSurfaceVariant: const Color(0xFFB4B9C4), // Softer variant color
-                outline: const Color(0xFF2A3441),
-              ),
+              scaffoldBackgroundColor: const Color(0xFF0F1419),
+              colorScheme:
+                  ColorScheme.fromSeed(
+                    seedColor: const Color(0xFF5C6BC0),
+                    brightness: Brightness.dark,
+                  ).copyWith(
+                    primary: const Color(0xFF5C6BC0),
+                    surface: const Color(0xFF1A2332),
+                    surfaceContainerLow: const Color(0xFF1A2332),
+                    surfaceContainerHighest: const Color(0xFF2A3441),
+                    onSurface: const Color(0xFFE8EAED),
+                    onSurfaceVariant: const Color(0xFFB4B9C4),
+                    outline: const Color(0xFF2A3441),
+                  ),
               appBarTheme: const AppBarTheme(
-                backgroundColor: Color(0xFF151B24), // Đồng bộ với hr_hub_page
+                backgroundColor: Color(0xFF151B24),
                 foregroundColor: Color(0xFFE8EAED),
                 elevation: 0,
                 surfaceTintColor: Colors.transparent,
               ),
-              cardColor: const Color(0xFF1A2332), // Đồng bộ với hr_hub_page
               cardTheme: CardThemeData(
                 color: const Color(0xFF1A2332),
                 elevation: 0,
-                shadowColor: Colors.black,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
                   side: const BorderSide(color: Color(0xFF2A3441), width: 1),

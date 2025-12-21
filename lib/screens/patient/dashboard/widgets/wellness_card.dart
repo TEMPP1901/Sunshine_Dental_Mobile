@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart'; // Import i18n
 
 class WellnessCard extends StatelessWidget {
   final String status; // 'Excellent', 'Warning', 'Overdue', 'New'
@@ -17,40 +18,39 @@ class WellnessCard extends StatelessWidget {
     switch (status) {
       case 'Excellent': // < 6 tháng
         return {
-          'color':
-              Colors.green, // Flutter không có emerald mặc định, dùng green
-          'bgColor': const Color(0xFF10B981), // Emerald 500
-          'lightColor': const Color(0xFFECFDF5), // Emerald 50
-          'textColor': const Color(0xFF047857), // Emerald 700
+          'color': Colors.green,
+          'bgColor': const Color(0xFF10B981),
+          'lightColor': const Color(0xFFECFDF5),
+          'textColor': const Color(0xFF047857),
           'icon': '🛡️',
-          'title': 'An toàn',
+          'title': 'dashboard.wellness.safe'.tr(), // "An toàn"
         };
       case 'Warning': // 6-12 tháng
         return {
           'color': Colors.amber,
-          'bgColor': const Color(0xFFF59E0B), // Amber 500
-          'lightColor': const Color(0xFFFFFBEB), // Amber 50
-          'textColor': const Color(0xFFB45309), // Amber 700
+          'bgColor': const Color(0xFFF59E0B),
+          'lightColor': const Color(0xFFFFFBEB),
+          'textColor': const Color(0xFFB45309),
           'icon': '⚠️',
-          'title': 'Cần kiểm tra',
+          'title': 'dashboard.wellness.warning'.tr(), // "Cần kiểm tra"
         };
       case 'Overdue': // > 1 năm
         return {
           'color': Colors.red,
-          'bgColor': const Color(0xFFEF4444), // Red 500
-          'lightColor': const Color(0xFFFEF2F2), // Red 50
-          'textColor': const Color(0xFFB91C1C), // Red 700
+          'bgColor': const Color(0xFFEF4444),
+          'lightColor': const Color(0xFFFEF2F2),
+          'textColor': const Color(0xFFB91C1C),
           'icon': '❗',
-          'title': 'Quá hạn',
+          'title': 'dashboard.wellness.overdue'.tr(), // "Quá hạn"
         };
       default: // New User
         return {
           'color': Colors.blue,
-          'bgColor': const Color(0xFF3B82F6), // Blue 500
-          'lightColor': const Color(0xFFEFF6FF), // Blue 50
-          'textColor': const Color(0xFF1D4ED8), // Blue 700
+          'bgColor': const Color(0xFF3B82F6),
+          'lightColor': const Color(0xFFEFF6FF),
+          'textColor': const Color(0xFF1D4ED8),
           'icon': '👋',
-          'title': 'Thành viên mới',
+          'title': 'dashboard.wellness.new'.tr(), // "Thành viên mới"
         };
     }
   }
@@ -63,11 +63,10 @@ class WellnessCard extends StatelessWidget {
     final Color textColor = config['textColor'];
 
     return Container(
-      // Height cố định hoặc để auto tùy layout cha
       constraints: const BoxConstraints(minHeight: 200),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(32), // Rounded-[2rem]
+        borderRadius: BorderRadius.circular(32),
         border: Border.all(color: Colors.grey.shade100),
         boxShadow: [
           BoxShadow(
@@ -91,12 +90,7 @@ class WellnessCard extends StatelessWidget {
             ),
 
             Padding(
-              padding: const EdgeInsets.fromLTRB(
-                24,
-                24,
-                24,
-                24,
-              ), // Left padding + thanh màu
+              padding: const EdgeInsets.all(24),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -147,7 +141,8 @@ class WellnessCard extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              "ngày chưa khám",
+                              'dashboard.wellness.daysUnchecked'
+                                  .tr(), // "ngày chưa khám"
                               style: TextStyle(
                                 fontSize: 12,
                                 color: Colors.grey.shade400,
@@ -190,12 +185,12 @@ class WellnessCard extends StatelessWidget {
                             width: double.infinity,
                             child: ElevatedButton(
                               onPressed: () {
-                                // TODO: Link tới trang booking
+                                // TODO: Cập nhật route booking nếu dùng GoRouter
                                 // context.push('/booking');
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
+                                  SnackBar(
                                     content: Text(
-                                      "Chuyển tới trang Đặt Lịch (Booking)",
+                                      'dashboard.wellness.bookingRedirect'.tr(),
                                     ),
                                   ),
                                 );
@@ -211,9 +206,12 @@ class WellnessCard extends StatelessWidget {
                                 ),
                                 elevation: 2,
                               ),
-                              child: const Text(
-                                "Đặt lịch ngay",
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                              child: Text(
+                                'dashboard.wellness.bookNow'
+                                    .tr(), // "Đặt lịch ngay"
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                           ),

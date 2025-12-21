@@ -1,10 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 import 'common/hr_app_bar.dart';
 import 'common/empty_error_state.dart';
-import 'common/stats_chips.dart';
 import '../../services/hr_service.dart';
 import 'widgets/attendance_history_widgets.dart';
 
@@ -48,7 +46,8 @@ class _AttendanceHistoryPageState extends State<AttendanceHistoryPage> {
     }
   }
 
-  String _fmt(DateTime d) => '${d.year.toString().padLeft(4, '0')}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
+  String _fmt(DateTime d) =>
+      '${d.year.toString().padLeft(4, '0')}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
 
   Future<void> _load({int? page}) async {
     final targetPage = page ?? 0;
@@ -66,7 +65,7 @@ class _AttendanceHistoryPageState extends State<AttendanceHistoryPage> {
         });
         return;
       }
-      
+
       // Try daily-list API first (same as web), fallback to history API
       Map<String, dynamic> data;
       try {
@@ -86,7 +85,7 @@ class _AttendanceHistoryPageState extends State<AttendanceHistoryPage> {
           size: 20,
         );
       }
-      
+
       final content = _parseList(data['content'] ?? data);
       // Parse page number từ nhiều field khác nhau
       int? number;
@@ -99,35 +98,39 @@ class _AttendanceHistoryPageState extends State<AttendanceHistoryPage> {
       } else if (data['page'] is Map) {
         number = _coerceInt((data['page'] as Map)['number']);
       }
-      
+
       final totalPages = _coerceInt(data['totalPages'] ?? data['totalPage']);
-      final totalElements = _coerceInt(data['totalElements'] ?? data['total'] ?? data['totalCount']);
-      
+      final totalElements = _coerceInt(
+        data['totalElements'] ?? data['total'] ?? data['totalCount'],
+      );
+
       // Nếu API không trả về totalPages/totalElements, tính dựa trên số items
       int calculatedTotalPages = totalPages ?? 0;
       int calculatedTotalElements = totalElements ?? 0;
-      
+
       if (calculatedTotalPages == 0) {
         if (content.length == 20) {
           // Có đúng 20 items, có thể còn trang tiếp theo
           calculatedTotalPages = 2;
-        } else if (content.length > 0) {
+        } else if (content.isNotEmpty) {
           // Có items nhưng ít hơn 20, chắc chắn chỉ có 1 trang
           calculatedTotalPages = 1;
         }
-      } else if (calculatedTotalPages > 1 && content.length < 20 && targetPage > 0) {
+      } else if (calculatedTotalPages > 1 &&
+          content.length < 20 &&
+          targetPage > 0) {
         // Nếu đã có totalPages > 1 nhưng load được ít hơn 20 items ở page > 0
         // Có nghĩa là đây là trang cuối, update totalPages
         calculatedTotalPages = targetPage + 1;
       }
-      
+
       if (calculatedTotalElements == 0 && content.isNotEmpty) {
         calculatedTotalElements = content.length;
         if (calculatedTotalPages > 1) {
           calculatedTotalElements = content.length * calculatedTotalPages;
         }
       }
-      
+
       setState(() {
         _items = content;
         _page = number ?? targetPage;
@@ -147,18 +150,24 @@ class _AttendanceHistoryPageState extends State<AttendanceHistoryPage> {
   // Filter items by search term (department is already filtered by API)
   List<Map<String, dynamic>> get _filteredItems {
     var filtered = _items;
-    
+
     // Filter by search term (client-side)
     final searchTerm = _searchCtrl.text.trim().toLowerCase();
     if (searchTerm.isNotEmpty) {
       filtered = filtered.where((item) {
-        final name = (item['fullName'] ?? item['employeeName'] ?? item['employeeName'] ?? '').toString().toLowerCase();
+        final name =
+            (item['fullName'] ??
+                    item['employeeName'] ??
+                    item['employeeName'] ??
+                    '')
+                .toString()
+                .toLowerCase();
         return name.contains(searchTerm);
       }).toList();
     }
-    
+
     // Department filter is handled by API, no need to filter client-side
-    
+
     return filtered;
   }
 
@@ -213,10 +222,12 @@ class _AttendanceHistoryPageState extends State<AttendanceHistoryPage> {
         if (_items.isEmpty && !_loading)
           const AttendanceEmptyState()
         else if (_items.isNotEmpty)
-          ..._filteredItems.map((item) => Padding(
-                padding: const EdgeInsets.only(bottom: 16),
-                child: AttendanceItemCard(item: item),
-              )),
+          ..._filteredItems.map(
+            (item) => Padding(
+              padding: const EdgeInsets.only(bottom: 16),
+              child: AttendanceItemCard(item: item),
+            ),
+          ),
         if (_filteredItems.isEmpty && _items.isNotEmpty)
           const AttendanceNoSearchResults(),
         if (_items.isNotEmpty && _totalPages > 0) ...[
@@ -227,25 +238,23 @@ class _AttendanceHistoryPageState extends State<AttendanceHistoryPage> {
     );
   }
 
-
   Widget _filters() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final surfaceColor = isDark ? const Color(0xFF1E293B) : Colors.white;
-    final surfaceLightColor = isDark ? const Color(0xFF334155) : const Color(0xFFFAFBFC);
-    
+    final surfaceLightColor = isDark
+        ? const Color(0xFF334155)
+        : const Color(0xFFFAFBFC);
+
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            surfaceColor,
-            surfaceLightColor,
-          ],
+          colors: [surfaceColor, surfaceLightColor],
         ),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: isDark 
+          color: isDark
               ? Colors.grey[800]!.withOpacity(0.5)
               : Colors.grey[200]!.withOpacity(0.8),
           width: 1,
@@ -280,19 +289,23 @@ class _AttendanceHistoryPageState extends State<AttendanceHistoryPage> {
                   fontWeight: FontWeight.w500,
                 ),
                 filled: true,
-                fillColor: isDark 
+                fillColor: isDark
                     ? Colors.grey[900]!.withOpacity(0.3)
                     : Colors.grey[50]!.withOpacity(0.5),
                 prefixIcon: Container(
                   margin: const EdgeInsets.all(8),
                   padding: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF6D28D9).withOpacity(isDark ? 0.2 : 0.1),
+                    color: const Color(
+                      0xFF6D28D9,
+                    ).withOpacity(isDark ? 0.2 : 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
                     Icons.calendar_today_rounded,
-                    color: isDark ? const Color(0xFF7C3AED) : const Color(0xFF6D28D9),
+                    color: isDark
+                        ? const Color(0xFF7C3AED)
+                        : const Color(0xFF6D28D9),
                     size: 16,
                   ),
                 ),
@@ -312,7 +325,7 @@ class _AttendanceHistoryPageState extends State<AttendanceHistoryPage> {
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(14),
                   borderSide: BorderSide(
-                    color: isDark 
+                    color: isDark
                         ? Colors.grey[700]!.withOpacity(0.3)
                         : Colors.grey[300]!.withOpacity(0.5),
                     width: 1,
@@ -321,7 +334,7 @@ class _AttendanceHistoryPageState extends State<AttendanceHistoryPage> {
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(14),
                   borderSide: BorderSide(
-                    color: isDark 
+                    color: isDark
                         ? Colors.grey[700]!.withOpacity(0.3)
                         : Colors.grey[300]!.withOpacity(0.5),
                     width: 1,
@@ -334,7 +347,10 @@ class _AttendanceHistoryPageState extends State<AttendanceHistoryPage> {
                     width: 1.5,
                   ),
                 ),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 14,
+                ),
               ),
               onSubmitted: (_) => _load(page: 0),
             ),
@@ -356,26 +372,30 @@ class _AttendanceHistoryPageState extends State<AttendanceHistoryPage> {
                   fontWeight: FontWeight.w400,
                 ),
                 filled: true,
-                fillColor: isDark 
+                fillColor: isDark
                     ? Colors.grey[900]!.withOpacity(0.3)
                     : Colors.grey[50]!.withOpacity(0.5),
                 prefixIcon: Container(
                   margin: const EdgeInsets.all(8),
                   padding: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF6D28D9).withOpacity(isDark ? 0.2 : 0.1),
+                    color: const Color(
+                      0xFF6D28D9,
+                    ).withOpacity(isDark ? 0.2 : 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
                     Icons.search_rounded,
-                    color: isDark ? const Color(0xFF7C3AED) : const Color(0xFF6D28D9),
+                    color: isDark
+                        ? const Color(0xFF7C3AED)
+                        : const Color(0xFF6D28D9),
                     size: 16,
                   ),
                 ),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(14),
                   borderSide: BorderSide(
-                    color: isDark 
+                    color: isDark
                         ? Colors.grey[700]!.withOpacity(0.3)
                         : Colors.grey[300]!.withOpacity(0.5),
                     width: 1,
@@ -384,7 +404,7 @@ class _AttendanceHistoryPageState extends State<AttendanceHistoryPage> {
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(14),
                   borderSide: BorderSide(
-                    color: isDark 
+                    color: isDark
                         ? Colors.grey[700]!.withOpacity(0.3)
                         : Colors.grey[300]!.withOpacity(0.5),
                     width: 1,
@@ -397,14 +417,17 @@ class _AttendanceHistoryPageState extends State<AttendanceHistoryPage> {
                     width: 1.5,
                   ),
                 ),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 14,
+                ),
               ),
               onChanged: (_) => setState(() {}),
             ),
             const SizedBox(height: 12),
             // Department Filter
             DropdownButtonFormField<int?>(
-              value: _selectedDepartmentId,
+              initialValue: _selectedDepartmentId,
               dropdownColor: surfaceColor,
               iconEnabledColor: isDark ? Colors.grey[400] : Colors.grey[600],
               style: TextStyle(
@@ -420,26 +443,30 @@ class _AttendanceHistoryPageState extends State<AttendanceHistoryPage> {
                   fontWeight: FontWeight.w500,
                 ),
                 filled: true,
-                fillColor: isDark 
+                fillColor: isDark
                     ? Colors.grey[900]!.withOpacity(0.3)
                     : Colors.grey[50]!.withOpacity(0.5),
                 prefixIcon: Container(
                   margin: const EdgeInsets.all(8),
                   padding: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF6D28D9).withOpacity(isDark ? 0.2 : 0.1),
+                    color: const Color(
+                      0xFF6D28D9,
+                    ).withOpacity(isDark ? 0.2 : 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
                     Icons.business_rounded,
-                    color: isDark ? const Color(0xFF7C3AED) : const Color(0xFF6D28D9),
+                    color: isDark
+                        ? const Color(0xFF7C3AED)
+                        : const Color(0xFF6D28D9),
                     size: 16,
                   ),
                 ),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(14),
                   borderSide: BorderSide(
-                    color: isDark 
+                    color: isDark
                         ? Colors.grey[700]!.withOpacity(0.3)
                         : Colors.grey[300]!.withOpacity(0.5),
                     width: 1,
@@ -448,7 +475,7 @@ class _AttendanceHistoryPageState extends State<AttendanceHistoryPage> {
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(14),
                   borderSide: BorderSide(
-                    color: isDark 
+                    color: isDark
                         ? Colors.grey[700]!.withOpacity(0.3)
                         : Colors.grey[300]!.withOpacity(0.5),
                     width: 1,
@@ -461,7 +488,10 @@ class _AttendanceHistoryPageState extends State<AttendanceHistoryPage> {
                     width: 1.5,
                   ),
                 ),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 14,
+                ),
                 suffixIcon: Padding(
                   padding: const EdgeInsets.only(right: 12),
                   child: Icon(
@@ -471,31 +501,31 @@ class _AttendanceHistoryPageState extends State<AttendanceHistoryPage> {
                   ),
                 ),
               ),
-                items: [
-                  DropdownMenuItem<int?>(
-                    value: null,
-                    child: Text('hr.attendance.allDepartments'.tr()),
-                  ),
-                  ..._departments.map((dept) {
-                    final id = _coerceInt(dept['id']);
-                    final name = dept['departmentName']?.toString() ?? 'Unknown';
-                    return DropdownMenuItem<int?>(
-                      value: id,
-                      child: Text(
-                        name,
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
-                      ),
-                    );
-                  }),
-                ],
-                onChanged: (value) {
-                  setState(() {
-                    _selectedDepartmentId = value;
-                  });
-                  // Reload data when department changes
-                  _load(page: 0);
-                },
+              items: [
+                DropdownMenuItem<int?>(
+                  value: null,
+                  child: Text('hr.attendance.allDepartments'.tr()),
+                ),
+                ..._departments.map((dept) {
+                  final id = _coerceInt(dept['id']);
+                  final name = dept['departmentName']?.toString() ?? 'Unknown';
+                  return DropdownMenuItem<int?>(
+                    value: id,
+                    child: Text(
+                      name,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                    ),
+                  );
+                }),
+              ],
+              onChanged: (value) {
+                setState(() {
+                  _selectedDepartmentId = value;
+                });
+                // Reload data when department changes
+                _load(page: 0);
+              },
               isExpanded: true,
             ),
             const SizedBox(height: 14),
@@ -533,8 +563,15 @@ class _AttendanceHistoryPageState extends State<AttendanceHistoryPage> {
   }
 
   Future<void> _pickDate(TextEditingController c) async {
-    final init = c.text.isNotEmpty ? DateTime.tryParse(c.text) ?? DateTime.now() : DateTime.now();
-    final picked = await showDatePicker(context: context, initialDate: init, firstDate: DateTime(2020), lastDate: DateTime(2100));
+    final init = c.text.isNotEmpty
+        ? DateTime.tryParse(c.text) ?? DateTime.now()
+        : DateTime.now();
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: init,
+      firstDate: DateTime(2020),
+      lastDate: DateTime(2100),
+    );
     if (picked != null) {
       c.text = _fmt(picked);
       _load(page: 0);
@@ -544,34 +581,35 @@ class _AttendanceHistoryPageState extends State<AttendanceHistoryPage> {
   Widget _pager() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final surfaceColor = isDark ? const Color(0xFF1E293B) : Colors.white;
-    final surfaceLightColor = isDark ? const Color(0xFF334155) : const Color(0xFFF8FAFC);
-    
+    final surfaceLightColor = isDark
+        ? const Color(0xFF334155)
+        : const Color(0xFFF8FAFC);
+
     final canGoPrev = _page > 0;
     final canGoNext = _totalPages > 1 && _page + 1 < _totalPages;
-    
+
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            surfaceColor,
-            surfaceLightColor,
-          ],
+          colors: [surfaceColor, surfaceLightColor],
         ),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: isDark ? Colors.grey[800]! : const Color(0xFFE2E8F0),
           width: 1,
         ),
-        boxShadow: isDark ? null : [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        boxShadow: isDark
+            ? null
+            : [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.04),
+                  blurRadius: 10,
+                  offset: const Offset(0, 2),
+                ),
+              ],
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -617,13 +655,17 @@ class _AttendanceHistoryPageState extends State<AttendanceHistoryPage> {
 
   List<Map<String, dynamic>> _parseList(dynamic data) {
     if (data is List) {
-      return data.whereType<Map>().map((e) => Map<String, dynamic>.from(e)).toList();
+      return data
+          .whereType<Map>()
+          .map((e) => Map<String, dynamic>.from(e))
+          .toList();
     }
     if (data is Map && data['content'] is List) {
-      return (data['content'] as List).whereType<Map>().map((e) => Map<String, dynamic>.from(e)).toList();
+      return (data['content'] as List)
+          .whereType<Map>()
+          .map((e) => Map<String, dynamic>.from(e))
+          .toList();
     }
     return [];
   }
 }
-
-

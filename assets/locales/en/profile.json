@@ -6,6 +6,22 @@
   },
   "signInPrompt": "You need to sign in to view your profile.",
   "guest": "Guest User",
+  "section": {
+    "patient": "Patient",
+    "doctor": "For Doctor"
+  },
+  "patient": {
+    "overview": "Health Overview",
+    "overviewSub": "View rank & metrics",
+    "appointments": "My Appointments",
+    "appointmentsSub": "Manage & Cancel",
+    "records": "Medical Records",
+    "recordsSub": "History & Treatments"
+  },
+  "doctor": {
+    "schedule": "Work Schedule",
+    "scheduleSub": "Shifts & Appointments"
+  },
   "myAccountSubtitle": "View and update your personal details",
   "changePassword": {
     "title": "Change Password",
@@ -92,4 +108,3 @@
     "title": "Language"
   }
 }
-

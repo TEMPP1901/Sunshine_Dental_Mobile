@@ -21,11 +21,15 @@ class ShiftCard extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final startTime = attendance['startTime']?.toString() ?? '--:--';
     final endTime = attendance['endTime']?.toString() ?? '--:--';
-    final clinicName = attendance['clinicName']?.toString() ?? attendance['clinic']?['clinicName']?.toString() ?? 'Unknown Clinic';
+    final clinicName =
+        attendance['clinicName']?.toString() ??
+        attendance['clinic']?['clinicName']?.toString() ??
+        'Unknown Clinic';
     // Lấy trạng thái chấm công ưu tiên attendanceStatus. Nếu không có thì lấy trường status
-    final status = attendance['attendanceStatus']?.toString() ??
-                   attendance['status']?.toString() ??
-                   'UNKNOWN';
+    final status =
+        attendance['attendanceStatus']?.toString() ??
+        attendance['status']?.toString() ??
+        'UNKNOWN';
     // Lấy shiftType để hiển thị ca sáng/chiều
     final shiftType = attendance['shiftType']?.toString();
     final shiftTypeLabel = _getShiftTypeLabel(shiftType);
@@ -80,11 +84,16 @@ class ShiftCard extends StatelessWidget {
                     padding: const EdgeInsets.only(bottom: 10),
                     child: Row(
                       children: [
-                        Icon(Icons.calendar_today_rounded, size: 14, color: colorScheme.primary),
+                        Icon(
+                          Icons.calendar_today_rounded,
+                          size: 14,
+                          color: colorScheme.primary,
+                        ),
                         const SizedBox(width: 8),
                         Text(
                           DateFormat('dd/MM/yyyy').format(workDate),
-                          style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                          style: Theme.of(context).textTheme.labelMedium
+                              ?.copyWith(
                                 color: colorScheme.primary,
                                 fontWeight: FontWeight.w700,
                               ),
@@ -101,7 +110,11 @@ class ShiftCard extends StatelessWidget {
                         color: colorScheme.primary.withOpacity(0.08),
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: Icon(Icons.access_time_rounded, color: colorScheme.primary, size: 20),
+                      child: Icon(
+                        Icons.access_time_rounded,
+                        color: colorScheme.primary,
+                        size: 20,
+                      ),
                     ),
                     const SizedBox(width: 14),
                     Expanded(
@@ -116,7 +129,8 @@ class ShiftCard extends StatelessWidget {
                                   clinicName.isEmpty ? 'Clinic' : clinicName,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
-                                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                  style: Theme.of(context).textTheme.titleMedium
+                                      ?.copyWith(
                                         fontWeight: FontWeight.w700,
                                         color: colorScheme.onSurface,
                                       ),
@@ -125,9 +139,13 @@ class ShiftCard extends StatelessWidget {
                               if (shiftTypeLabel.isNotEmpty) ...[
                                 const SizedBox(width: 8),
                                 Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 5,
+                                  ),
                                   decoration: BoxDecoration(
-                                    color: colorScheme.surfaceVariant.withOpacity(0.35),
+                                    color: colorScheme.surfaceContainerHighest
+                                        .withOpacity(0.35),
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   child: Text(
@@ -147,17 +165,23 @@ class ShiftCard extends StatelessWidget {
                           const SizedBox(height: 6),
                           Text(
                             '$formattedStartTime — $formattedEndTime',
-                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            style: Theme.of(context).textTheme.bodyMedium
+                                ?.copyWith(
                                   color: colorScheme.onSurfaceVariant,
                                   fontWeight: FontWeight.w600,
                                 ),
                           ),
-                          if (attendance['checkInTime'] != null || attendance['checkOutTime'] != null) ...[
+                          if (attendance['checkInTime'] != null ||
+                              attendance['checkOutTime'] != null) ...[
                             const SizedBox(height: 8),
                             Row(
                               children: [
                                 if (attendance['checkInTime'] != null) ...[
-                                  const Icon(Icons.login_rounded, size: 12, color: Color(0xFF047857)),
+                                  const Icon(
+                                    Icons.login_rounded,
+                                    size: 12,
+                                    color: Color(0xFF047857),
+                                  ),
                                   const SizedBox(width: 4),
                                   Text(
                                     _formatTime(attendance['checkInTime']),
@@ -168,13 +192,26 @@ class ShiftCard extends StatelessWidget {
                                     ),
                                   ),
                                 ],
-                                if (attendance['checkInTime'] != null && attendance['checkOutTime'] != null)
+                                if (attendance['checkInTime'] != null &&
+                                    attendance['checkOutTime'] != null)
                                   Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 6),
-                                    child: Text('•', style: TextStyle(fontSize: 11, color: colorScheme.onSurfaceVariant)),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 6,
+                                    ),
+                                    child: Text(
+                                      '•',
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        color: colorScheme.onSurfaceVariant,
+                                      ),
+                                    ),
                                   ),
                                 if (attendance['checkOutTime'] != null) ...[
-                                  const Icon(Icons.logout_rounded, size: 12, color: Color(0xFFD97706)),
+                                  const Icon(
+                                    Icons.logout_rounded,
+                                    size: 12,
+                                    color: Color(0xFFD97706),
+                                  ),
                                   const SizedBox(width: 4),
                                   Text(
                                     _formatTime(attendance['checkOutTime']),
@@ -192,7 +229,11 @@ class ShiftCard extends StatelessWidget {
                             const SizedBox(height: 8),
                             Row(
                               children: [
-                                Icon(Icons.access_time_filled_rounded, size: 12, color: colorScheme.primary),
+                                Icon(
+                                  Icons.access_time_filled_rounded,
+                                  size: 12,
+                                  color: colorScheme.primary,
+                                ),
                                 const SizedBox(width: 4),
                                 Text(
                                   '${_formatHours(attendance['actualWorkHours'])}h',
@@ -205,15 +246,27 @@ class ShiftCard extends StatelessWidget {
                                 if (attendance['expectedWorkHours'] != null)
                                   Text(
                                     ' / ${_formatHours(attendance['expectedWorkHours'])}h',
-                                    style: TextStyle(fontSize: 11, color: colorScheme.onSurfaceVariant),
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      color: colorScheme.onSurfaceVariant,
+                                    ),
                                   ),
-                                if (attendance['lateMinutes'] != null && (attendance['lateMinutes'] as int) > 0) ...[
+                                if (attendance['lateMinutes'] != null &&
+                                    (attendance['lateMinutes'] as int) > 0) ...[
                                   const SizedBox(width: 8),
-                                  _buildBadge('Late ${attendance['lateMinutes']}m', const Color(0xFFD97706)),
+                                  _buildBadge(
+                                    'Late ${attendance['lateMinutes']}m',
+                                    const Color(0xFFD97706),
+                                  ),
                                 ],
-                                if (attendance['earlyMinutes'] != null && (attendance['earlyMinutes'] as int) > 0) ...[
+                                if (attendance['earlyMinutes'] != null &&
+                                    (attendance['earlyMinutes'] as int) >
+                                        0) ...[
                                   const SizedBox(width: 6),
-                                  _buildBadge('Early ${attendance['earlyMinutes']}m', const Color(0xFF047857)),
+                                  _buildBadge(
+                                    'Early ${attendance['earlyMinutes']}m',
+                                    const Color(0xFF047857),
+                                  ),
                                 ],
                               ],
                             ),
@@ -238,17 +291,26 @@ class ShiftCard extends StatelessWidget {
     final startTime = attendance['startTime']?.toString();
     final checkInTime = attendance['checkInTime'];
     final now = DateTime.now();
-    
-    if ((status.toUpperCase() == 'ABSENT' || status.toUpperCase() == 'APPROVED_ABSENCE') 
-        && checkInTime == null && startTime != null && startTime.isNotEmpty) {
+
+    if ((status.toUpperCase() == 'ABSENT' ||
+            status.toUpperCase() == 'APPROVED_ABSENCE') &&
+        checkInTime == null &&
+        startTime != null &&
+        startTime.isNotEmpty) {
       try {
         // Parse startTime (format: HH:mm:ss hoặc HH:mm)
         final timeParts = startTime.split(':');
         if (timeParts.length >= 2) {
           final hour = int.parse(timeParts[0]);
           final minute = int.parse(timeParts[1]);
-          final shiftStart = DateTime(now.year, now.month, now.day, hour, minute);
-          
+          final shiftStart = DateTime(
+            now.year,
+            now.month,
+            now.day,
+            hour,
+            minute,
+          );
+
           // Nếu chưa tới giờ bắt đầu ca → hiển thị "Đi trễ" thay vì "Vắng mặt"
           if (now.isBefore(shiftStart)) {
             return _buildPendingChip(context);
@@ -258,7 +320,7 @@ class ShiftCard extends StatelessWidget {
         // Nếu parse lỗi thì vẫn hiển thị status như cũ
       }
     }
-    
+
     Color color;
     String label;
 
@@ -355,7 +417,7 @@ class ShiftCard extends StatelessWidget {
   Widget _buildPendingChip(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final color = colorScheme.primary.withOpacity(0.7);
-    
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
@@ -376,7 +438,9 @@ class ShiftCard extends StatelessWidget {
 
   // Lấy label cho shiftType (ca sáng/chiều)
   String _getShiftTypeLabel(String? shiftType) {
-    if (shiftType == null || shiftType.isEmpty || shiftType.toUpperCase() == 'FULL_DAY') {
+    if (shiftType == null ||
+        shiftType.isEmpty ||
+        shiftType.toUpperCase() == 'FULL_DAY') {
       return '';
     }
     switch (shiftType.toUpperCase()) {

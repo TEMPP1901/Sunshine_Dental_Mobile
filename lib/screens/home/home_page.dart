@@ -13,8 +13,8 @@ import 'sections/section_title.dart';
 import 'sections/service_carousel.dart';
 import 'sections/doctor_card.dart';
 import 'sections/trusted_by_banner.dart';
-import 'sections/medical_record_preview.dart';
 import 'sections/quick_actions_bar.dart';
+import 'sections/contact_section.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -104,15 +104,8 @@ class HomePage extends StatelessWidget {
 
                     const SizedBox(height: 28),
 
-                    // 7. Medical Record
-                    SectionTitle(
-                      title: 'home.section.medicalRecord'.tr(),
-                      onSeeAll: () =>
-                          Fluttertoast.showToast(msg: 'Navigating to Records'),
-                      showSeeAll: false,
-                    ),
-                    const SizedBox(height: 16),
-                    const MedicalRecordPreview(),
+                    // 7. Contact
+                    const ContactSection(),
                   ],
                 ),
               ),

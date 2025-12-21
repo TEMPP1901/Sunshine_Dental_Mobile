@@ -111,6 +111,7 @@ flutter:
     - assets/service_images/
     - assets/about_images/
     - assets/avatars/
+    - assets/locales/
     - assets/locales/en/
     - assets/locales/vi/
 
