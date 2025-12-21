@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 /// Helper functions cho schedule widgets
@@ -78,7 +79,7 @@ class ScheduleEmptyState extends StatelessWidget {
           ),
           const SizedBox(width: 12),
           Text(
-            'Không có dữ liệu',
+            'hr.common.noData'.tr(),
             style: TextStyle(
               fontSize: 14,
               color: isDark ? Colors.grey[400] : Colors.grey[600],

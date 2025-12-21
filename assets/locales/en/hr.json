@@ -1,0 +1,151 @@
+{
+  "title": "HR Hub",
+  "features": "Features",
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "retry": "Retry",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "filter": "Filter",
+    "reset": "Reset",
+    "search": "Search",
+    "all": "All",
+    "status": "Status",
+    "active": "Active",
+    "inactive": "Inactive",
+    "resignation": "Resignation",
+    "clinic": "Clinic",
+    "department": "Department",
+    "role": "Role",
+    "employee": "Employee",
+    "employees": "Employees",
+    "total": "Total",
+    "loadMore": "Load More",
+    "noData": "No data",
+    "noDataFound": "No data found"
+  },
+  "shortcuts": {
+    "employees": {
+      "title": "Employees",
+      "subtitle": "Human resource management"
+    },
+    "attendance": {
+      "title": "Attendance",
+      "subtitle": "Timekeeping history"
+    },
+    "schedules": {
+      "title": "Schedules",
+      "subtitle": "Work schedule"
+    },
+    "faceApprovals": {
+      "title": "Face approvals",
+      "subtitle": "Face approval"
+    },
+    "approvedLeaves": {
+      "title": "Approved leaves",
+      "subtitle": "Approved leave requests"
+    },
+    "pendingExplanations": {
+      "title": "Pending explanations",
+      "subtitle": "Explanations to be processed"
+    }
+  },
+  "employees": {
+    "title": "Employees (HR)",
+    "searchPlaceholder": "Search name/code",
+    "totalEmployees": "Total: {count} employees",
+    "statusUpdated": "Status updated",
+    "emptyState": "Try changing filters to search"
+  },
+  "attendance": {
+    "title": "Attendance History",
+    "selectDate": "Please select a date",
+    "date": "Date (yyyy-MM-dd)",
+    "searchEmployee": "Search employee name",
+    "allDepartments": "All departments",
+    "noDataForDate": "No attendance history found for selected date",
+    "noSearchResults": "No results found",
+    "tryChangeFilters": "Try changing filters or search keywords",
+    "checkIn": "Check-in",
+    "checkOut": "Check-out",
+    "missingCheckOut": "Missing check-out",
+    "onTime": "On time",
+    "late": "Late",
+    "absent": "Absent",
+    "approvedLeave": "Approved Leave",
+    "totalRecords": "Total: {count} records"
+  },
+  "schedules": {
+    "title": "Work Schedule (HR)",
+    "currentWeek": "Current week",
+    "selectDate": "Select date",
+    "selectDateToView": "Select date to view schedule",
+    "scheduleForDate": "Schedule for {date}",
+    "error": {
+      "loadFailed": "An error occurred while loading data",
+      "unauthorized": "Access denied. Please login again.",
+      "forbidden": "You do not have permission to access this feature.",
+      "notFound": "Data not found.",
+      "serverError": "Server error. Please try again later.",
+      "networkError": "Unable to connect to server. Please check your network connection."
+    }
+  },
+  "faceApprovals": {
+    "title": "Face Profile Approvals",
+    "approve": "Approve",
+    "reject": "Reject",
+    "rejectTitle": "Reject Request",
+    "rejectReason": "Reason (optional)",
+    "approved": "Approved",
+    "rejected": "Rejected",
+    "noPendingRequests": "No pending requests",
+    "code": "Code: {code}",
+    "requestedAt": "Requested: {date}"
+  },
+  "approvedLeaves": {
+    "title": "Leave Requests to Process",
+    "approve": "Approve",
+    "reject": "Reject",
+    "approveTitle": "Approve Leave Request",
+    "rejectTitle": "Reject Leave Request",
+    "note": "Note (optional)",
+    "noteHint": "Enter note if needed...",
+    "approved": "Leave request approved",
+    "rejected": "Leave request rejected",
+    "missingId": "Leave request ID not found",
+    "noPendingLeaves": "No leave requests to process",
+    "allProcessed": "All requests have been processed",
+    "fromDate": "From date",
+    "toDate": "To date",
+    "days": "Days",
+    "day": "day",
+    "daysPlural": "days",
+    "type": "Type",
+    "reason": "Reason",
+    "createdDate": "Created date",
+    "status": {
+      "pending": "Pending",
+      "pendingAdmin": "Pending Admin"
+    }
+  },
+  "pendingExplanations": {
+    "title": "Pending Explanations",
+    "approve": "Approve",
+    "reject": "Reject",
+    "approveTitle": "Approve Explanation",
+    "rejectTitle": "Reject Explanation",
+    "hrNote": "HR Note (optional)",
+    "hrNoteHint": "Enter note if needed",
+    "missingId": "Explanation ID not found",
+    "approved": "Explanation approved",
+    "rejected": "Explanation rejected",
+    "noPendingExplanations": "No explanations to process",
+    "allProcessed": "All explanations have been processed",
+    "filterByClinic": "Filter by clinic",
+    "workDate": "Work date",
+    "type": "Type",
+    "reason": "Reason"
+  }
+}
+

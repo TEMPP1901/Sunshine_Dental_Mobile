@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -60,7 +61,7 @@ class _AttendanceHistoryPageState extends State<AttendanceHistoryPage> {
       final dateStr = _startCtrl.text.trim();
       if (dateStr.isEmpty) {
         setState(() {
-          _error = 'Vui lòng chọn ngày';
+          _error = 'hr.attendance.selectDate'.tr();
           _items = [];
         });
         return;
@@ -182,7 +183,7 @@ class _AttendanceHistoryPageState extends State<AttendanceHistoryPage> {
     return Scaffold(
       appBar: HrAppBar(
         context: context,
-        titleText: 'Lịch sử Attendance',
+        titleText: 'hr.attendance.title'.tr(),
         onRefresh: _loading ? null : () => _load(page: 0),
       ),
       body: RefreshIndicator(
@@ -272,7 +273,7 @@ class _AttendanceHistoryPageState extends State<AttendanceHistoryPage> {
                 color: isDark ? Colors.white : const Color(0xFF1E293B),
               ),
               decoration: InputDecoration(
-                labelText: 'Ngày (yyyy-MM-dd)',
+                labelText: 'hr.attendance.date'.tr(),
                 labelStyle: TextStyle(
                   color: isDark ? Colors.grey[400] : Colors.grey[600],
                   fontSize: 13,
@@ -348,7 +349,7 @@ class _AttendanceHistoryPageState extends State<AttendanceHistoryPage> {
               ),
               cursorColor: const Color(0xFF6D28D9),
               decoration: InputDecoration(
-                hintText: 'Tìm kiếm tên nhân viên',
+                hintText: 'hr.attendance.searchEmployee'.tr(),
                 hintStyle: TextStyle(
                   color: isDark ? Colors.grey[500] : Colors.grey[500],
                   fontSize: 15,
@@ -412,7 +413,7 @@ class _AttendanceHistoryPageState extends State<AttendanceHistoryPage> {
                 fontWeight: FontWeight.w500,
               ),
               decoration: InputDecoration(
-                labelText: 'Phòng ban',
+                labelText: 'hr.common.department'.tr(),
                 labelStyle: TextStyle(
                   color: isDark ? Colors.grey[400] : Colors.grey[600],
                   fontSize: 13,
@@ -471,9 +472,9 @@ class _AttendanceHistoryPageState extends State<AttendanceHistoryPage> {
                 ),
               ),
                 items: [
-                  const DropdownMenuItem<int?>(
+                  DropdownMenuItem<int?>(
                     value: null,
-                    child: Text('Tất cả phòng ban'),
+                    child: Text('hr.attendance.allDepartments'.tr()),
                   ),
                   ..._departments.map((dept) {
                     final id = _coerceInt(dept['id']);
@@ -503,7 +504,7 @@ class _AttendanceHistoryPageState extends State<AttendanceHistoryPage> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 AttendanceActionButton(
-                  label: 'Reset',
+                  label: 'hr.common.reset'.tr(),
                   icon: Icons.refresh_rounded,
                   onPressed: () {
                     final today = DateTime.now();
@@ -518,7 +519,7 @@ class _AttendanceHistoryPageState extends State<AttendanceHistoryPage> {
                 ),
                 const SizedBox(width: 12),
                 AttendanceActionButton(
-                  label: 'Lọc',
+                  label: 'hr.common.filter'.tr(),
                   icon: Icons.filter_alt_rounded,
                   onPressed: () => _load(page: 0),
                   isPrimary: true,
@@ -588,7 +589,7 @@ class _AttendanceHistoryPageState extends State<AttendanceHistoryPage> {
               ),
               if (_totalElements > 0)
                 Text(
-                  'Tổng: $_totalElements bản ghi',
+                  'hr.attendance.totalRecords'.tr(args: ['$_totalElements']),
                   style: TextStyle(
                     fontSize: 12,
                     color: isDark ? Colors.grey[500] : Colors.grey[600],

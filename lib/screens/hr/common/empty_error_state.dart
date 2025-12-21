@@ -1,16 +1,17 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 class EmptyErrorState extends StatelessWidget {
   final String? error;
   final VoidCallback? onRetry;
-  final String emptyText;
+  final String? emptyText;
   final IconData? icon;
 
   const EmptyErrorState({
     super.key,
     this.error,
     this.onRetry,
-    this.emptyText = 'Không có dữ liệu',
+    this.emptyText,
     this.icon,
   });
 
@@ -28,7 +29,7 @@ class EmptyErrorState extends StatelessWidget {
               const SizedBox(height: 8),
               Text(error!, textAlign: TextAlign.center),
               const SizedBox(height: 12),
-              if (onRetry != null) FilledButton(onPressed: onRetry, child: const Text('Thử lại')),
+              if (onRetry != null) FilledButton(onPressed: onRetry, child: Text('hr.common.retry'.tr())),
             ],
           ),
         ),
@@ -37,7 +38,7 @@ class EmptyErrorState extends StatelessWidget {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24),
-        child: Text(emptyText, style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
+        child: Text(emptyText ?? 'hr.common.noData'.tr(), style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
       ),
     );
   }

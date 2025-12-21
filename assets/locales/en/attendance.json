@@ -72,12 +72,7 @@
   },
   "explanation": {
     "title": "Attendance Explanations Required",
-    "typeLate": "Late Arrival",
-    "typeAbsent": "Absent",
-    "typeMissingCheckIn": "Missing Check-In",
     "typeMissingCheckOut": "Missing Check-Out",
-    "late": "Late Arrival",
-    "earlyLeave": "Left Early",
     "submit": "Submit",
     "date": "Date: {date}",
     "attendanceStatus": "Status: {status}",

@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class AdminHubPage extends StatefulWidget {
   const AdminHubPage({super.key});
@@ -42,40 +43,40 @@ class _AdminHubPageState extends State<AdminHubPage> with TickerProviderStateMix
     // Các tính năng xử lý thường xuyên và quan trọng
     final shortcuts = [
       _Shortcut(
-        'Leave Requests',
-        'Duyệt đơn nghỉ',
+        'admin.shortcuts.leaveRequests.title'.tr(),
+        'admin.shortcuts.leaveRequests.subtitle'.tr(),
         Icons.description_rounded,
         '/admin/leave-requests',
         const Color(0xFFDC2626), // Red - Urgent
         const Color(0xFFEF4444), // Red Light
       ),
       _Shortcut(
-        'Reports',
-        'Báo cáo & Thống kê',
+        'admin.shortcuts.reports.title'.tr(),
+        'admin.shortcuts.reports.subtitle'.tr(),
         Icons.bar_chart_rounded,
         '/admin/reports',
         const Color(0xFFB45309), // Orange - Important
         const Color(0xFFF59E0B), // Orange Light
       ),
       _Shortcut(
-        'Attendance',
-        'Chấm công',
+        'admin.shortcuts.attendance.title'.tr(),
+        'admin.shortcuts.attendance.subtitle'.tr(),
         Icons.access_time_rounded,
         '/admin/attendance',
         const Color(0xFF0F766E), // Teal - Daily check
         const Color(0xFF14B8A6), // Teal Light
       ),
       _Shortcut(
-        'Staff',
-        'Quản lý nhân viên',
+        'admin.shortcuts.staff.title'.tr(),
+        'admin.shortcuts.staff.subtitle'.tr(),
         Icons.people_alt_rounded,
         '/admin/staff',
         const Color(0xFF6D28D9), // Purple
         const Color(0xFF7C3AED), // Purple Light
       ),
       _Shortcut(
-        'System Logs',
-        'Nhật ký hệ thống',
+        'admin.shortcuts.systemLogs.title'.tr(),
+        'admin.shortcuts.systemLogs.subtitle'.tr(),
         Icons.history_rounded,
         '/admin/system-logs',
         const Color(0xFF475569), // Slate
@@ -152,7 +153,7 @@ class _AdminHubPageState extends State<AdminHubPage> with TickerProviderStateMix
                             context.canPop() ? context.pop() : context.go('/home'),
                       ),
                       title: Text(
-                        'Admin Hub',
+                        'admin.adminHub'.tr(),
                         style: theme.textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.w800,
                           letterSpacing: -0.8,
@@ -191,7 +192,7 @@ class _AdminHubPageState extends State<AdminHubPage> with TickerProviderStateMix
                                   ],
                                 ).createShader(bounds),
                           child: Text(
-                            'Tính năng',
+                            'admin.features'.tr(),
                             style: theme.textTheme.headlineMedium?.copyWith(
                               fontWeight: FontWeight.w900,
                               letterSpacing: -1.5,
@@ -331,7 +332,7 @@ class _ShortcutCardState extends State<_ShortcutCard>
               // If route doesn't exist yet, show coming soon or navigate to main admin page
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('${widget.item.title} - Coming soon'),
+                  content: Text('${widget.item.title} - ${'admin.comingSoon'.tr()}'),
                   duration: const Duration(seconds: 2),
                 ),
               );
@@ -421,7 +422,7 @@ class _ShortcutCardState extends State<_ShortcutCard>
                             } catch (e) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                  content: Text('${widget.item.title} - Coming soon'),
+                                  content: Text('${widget.item.title} - ${'admin.comingSoon'.tr()}'),
                                   duration: const Duration(seconds: 2),
                                 ),
                               );

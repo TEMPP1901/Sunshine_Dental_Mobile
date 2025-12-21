@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -49,19 +50,19 @@ class _HrSchedulePageState extends State<HrSchedulePage> {
       });
     } catch (e) {
       // Parse error message để hiển thị thân thiện hơn
-      String errorMessage = 'Đã xảy ra lỗi khi tải dữ liệu';
+      String errorMessage = 'hr.schedules.error.loadFailed'.tr();
       final errorStr = e.toString();
       
       if (errorStr.contains('401') || errorStr.contains('Unauthorized')) {
-        errorMessage = 'Không có quyền truy cập. Vui lòng đăng nhập lại.';
+        errorMessage = 'hr.schedules.error.unauthorized'.tr();
       } else if (errorStr.contains('403') || errorStr.contains('Forbidden')) {
-        errorMessage = 'Bạn không có quyền truy cập tính năng này.';
+        errorMessage = 'hr.schedules.error.forbidden'.tr();
       } else if (errorStr.contains('404') || errorStr.contains('Not Found')) {
-        errorMessage = 'Không tìm thấy dữ liệu.';
+        errorMessage = 'hr.schedules.error.notFound'.tr();
       } else if (errorStr.contains('500') || errorStr.contains('Internal Server Error')) {
-        errorMessage = 'Lỗi server. Vui lòng thử lại sau.';
+        errorMessage = 'hr.schedules.error.serverError'.tr();
       } else if (errorStr.contains('Network') || errorStr.contains('Connection')) {
-        errorMessage = 'Không thể kết nối đến server. Vui lòng kiểm tra kết nối mạng.';
+        errorMessage = 'hr.schedules.error.networkError'.tr();
       }
       // Nếu không match với các lỗi đã biết, giữ nguyên message mặc định
       
@@ -85,7 +86,7 @@ class _HrSchedulePageState extends State<HrSchedulePage> {
     return Scaffold(
       appBar: HrAppBar(
         context: context,
-        titleText: 'Lịch làm việc (HR)',
+        titleText: 'hr.schedules.title'.tr(),
         onRefresh: _loading ? null : _load,
       ),
       body: RefreshIndicator(
@@ -114,8 +115,8 @@ class _HrSchedulePageState extends State<HrSchedulePage> {
         const SizedBox(height: 12),
         ScheduleSection(
           title: _isCustomDate && _selectedDate != null 
-            ? 'Lịch ngày ${_fmt(_selectedDate!)}' 
-            : 'Tuần hiện tại', 
+            ? 'hr.schedules.scheduleForDate'.tr(args: [_fmt(_selectedDate!)]) 
+            : 'hr.schedules.currentWeek'.tr(), 
           data: _current, 
           icon: Icons.calendar_today_rounded,
         ),
@@ -169,7 +170,7 @@ class _HrSchedulePageState extends State<HrSchedulePage> {
               const SizedBox(width: 12),
               Expanded(
                   child: Text(
-                  'Chọn ngày xem lịch',
+                  'hr.schedules.selectDateToView'.tr(),
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
@@ -221,7 +222,7 @@ class _HrSchedulePageState extends State<HrSchedulePage> {
                           ),
                           const SizedBox(width: 6),
                           Text(
-                            'Tuần hiện tại',
+                            'hr.schedules.currentWeek'.tr(),
                             style: TextStyle(
                               fontSize: 13,
                               fontWeight: !_isCustomDate ? FontWeight.w600 : FontWeight.w500,
@@ -272,7 +273,7 @@ class _HrSchedulePageState extends State<HrSchedulePage> {
                           child: Text(
                             _selectedDate != null 
                               ? _fmt(_selectedDate!)
-                              : 'Chọn ngày',
+                              : 'hr.schedules.selectDate'.tr(),
                             style: TextStyle(
                               fontSize: 13,
                               fontWeight: _isCustomDate ? FontWeight.w600 : FontWeight.w500,

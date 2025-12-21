@@ -329,8 +329,8 @@ class _ProfilePageState extends State<ProfilePage> {
                   const SizedBox(height: 8),
                   ProfileMenuItem(
                     icon: Icons.admin_panel_settings_rounded,
-                    title: "Admin Hub",
-                    subtitle: "Quản lý hệ thống & báo cáo",
+                    title: 'profile.adminHub.title'.tr(),
+                    subtitle: 'profile.adminHub.subtitle'.tr(),
                     onTap: () => context.go('/admin'),
                     isFirst: true,
                     isLast: true,
@@ -345,8 +345,8 @@ class _ProfilePageState extends State<ProfilePage> {
                   const SizedBox(height: 8),
                   ProfileMenuItem(
                     icon: Icons.business_center_outlined,
-                    title: "HR Hub",
-                    subtitle: "Quản lý nhân sự & chấm công",
+                    title: 'profile.hrHub.title'.tr(),
+                    subtitle: 'profile.hrHub.subtitle'.tr(),
                     onTap: () => context.go('/hr'),
                     isFirst: true,
                     isLast: true,
@@ -379,8 +379,8 @@ class _ProfilePageState extends State<ProfilePage> {
                 if (_canUpdateFaceProfile)
                   ProfileMenuItem(
                     icon: Icons.face_retouching_natural_rounded,
-                    title: 'Cập nhật khuôn mặt chấm công',
-                    subtitle: 'Cập nhật ảnh khuôn mặt để chấm công',
+                    title: 'profile.updateFaceProfile.title'.tr(),
+                    subtitle: 'profile.updateFaceProfile.subtitle'.tr(),
                     onTap: () => context.push('/update-face-profile'),
                     customIconColor: Colors.purple,
                   ),

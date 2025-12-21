@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 /// Widget hiển thị empty state cho attendance history
@@ -48,7 +49,7 @@ class AttendanceEmptyState extends StatelessWidget {
           ),
           const SizedBox(height: 24),
           Text(
-            'Không có dữ liệu',
+            'hr.common.noData'.tr(),
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
@@ -57,7 +58,7 @@ class AttendanceEmptyState extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            'Không tìm thấy lịch sử attendance cho ngày đã chọn',
+            'hr.attendance.noDataForDate'.tr(),
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 14,
@@ -118,7 +119,7 @@ class AttendanceNoSearchResults extends StatelessWidget {
           ),
           const SizedBox(height: 24),
           Text(
-            'Không tìm thấy kết quả',
+            'hr.attendance.noSearchResults'.tr(),
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
@@ -127,7 +128,7 @@ class AttendanceNoSearchResults extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            'Thử thay đổi bộ lọc hoặc từ khóa tìm kiếm',
+            'hr.attendance.tryChangeFilters'.tr(),
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 14,
@@ -356,6 +357,23 @@ class AttendanceItemCard extends StatelessWidget {
     }
   }
 
+  String _translateStatus(String status) {
+    final statusLower = status.toLowerCase();
+    if (statusLower.contains('absent') || statusLower.contains('vắng')) {
+      return 'hr.attendance.absent'.tr();
+    } else if (statusLower.contains('approved') && statusLower.contains('leave')) {
+      return 'hr.attendance.approvedLeave'.tr();
+    } else if (statusLower.contains('late') || statusLower.contains('muộn')) {
+      return 'hr.attendance.late'.tr();
+    } else if (statusLower.contains('on_time') || statusLower.contains('đúng giờ')) {
+      return 'hr.attendance.onTime'.tr();
+    } else if (statusLower.contains('missing') && statusLower.contains('check')) {
+      return 'hr.attendance.missingCheckOut'.tr();
+    }
+    // Return original if no match
+    return status;
+  }
+
   Widget _buildTimeDetail(
     BuildContext context,
     IconData icon,
@@ -413,7 +431,7 @@ class AttendanceItemCard extends StatelessWidget {
     final textColor = isDark ? Colors.white : const Color(0xFF0F172A);
     final textSecondaryColor = isDark ? Colors.grey[400] : Colors.grey[600];
     
-    final employee = item['fullName'] ?? item['employeeName'] ?? 'Nhân viên';
+    final employee = item['fullName'] ?? item['employeeName'] ?? 'hr.common.employee'.tr();
     final status = item['attendanceStatus'] ?? item['status']?.toString() ?? '';
     final checkIn = item['checkInTime'] ?? item['checkIn'] ?? '--';
     final checkOut = item['checkOutTime'] ?? item['checkOut'] ?? '--';
@@ -597,7 +615,7 @@ class AttendanceItemCard extends StatelessWidget {
                         child: _buildTimeDetail(
                           context,
                           Icons.login_rounded,
-                          'Check-in',
+                          'hr.attendance.checkIn'.tr(),
                           _formatTime(checkIn.toString()),
                           const Color(0xFF059669),
                           isDark,
@@ -614,7 +632,7 @@ class AttendanceItemCard extends StatelessWidget {
                         child: _buildTimeDetail(
                           context,
                           Icons.logout_rounded,
-                          'Check-out',
+                          'hr.attendance.checkOut'.tr(),
                           _formatTime(checkOut.toString()),
                           const Color(0xFF6D28D9),
                           isDark,

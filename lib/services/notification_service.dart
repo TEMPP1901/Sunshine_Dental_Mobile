@@ -340,7 +340,7 @@ class NotificationService {
               await _navigateToLeaveRequestPage();
               return;
             case 'ATTENDANCE':
-              // Trường hợp ATTENDANCE_CHECKIN, ATTENDANCE_CHECKOUT, ATTENDANCE_ABSENT, EXPLANATION_SUBMITTED, EXPLANATION_APPROVED, EXPLANATION_REJECTED
+              // Trường hợp ATTENDANCE_CHECKIN, ATTENDANCE_CHECKOUT, ATTENDANCE_ABSENT, EXPLANATION_SUBMITTED (MISSING_CHECK_OUT), EXPLANATION_APPROVED, EXPLANATION_REJECTED
               appRouter.go('/attendance');
               return;
             case 'DOCTOR_SCHEDULE':

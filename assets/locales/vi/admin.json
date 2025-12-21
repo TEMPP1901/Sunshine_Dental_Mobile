@@ -1,0 +1,137 @@
+{
+  "adminHub": "Trung tâm Quản trị",
+  "features": "Tính năng",
+  "comingSoon": "Sắp ra mắt",
+  "common": {
+    "loading": "Đang tải...",
+    "error": "Lỗi",
+    "cancel": "Hủy",
+    "all": "Tất cả",
+    "clinic": "Phòng khám",
+    "employee": "Nhân viên",
+    "user": "Người dùng"
+  },
+  "dashboard": {
+    "title": "Duyệt đơn nghỉ",
+    "pendingLeaveRequests": "Đơn nghỉ chờ Admin",
+    "approveLeaveRequest": "Duyệt đơn xin nghỉ",
+    "rejectLeaveRequest": "Từ chối đơn xin nghỉ",
+    "noteOptional": "Ghi chú (tùy chọn)",
+    "enterNoteIfAny": "Nhập ghi chú nếu có...",
+    "approve": "Duyệt",
+    "reject": "Từ chối",
+    "cancel": "Hủy",
+    "missingLeaveRequestId": "Thiếu leaveRequestId",
+    "leaveRequestProcessed": "Đã xử lý đơn nghỉ"
+  },
+  "shortcuts": {
+    "leaveRequests": {
+      "title": "Leave Requests",
+      "subtitle": "Duyệt đơn nghỉ"
+    },
+    "reports": {
+      "title": "Reports",
+      "subtitle": "Báo cáo & Thống kê"
+    },
+    "attendance": {
+      "title": "Attendance",
+      "subtitle": "Chấm công"
+    },
+    "staff": {
+      "title": "Staff",
+      "subtitle": "Quản lý nhân viên"
+    },
+    "systemLogs": {
+      "title": "System Logs",
+      "subtitle": "Nhật ký hệ thống"
+    }
+  },
+  "attendance": {
+    "title": "Chấm công",
+    "date": "Ngày",
+    "selectDate": "Chọn ngày",
+    "selectClinic": "Chọn phòng khám",
+    "allClinics": "Tất cả phòng khám",
+    "status": "Trạng thái",
+    "newStatus": "Trạng thái mới: ",
+    "updateStatus": "Cập nhật trạng thái",
+    "update": "Cập nhật",
+    "statusUpdated": "Đã cập nhật trạng thái",
+    "note": "Ghi chú (tùy chọn)",
+    "noteHint": "Nhập ghi chú nếu có...",
+    "checkIn": "Check-in",
+    "checkOut": "Check-out",
+    "foundResults": "Tìm thấy {count} kết quả",
+    "noData": "Không có dữ liệu chấm công",
+    "tryChangeFilters": "Thử thay đổi bộ lọc để tìm kiếm",
+    "clinicName": "Phòng khám {id}",
+    "userId": "ID: {id}",
+    "statusOptions": {
+      "present": "Có mặt",
+      "late": "Muộn",
+      "absent": "Vắng mặt"
+    },
+    "error": {
+      "loadClinicsFailed": "Không tải được danh sách phòng khám: {error}",
+      "invalidDateFormat": "Định dạng ngày không hợp lệ. Vui lòng nhập theo định dạng yyyy-MM-dd",
+      "loadFailed": "Không thể tải dữ liệu: {error}"
+    }
+  },
+  "staff": {
+    "title": "Quản lý nhân viên",
+    "searchPlaceholder": "Tìm kiếm theo tên, email, phone, code...",
+    "email": "Email",
+    "phone": "Số điện thoại",
+    "role": "Vai trò",
+    "department": "Phòng ban",
+    "code": "Mã: {code}",
+    "totalStaff": "Tổng: {count} nhân viên",
+    "notFound": "Không tìm thấy nhân viên",
+    "tryChangeSearch": "Thử thay đổi từ khóa tìm kiếm",
+    "emptyList": "Danh sách nhân viên trống",
+    "active": "Hoạt động",
+    "inactive": "Không hoạt động",
+    "error": {
+      "loadFailed": "Không thể tải dữ liệu: {error}"
+    }
+  },
+  "reports": {
+    "title": "Báo cáo & Thống kê",
+    "revenue": "Doanh thu",
+    "thisMonth": "Tháng này",
+    "profit": "Lợi nhuận",
+    "appointments": "Lịch hẹn",
+    "cancelled": "Đã hủy",
+    "staffAndPatients": "Nhân sự & Bệnh nhân",
+    "totalStaff": "Tổng nhân viên",
+    "totalPatients": "Tổng bệnh nhân",
+    "clinics": "Phòng khám",
+    "totalClinics": "Tổng phòng khám",
+    "inventoryAlerts": "Cảnh báo kho hàng",
+    "lowStock": "Sắp hết",
+    "outOfStock": "Hết hàng",
+    "pendingActions": "Cần xử lý",
+    "pendingLeaves": "Đơn nghỉ chờ",
+    "error": {
+      "loadFailed": "Không thể tải dữ liệu: {error}"
+    }
+  },
+  "systemLogs": {
+    "title": "Nhật ký hệ thống",
+    "search": "Tìm kiếm...",
+    "selectDate": "Chọn ngày",
+    "noLogs": "Không có nhật ký",
+    "noActivityForDate": "Không có hoạt động nào vào ngày {date}",
+    "noActivityRecorded": "Chưa có hoạt động nào được ghi lại",
+    "noResults": "Không tìm thấy kết quả",
+    "tryDifferentKeyword": "Thử tìm kiếm với từ khóa khác",
+    "today": "Hôm nay",
+    "yesterday": "Hôm qua",
+    "recordId": "ID: {id}",
+    "ipAddress": "IP: {ip}",
+    "loadedLogs": "Đã tải {count} logs gần nhất. Có thêm {older} logs cũ hơn.",
+    "error": {
+      "loadFailed": "Không thể tải dữ liệu: {error}"
+    }
+  }
+}

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -52,7 +53,7 @@ class _ApprovedLeavePageState extends State<ApprovedLeavePage> {
       final errorMsg = e.toString().replaceFirst('Exception: ', '');
       setState(() => _error = errorMsg);
       Fluttertoast.showToast(
-        msg: 'Lỗi: $errorMsg',
+        msg: '${'hr.common.error'.tr()}: $errorMsg',
         toastLength: Toast.LENGTH_LONG,
       );
     } finally {
@@ -66,7 +67,7 @@ class _ApprovedLeavePageState extends State<ApprovedLeavePage> {
   ) async {
     final leaveRequestId = item['id'] ?? item['leaveRequestId'];
     if (leaveRequestId == null) {
-      Fluttertoast.showToast(msg: 'Không tìm thấy ID đơn xin nghỉ');
+      Fluttertoast.showToast(msg: 'hr.approvedLeaves.missingId'.tr());
       return;
     }
 
@@ -129,7 +130,7 @@ class _ApprovedLeavePageState extends State<ApprovedLeavePage> {
                   const SizedBox(width: 16),
                   Expanded(
                     child: Text(
-                      action == 'APPROVE' ? 'Duyệt đơn xin nghỉ' : 'Từ chối đơn xin nghỉ',
+                      action == 'APPROVE' ? 'hr.approvedLeaves.approveTitle'.tr() : 'hr.approvedLeaves.rejectTitle'.tr(),
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w800,
@@ -148,8 +149,8 @@ class _ApprovedLeavePageState extends State<ApprovedLeavePage> {
                   color: isDark ? Colors.white : const Color(0xFF0F172A),
                 ),
                 decoration: InputDecoration(
-                  labelText: 'Ghi chú (tùy chọn)',
-                  hintText: 'Nhập ghi chú nếu cần...',
+                  labelText: 'hr.approvedLeaves.note'.tr(),
+                  hintText: 'hr.approvedLeaves.noteHint'.tr(),
                   filled: true,
                   fillColor: isDark ? const Color(0xFF334155) : const Color(0xFFF1F5F9),
                   border: OutlineInputBorder(
@@ -196,7 +197,7 @@ class _ApprovedLeavePageState extends State<ApprovedLeavePage> {
                         ),
                       ),
                       child: Text(
-                        'Hủy',
+                        'hr.common.cancel'.tr(),
                         style: TextStyle(
                           fontWeight: FontWeight.w700,
                           color: isDark ? Colors.grey[300] : Colors.grey[700],
@@ -241,7 +242,7 @@ class _ApprovedLeavePageState extends State<ApprovedLeavePage> {
                                 ),
                                 const SizedBox(width: 8),
                                 Text(
-                                  action == 'APPROVE' ? 'Duyệt' : 'Từ chối',
+                                  action == 'APPROVE' ? 'hr.approvedLeaves.approve'.tr() : 'hr.approvedLeaves.reject'.tr(),
                                   style: const TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w700,
@@ -272,7 +273,7 @@ class _ApprovedLeavePageState extends State<ApprovedLeavePage> {
         comment: comment,
       );
       Fluttertoast.showToast(
-        msg: action == 'APPROVE' ? 'Đã duyệt đơn xin nghỉ' : 'Đã từ chối đơn xin nghỉ',
+        msg: action == 'APPROVE' ? 'hr.approvedLeaves.approved'.tr() : 'hr.approvedLeaves.rejected'.tr(),
       );
       _load();
     } catch (e) {
@@ -289,7 +290,7 @@ class _ApprovedLeavePageState extends State<ApprovedLeavePage> {
       backgroundColor: isDark ? const Color(0xFF0F172A) : const Color(0xFFF1F5F9),
       appBar: HrAppBar(
         context: context,
-        titleText: 'Đơn xin nghỉ cần xử lý',
+        titleText: 'hr.approvedLeaves.title'.tr(),
         onRefresh: _loading ? null : _load,
       ),
       body: RefreshIndicator(
@@ -359,7 +360,7 @@ class _ApprovedLeavePageState extends State<ApprovedLeavePage> {
         children: [
           Expanded(
             child: LeaveFilterChip(
-              label: 'PENDING',
+              label: 'hr.approvedLeaves.status.pending'.tr(),
               icon: Icons.pending_actions_rounded,
               isSelected: _statusFilter == 'PENDING',
               onTap: () {
@@ -373,7 +374,7 @@ class _ApprovedLeavePageState extends State<ApprovedLeavePage> {
           const SizedBox(width: 8),
           Expanded(
             child: LeaveFilterChip(
-              label: 'PENDING_ADMIN',
+              label: 'hr.approvedLeaves.status.pendingAdmin'.tr(),
               icon: Icons.admin_panel_settings_rounded,
               isSelected: _statusFilter == 'PENDING_ADMIN',
               onTap: () {
@@ -387,7 +388,7 @@ class _ApprovedLeavePageState extends State<ApprovedLeavePage> {
           const SizedBox(width: 8),
           Expanded(
             child: LeaveFilterChip(
-              label: 'Tất cả',
+              label: 'hr.common.all'.tr(),
               icon: Icons.list_rounded,
               isSelected: _statusFilter == 'ALL',
               onTap: () {

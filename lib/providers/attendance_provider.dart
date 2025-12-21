@@ -105,9 +105,8 @@ class AttendanceProvider extends ChangeNotifier {
           final workDate = DateFormat('yyyy-MM-dd').format(parsed);
           final explanationType = ex['explanationType']?.toString().toUpperCase();
 
-          
-          // oại bỏ MISSING_CHECK_OUT cho ngày hôm nay nếu ĐANG TRONG GIỜ LÀM VIỆC (8:00 - 18:00)
-          
+          // CHỈ CÒN LOẠI GIẢI TRÌNH: MISSING_CHECK_OUT (quên check out)
+          // Loại bỏ MISSING_CHECK_OUT cho ngày hôm nay nếu ĐANG TRONG GIỜ LÀM VIỆC (8:00 - 18:00)
           final isToday = workDate == today;
           final currentHour = DateTime.now().hour;
           
@@ -116,6 +115,11 @@ class AttendanceProvider extends ChangeNotifier {
             if (currentHour >= 8 && currentHour < 18) {
               return false;
             }
+          }
+
+          // CHỈ CHẤP NHẬN MISSING_CHECK_OUT
+          if (explanationType != 'MISSING_CHECK_OUT') {
+            return false;
           }
 
           return true;
@@ -131,7 +135,7 @@ class AttendanceProvider extends ChangeNotifier {
     }
   }
 
-  // Gửi giải trình vắng mặt hoặc đi muộn
+  // Gửi giải trình: CHỈ HỖ TRỢ MISSING_CHECK_OUT (quên check out)
   Future<bool> submitExplanation(
     int attendanceId,
     String explanationType,
@@ -141,6 +145,13 @@ class AttendanceProvider extends ChangeNotifier {
     String? workDate,
     String? shiftType,
   }) async {
+    // Validation: CHỈ CHẤP NHẬN MISSING_CHECK_OUT
+    if (explanationType.toUpperCase() != 'MISSING_CHECK_OUT') {
+      Fluttertoast.showToast(
+        msg: 'Invalid explanation type. Only MISSING_CHECK_OUT is supported.',
+      );
+      return false;
+    }
     _isSubmitting = true;
     notifyListeners();
 

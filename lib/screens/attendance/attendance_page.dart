@@ -722,19 +722,12 @@ class _AttendancePageState extends State<AttendancePage> with SingleTickerProvid
   }
 
   // Lấy tiêu đề giải trình theo loại
+  // CHỈ CÒN LOẠI: MISSING_CHECK_OUT (quên check out)
   String _getExplanationTitle(String type) {
-    switch (type.toUpperCase()) {
-      case 'LATE':
-        return 'Late'.tr();
-      case 'MISSING_CHECK_OUT':
-        return 'Missing check-out'.tr();
-      case 'MISSING_CHECK_IN':
-        return 'Missing check-in'.tr();
-      case 'ABSENT':
-        return 'Absent'.tr();
-      default:
-        return 'Early leave'.tr();
+    if (type.toUpperCase() == 'MISSING_CHECK_OUT') {
+      return 'Missing check-out'.tr();
     }
+    return type; // Fallback nếu có loại khác
   }
 
   // Lấy nhãn loại ca làm việc
@@ -744,6 +737,7 @@ class _AttendancePageState extends State<AttendancePage> with SingleTickerProvid
   }
 
   // Hiển thị 1 item giải trình
+  // CHỈ CÒN LOẠI: MISSING_CHECK_OUT (quên check out)
   Widget _buildExplanationItem(Map<String, dynamic> item, AttendanceProvider provider) {
     final colorScheme = Theme.of(context).colorScheme;
     final type = item['explanationType']?.toString() ?? 'UNKNOWN';
@@ -807,6 +801,17 @@ class _AttendancePageState extends State<AttendancePage> with SingleTickerProvid
           ),
           TextButton(
             onPressed: () async {
+              // Validation: CHỈ CHẤP NHẬN MISSING_CHECK_OUT
+              if (type.toUpperCase() != 'MISSING_CHECK_OUT') {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Invalid explanation type. Only MISSING_CHECK_OUT is supported.'),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+                return;
+              }
+
               final reason = await showDialog<String>(
                 context: context,
                 builder: (context) => const ExplanationDialog(),

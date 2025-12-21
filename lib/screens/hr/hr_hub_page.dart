@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -41,48 +42,48 @@ class _HrHubPageState extends State<HrHubPage> with TickerProviderStateMixin {
 
     final shortcuts = [
       _Shortcut(
-        'Employees',
-        'Quản lý nhân sự',
+        'hr.shortcuts.employees.title'.tr(),
+        'hr.shortcuts.employees.subtitle'.tr(),
         Icons.people_alt_rounded,
         '/hr/employees',
         const Color(0xFF6D28D9), // Darker Purple
         const Color(0xFF7C3AED), // Darker Purple Light
       ),
       _Shortcut(
-        'Attendance',
-        'Lịch sử chấm công',
+        'hr.shortcuts.attendance.title'.tr(),
+        'hr.shortcuts.attendance.subtitle'.tr(),
         Icons.history_rounded,
         '/hr/attendance-history',
         const Color(0xFF0E7490), // Darker Cyan
         const Color(0xFF06B6D4), // Darker Cyan Light
       ),
       _Shortcut(
-        'Schedules',
-        'Lịch làm việc',
+        'hr.shortcuts.schedules.title'.tr(),
+        'hr.shortcuts.schedules.subtitle'.tr(),
         Icons.calendar_today_rounded,
         '/hr/schedules',
         const Color(0xFF047857), // Darker Green
         const Color(0xFF10B981), // Darker Green Light
       ),
       _Shortcut(
-        'Face approvals',
-        'Duyệt khuôn mặt',
+        'hr.shortcuts.faceApprovals.title'.tr(),
+        'hr.shortcuts.faceApprovals.subtitle'.tr(),
         Icons.face_retouching_natural_rounded,
         '/hr/face-approvals',
         const Color(0xFFB45309), // Darker Orange
         const Color(0xFFF59E0B), // Darker Orange Light
       ),
       _Shortcut(
-        'Approved leaves',
-        'Đơn nghỉ đã duyệt',
+        'hr.shortcuts.approvedLeaves.title'.tr(),
+        'hr.shortcuts.approvedLeaves.subtitle'.tr(),
         Icons.check_circle_rounded,
         '/hr/approved-leaves',
         const Color(0xFF0F766E), // Darker Teal
         const Color(0xFF14B8A6), // Darker Teal Light
       ),
       _Shortcut(
-        'Pending explanations',
-        'Giải trình cần xử lý',
+        'hr.shortcuts.pendingExplanations.title'.tr(),
+        'hr.shortcuts.pendingExplanations.subtitle'.tr(),
         Icons.description_rounded,
         '/hr/pending-explanations',
         const Color(0xFFBE185D), // Darker Pink
@@ -159,7 +160,7 @@ class _HrHubPageState extends State<HrHubPage> with TickerProviderStateMixin {
                             context.canPop() ? context.pop() : context.go('/home'),
                       ),
                       title: Text(
-                        'HR Hub',
+                        'hr.title'.tr(),
                         style: theme.textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.w800,
                           letterSpacing: -0.8,
@@ -198,7 +199,7 @@ class _HrHubPageState extends State<HrHubPage> with TickerProviderStateMixin {
                                   ],
                                 ).createShader(bounds),
                           child: Text(
-                            'Tính năng',
+                            'hr.features'.tr(),
                             style: theme.textTheme.headlineMedium?.copyWith(
                               fontWeight: FontWeight.w900,
                               letterSpacing: -1.5,
@@ -408,6 +409,7 @@ class _ShortcutCardState extends State<_ShortcutCard>
                             padding: const EdgeInsets.all(22),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
                               children: [
                                 // Icon container với glow rất tinh tế
                                 Container(
@@ -454,20 +456,22 @@ class _ShortcutCardState extends State<_ShortcutCard>
                                         : colorScheme.onSurface,
                                   ),
                                 ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  widget.item.subtitle,
-                                  style: theme.textTheme.bodySmall?.copyWith(
-                                    fontSize: 13.5,
-                                    color: isDark
-                                        ? const Color(0xFFB4B9C4)
-                                        : colorScheme.onSurfaceVariant,
-                                    fontWeight: FontWeight.w500,
-                                    height: 1.4,
-                                    letterSpacing: 0.1,
+                                const SizedBox(height: 6),
+                                Flexible(
+                                  child: Text(
+                                    widget.item.subtitle,
+                                    style: theme.textTheme.bodySmall?.copyWith(
+                                      fontSize: 13,
+                                      color: isDark
+                                          ? const Color(0xFFB4B9C4)
+                                          : colorScheme.onSurfaceVariant,
+                                      fontWeight: FontWeight.w500,
+                                      height: 1.3,
+                                      letterSpacing: 0.1,
+                                    ),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ],
                             ),

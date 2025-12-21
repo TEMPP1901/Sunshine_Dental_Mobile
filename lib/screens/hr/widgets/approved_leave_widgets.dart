@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 /// Widget hiển thị filter chip cho approved leave page
@@ -126,7 +127,7 @@ class LeaveEmptyState extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             Text(
-              'Không có đơn xin nghỉ cần xử lý',
+              'hr.approvedLeaves.noPendingLeaves'.tr(),
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
@@ -138,7 +139,7 @@ class LeaveEmptyState extends StatelessWidget {
             ),
             const SizedBox(height: 10),
             Text(
-              'Tất cả đơn đã được xử lý',
+              'hr.approvedLeaves.allProcessed'.tr(),
               style: TextStyle(
                 fontSize: 14,
                 color: isDark ? Colors.grey[300] : Colors.grey[600],
@@ -269,7 +270,7 @@ class LeaveRequestCard extends StatelessWidget {
 
     // Extract data
     final user = item['user'] as Map<String, dynamic>?;
-    final employeeName = user?['fullName']?.toString() ?? 'Nhân viên';
+    final employeeName = user?['fullName']?.toString() ?? 'hr.common.employee'.tr();
     final employeeId = user?['id']?.toString() ?? user?['userId']?.toString() ?? '';
     final clinic = item['clinic'] as Map<String, dynamic>?;
     final clinicName = clinic?['clinicName']?.toString() ?? clinic?['clinicCode']?.toString() ?? '--';
@@ -450,7 +451,7 @@ class LeaveRequestCard extends StatelessWidget {
                 children: [
                   LeaveInfoRow(
                     icon: Icons.business_rounded,
-                    label: 'Phòng khám',
+                    label: 'hr.common.clinic'.tr(),
                     value: clinicName,
                     iconColor: const Color(0xFF6366F1),
                     isDark: isDark,
@@ -458,7 +459,7 @@ class LeaveRequestCard extends StatelessWidget {
                   LeaveDivider(isDark: isDark),
                   LeaveInfoRow(
                     icon: Icons.date_range_rounded,
-                    label: 'Từ ngày',
+                    label: 'hr.approvedLeaves.fromDate'.tr(),
                     value: startDate,
                     iconColor: const Color(0xFF10B981),
                     isDark: isDark,
@@ -466,7 +467,7 @@ class LeaveRequestCard extends StatelessWidget {
                   LeaveDivider(isDark: isDark),
                   LeaveInfoRow(
                     icon: Icons.event_rounded,
-                    label: 'Đến ngày',
+                    label: 'hr.approvedLeaves.toDate'.tr(),
                     value: endDate,
                     iconColor: const Color(0xFF8B5CF6),
                     isDark: isDark,
@@ -475,8 +476,8 @@ class LeaveRequestCard extends StatelessWidget {
                     LeaveDivider(isDark: isDark),
                     LeaveInfoRow(
                       icon: Icons.calendar_today_rounded,
-                      label: 'Số ngày',
-                      value: '$daysCount ${daysCount == 1 ? 'ngày' : 'ngày'}',
+                      label: 'hr.approvedLeaves.days'.tr(),
+                      value: '$daysCount ${daysCount == 1 ? 'hr.approvedLeaves.day'.tr() : 'hr.approvedLeaves.daysPlural'.tr()}',
                       iconColor: const Color(0xFFF59E0B),
                       isDark: isDark,
                     ),
@@ -485,7 +486,7 @@ class LeaveRequestCard extends StatelessWidget {
                     LeaveDivider(isDark: isDark),
                     LeaveInfoRow(
                       icon: Icons.category_rounded,
-                      label: 'Loại',
+                      label: 'hr.approvedLeaves.type'.tr(),
                       value: type,
                       iconColor: const Color(0xFF10B981),
                       isDark: isDark,
@@ -518,7 +519,7 @@ class LeaveRequestCard extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Lý do',
+                                'hr.approvedLeaves.reason'.tr(),
                                 style: TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w600,
@@ -545,7 +546,7 @@ class LeaveRequestCard extends StatelessWidget {
                     LeaveDivider(isDark: isDark),
                     LeaveInfoRow(
                       icon: Icons.access_time_rounded,
-                      label: 'Ngày tạo',
+                      label: 'hr.approvedLeaves.createdDate'.tr(),
                       value: createdAt.length > 10 ? createdAt.substring(0, 10) : createdAt,
                       iconColor: const Color(0xFF6366F1),
                       isDark: isDark,
@@ -581,7 +582,7 @@ class LeaveRequestCard extends StatelessWidget {
                                 const Icon(Icons.close_rounded, color: Color(0xFFEF4444), size: 20),
                                 const SizedBox(width: 8),
                                 Text(
-                                  'Từ chối',
+                                  'hr.approvedLeaves.reject'.tr(),
                                   style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w700,
@@ -621,12 +622,12 @@ class LeaveRequestCard extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(vertical: 16),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
-                              children: const [
-                                Icon(Icons.check_circle_rounded, color: Colors.white, size: 22),
-                                SizedBox(width: 8),
+                              children: [
+                                const Icon(Icons.check_circle_rounded, color: Colors.white, size: 22),
+                                const SizedBox(width: 8),
                                 Text(
-                                  'Duyệt',
-                                  style: TextStyle(
+                                  'hr.approvedLeaves.approve'.tr(),
+                                  style: const TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w800,
                                     color: Colors.white,

@@ -193,7 +193,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
         await _navigateToLeaveRequestPage();
         break;
       case 'ATTENDANCE':
-        // ATTENDANCE_CHECKIN, ATTENDANCE_CHECKOUT, ATTENDANCE_ABSENT, EXPLANATION_SUBMITTED, EXPLANATION_APPROVED, EXPLANATION_REJECTED
+        // ATTENDANCE_CHECKIN, ATTENDANCE_CHECKOUT, ATTENDANCE_ABSENT, EXPLANATION_SUBMITTED (MISSING_CHECK_OUT), EXPLANATION_APPROVED, EXPLANATION_REJECTED
         context.go('/attendance');
         break;
       case 'DOCTOR_SCHEDULE':

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
@@ -44,7 +45,7 @@ class _FaceProfileApprovalPageState extends State<FaceProfileApprovalPage> {
   Future<void> _approve(FaceProfileRequest item) async {
     try {
       await _hrService.approveFaceProfile(item.requestId);
-      Fluttertoast.showToast(msg: 'Đã duyệt');
+      Fluttertoast.showToast(msg: 'hr.faceApprovals.approved'.tr());
       _load();
     } catch (e) {
       Fluttertoast.showToast(msg: e.toString());
@@ -56,16 +57,16 @@ class _FaceProfileApprovalPageState extends State<FaceProfileApprovalPage> {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Từ chối yêu cầu'),
+        title: Text('hr.faceApprovals.rejectTitle'.tr()),
         content: TextField(
           controller: controller,
-          decoration: const InputDecoration(
-            labelText: 'Lý do (tùy chọn)',
+          decoration: InputDecoration(
+            labelText: 'hr.faceApprovals.rejectReason'.tr(),
           ),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Hủy')),
-          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Từ chối')),
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text('hr.common.cancel'.tr())),
+          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: Text('hr.faceApprovals.reject'.tr())),
         ],
       ),
     );
@@ -76,7 +77,7 @@ class _FaceProfileApprovalPageState extends State<FaceProfileApprovalPage> {
         requestId: item.requestId,
         reason: controller.text,
       );
-      Fluttertoast.showToast(msg: 'Đã từ chối');
+      Fluttertoast.showToast(msg: 'hr.faceApprovals.rejected'.tr());
       _load();
     } catch (e) {
       Fluttertoast.showToast(msg: e.toString());
@@ -91,7 +92,7 @@ class _FaceProfileApprovalPageState extends State<FaceProfileApprovalPage> {
           icon: const Icon(Icons.arrow_back),
           onPressed: () => context.canPop() ? context.pop() : context.go('/hr'),
         ),
-        title: const Text('Face Profile Approvals'),
+        title: Text('hr.faceApprovals.title'.tr()),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
@@ -118,9 +119,9 @@ class _FaceProfileApprovalPageState extends State<FaceProfileApprovalPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Lỗi: $_error'),
+                Text('${'hr.common.error'.tr()}: $_error'),
                 const SizedBox(height: 8),
-                FilledButton(onPressed: _load, child: const Text('Thử lại')),
+                FilledButton(onPressed: _load, child: Text('hr.common.retry'.tr())),
               ],
             ),
           ),
@@ -129,9 +130,9 @@ class _FaceProfileApprovalPageState extends State<FaceProfileApprovalPage> {
     }
     if (_items.isEmpty) {
       return ListView(
-        children: const [
-          SizedBox(height: 48),
-          Center(child: Text('Không có yêu cầu chờ duyệt')),
+        children: [
+          const SizedBox(height: 48),
+          Center(child: Text('hr.faceApprovals.noPendingRequests'.tr())),
         ],
       );
     }
@@ -186,8 +187,8 @@ class FaceProfileCard extends StatelessWidget {
                       const SizedBox(height: 2),
                       Text(item.email, style: Theme.of(context).textTheme.bodySmall),
                       if (item.code.isNotEmpty)
-                        Text('Mã: ${item.code}', style: Theme.of(context).textTheme.bodySmall),
-                      Text('Yêu cầu: ${item.requestedAtText}',
+                        Text('hr.faceApprovals.code'.tr(args: [item.code]), style: Theme.of(context).textTheme.bodySmall),
+                      Text('hr.faceApprovals.requestedAt'.tr(args: [item.requestedAtText]),
                           style: Theme.of(context).textTheme.bodySmall),
                     ],
                   ),
@@ -201,13 +202,13 @@ class FaceProfileCard extends StatelessWidget {
                 TextButton.icon(
                   onPressed: onReject,
                   icon: const Icon(Icons.close_rounded, color: Colors.red),
-                  label: const Text('Từ chối'),
+                  label: Text('hr.faceApprovals.reject'.tr()),
                 ),
                 const SizedBox(width: 8),
                 FilledButton.icon(
                   onPressed: onApprove,
                   icon: const Icon(Icons.check_circle_outline),
-                  label: const Text('Duyệt'),
+                  label: Text('hr.faceApprovals.approve'.tr()),
                 ),
               ],
             ),

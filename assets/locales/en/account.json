@@ -17,6 +17,7 @@
   },
   "myAccount": {
     "title": "My Account",
+    "subtitle": "View and update your personal details",
     "fullName": "Full Name",
     "email": "Email",
     "phone": "Phone",

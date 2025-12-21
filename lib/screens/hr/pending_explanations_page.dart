@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
@@ -63,7 +64,7 @@ class _PendingExplanationsPageState extends State<PendingExplanationsPage> {
   ) async {
     final attendanceId = item['attendanceId'] ?? item['id'];
     if (attendanceId == null) {
-      Fluttertoast.showToast(msg: 'Không tìm thấy ID giải trình');
+      Fluttertoast.showToast(msg: 'hr.pendingExplanations.missingId'.tr());
       return;
     }
 
@@ -73,15 +74,15 @@ class _PendingExplanationsPageState extends State<PendingExplanationsPage> {
       final confirm = await showDialog<bool>(
         context: context,
         builder: (ctx) => AlertDialog(
-          title: Text(action == 'APPROVE' ? 'Duyệt giải trình' : 'Từ chối giải trình'),
+          title: Text(action == 'APPROVE' ? 'hr.pendingExplanations.approveTitle'.tr() : 'hr.pendingExplanations.rejectTitle'.tr()),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(
                 controller: controller,
-                decoration: const InputDecoration(
-                  labelText: 'Ghi chú HR (tùy chọn)',
-                  hintText: 'Nhập ghi chú nếu cần',
+                decoration: InputDecoration(
+                  labelText: 'hr.pendingExplanations.hrNote'.tr(),
+                  hintText: 'hr.pendingExplanations.hrNoteHint'.tr(),
                 ),
                 maxLines: 3,
               ),
@@ -90,14 +91,14 @@ class _PendingExplanationsPageState extends State<PendingExplanationsPage> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(ctx, false),
-              child: const Text('Hủy'),
+              child: Text('hr.common.cancel'.tr()),
             ),
             FilledButton(
               onPressed: () => Navigator.pop(ctx, true),
               style: FilledButton.styleFrom(
                 backgroundColor: action == 'APPROVE' ? Colors.green : Colors.red,
               ),
-              child: Text(action == 'APPROVE' ? 'Duyệt' : 'Từ chối'),
+              child: Text(action == 'APPROVE' ? 'hr.pendingExplanations.approve'.tr() : 'hr.pendingExplanations.reject'.tr()),
             ),
           ],
         ),
@@ -110,15 +111,15 @@ class _PendingExplanationsPageState extends State<PendingExplanationsPage> {
       final confirm = await showDialog<bool>(
         context: context,
         builder: (ctx) => AlertDialog(
-          title: const Text('Duyệt giải trình'),
+          title: Text(action == 'APPROVE' ? 'hr.pendingExplanations.approveTitle'.tr() : 'hr.pendingExplanations.rejectTitle'.tr()),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(
                 controller: controller,
-                decoration: const InputDecoration(
-                  labelText: 'Ghi chú HR (tùy chọn)',
-                  hintText: 'Nhập ghi chú nếu cần',
+                decoration: InputDecoration(
+                  labelText: 'hr.pendingExplanations.hrNote'.tr(),
+                  hintText: 'hr.pendingExplanations.hrNoteHint'.tr(),
                 ),
                 maxLines: 3,
               ),
@@ -127,14 +128,14 @@ class _PendingExplanationsPageState extends State<PendingExplanationsPage> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(ctx, false),
-              child: const Text('Hủy'),
+              child: Text('hr.common.cancel'.tr()),
             ),
             FilledButton(
               onPressed: () => Navigator.pop(ctx, true),
               style: FilledButton.styleFrom(
                 backgroundColor: Colors.green,
               ),
-              child: const Text('Duyệt'),
+              child: Text('hr.pendingExplanations.approve'.tr()),
             ),
           ],
         ),
@@ -150,7 +151,7 @@ class _PendingExplanationsPageState extends State<PendingExplanationsPage> {
         adminNote: adminNote,
       );
       Fluttertoast.showToast(
-        msg: action == 'APPROVE' ? 'Đã duyệt giải trình' : 'Đã từ chối giải trình',
+        msg: action == 'APPROVE' ? 'hr.pendingExplanations.approved'.tr() : 'hr.pendingExplanations.rejected'.tr(),
       );
       _load();
     } catch (e) {
@@ -165,7 +166,7 @@ class _PendingExplanationsPageState extends State<PendingExplanationsPage> {
     return Scaffold(
       appBar: HrAppBar(
         context: context,
-        titleText: 'Giải trình cần xử lý',
+        titleText: 'hr.pendingExplanations.title'.tr(),
         onRefresh: _loading ? null : _load,
       ),
       body: RefreshIndicator(
@@ -225,7 +226,7 @@ class _PendingExplanationsPageState extends State<PendingExplanationsPage> {
             child: DropdownButtonFormField<int?>(
               value: _selectedClinicId,
               decoration: InputDecoration(
-                labelText: 'Lọc theo phòng khám',
+                labelText: 'hr.pendingExplanations.filterByClinic'.tr(),
                 prefixIcon: const Icon(Icons.business_outlined, size: 20),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -233,9 +234,9 @@ class _PendingExplanationsPageState extends State<PendingExplanationsPage> {
                 contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
               ),
               items: [
-                const DropdownMenuItem<int?>(
+                DropdownMenuItem<int?>(
                   value: null,
-                  child: Text('Tất cả'),
+                  child: Text('hr.common.all'.tr()),
                 ),
                 ..._clinics.map((c) {
                   final id = int.tryParse((c['id'] ?? c['clinicId'] ?? '').toString());
@@ -279,7 +280,7 @@ class _PendingExplanationsPageState extends State<PendingExplanationsPage> {
           ),
           const SizedBox(height: 20),
           Text(
-            'Không có giải trình cần xử lý',
+            'hr.pendingExplanations.noPendingExplanations'.tr(),
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w700,
@@ -288,7 +289,7 @@ class _PendingExplanationsPageState extends State<PendingExplanationsPage> {
           ),
           const SizedBox(height: 8),
           Text(
-            'Tất cả giải trình đã được xử lý',
+            'hr.pendingExplanations.allProcessed'.tr(),
             style: TextStyle(
               fontSize: 14,
               color: isDark ? Colors.grey[400] : Colors.grey[600],
@@ -307,7 +308,7 @@ class _PendingExplanationsPageState extends State<PendingExplanationsPage> {
 
     // Extract data
     final user = item['user'] as Map<String, dynamic>?;
-    final employeeName = user?['fullName']?.toString() ?? 'Nhân viên';
+    final employeeName = user?['fullName']?.toString() ?? 'hr.common.employee'.tr();
     final employeeId = user?['id']?.toString() ?? user?['userId']?.toString() ?? '';
     final clinic = item['clinic'] as Map<String, dynamic>?;
     final clinicName = clinic?['clinicName']?.toString() ?? clinic?['clinicCode']?.toString() ?? '--';
@@ -451,7 +452,7 @@ class _PendingExplanationsPageState extends State<PendingExplanationsPage> {
                 children: [
                   _buildInfoRow(
                     icon: Icons.business_rounded,
-                    label: 'Phòng khám',
+                    label: 'hr.common.clinic'.tr(),
                     value: clinicName,
                     iconColor: const Color(0xFF6366F1),
                     isDark: isDark,
@@ -472,7 +473,7 @@ class _PendingExplanationsPageState extends State<PendingExplanationsPage> {
                   const SizedBox(height: 12),
                   _buildInfoRow(
                     icon: Icons.calendar_today_rounded,
-                    label: 'Ngày làm việc',
+                    label: 'hr.pendingExplanations.workDate'.tr(),
                     value: workDateStr,
                     iconColor: const Color(0xFF10B981),
                     isDark: isDark,
@@ -494,7 +495,7 @@ class _PendingExplanationsPageState extends State<PendingExplanationsPage> {
                     const SizedBox(height: 12),
                     _buildInfoRow(
                       icon: Icons.category_rounded,
-                      label: 'Loại',
+                      label: 'hr.pendingExplanations.type'.tr(),
                       value: explanationType,
                       iconColor: const Color(0xFFF59E0B),
                       isDark: isDark,
@@ -547,7 +548,7 @@ class _PendingExplanationsPageState extends State<PendingExplanationsPage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Lý do',
+                                'hr.pendingExplanations.reason'.tr(),
                                 style: TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w600,
@@ -580,7 +581,7 @@ class _PendingExplanationsPageState extends State<PendingExplanationsPage> {
                   child: OutlinedButton.icon(
                     onPressed: () => _processExplanation(item, 'REJECT'),
                     icon: const Icon(Icons.close_rounded, size: 18),
-                    label: const Text('Từ chối'),
+                    label: Text('hr.pendingExplanations.reject'.tr()),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: Colors.red,
                       side: const BorderSide(color: Colors.red, width: 1.5),
@@ -617,12 +618,12 @@ class _PendingExplanationsPageState extends State<PendingExplanationsPage> {
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
-                            children: const [
-                              Icon(Icons.check_circle_rounded, color: Colors.white, size: 20),
-                              SizedBox(width: 8),
+                            children: [
+                              const Icon(Icons.check_circle_rounded, color: Colors.white, size: 20),
+                              const SizedBox(width: 8),
                               Text(
-                                'Duyệt',
-                                style: TextStyle(
+                                'hr.pendingExplanations.approve'.tr(),
+                                style: const TextStyle(
                                   fontSize: 15,
                                   fontWeight: FontWeight.w700,
                                   color: Colors.white,

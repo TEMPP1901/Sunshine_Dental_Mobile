@@ -13,7 +13,48 @@
   },
   "updateFaceProfile": {
     "title": "Update Attendance Face",
-    "subtitle": "Update face image for attendance system"
+    "subtitle": "Update face photo for attendance",
+    "importantNote": "Important Note",
+    "importantNoteMessage": "Your face update request will be sent to HR for approval. You can only use the new face after HR approval.",
+    "capturedImage": "Captured Image",
+    "instructions": {
+      "title": "Photo Instructions",
+      "lighting": {
+        "title": "Ensure adequate lighting",
+        "description": "Take photo in a well-lit area, avoid too bright or too dark lighting"
+      },
+      "faceStraight": {
+        "title": "Look straight at camera",
+        "description": "Keep face straight, look directly at camera, don't tilt head"
+      },
+      "faceClear": {
+        "title": "Clear face",
+        "description": "Ensure face is not covered by mask, sunglasses, or other items"
+      },
+      "distance": {
+        "title": "Maintain appropriate distance",
+        "description": "Place face in the correct guide area on screen"
+      }
+    },
+    "buttons": {
+      "capture": "Capture Face Photo",
+      "captureAgain": "Capture Again",
+      "submit": "Submit Update Request",
+      "submitting": "Submitting request..."
+    },
+    "toast": {
+      "cameraError": "Unable to open camera. Please try again.",
+      "noImage": "Please capture face photo before submitting request.",
+      "success": "Face update request submitted successfully.\nPlease wait for HR approval before using.",
+      "error": "Error submitting face update request. Please try again.",
+      "serverError": "Server error. Please try again later.\nIf you haven't registered your face, please register first.",
+      "notRegistered": "You haven't registered your face. Please register your face before updating.",
+      "pendingRequest": "You already have a pending update request. Please wait for HR approval before submitting a new request.",
+      "faceRecognitionFailed": "Unable to recognize face from image. Please:\n- Ensure face is clear\n- Look straight at camera\n- Adequate lighting",
+      "faceProcessingFailed": "Unable to process face image. Please:\n- Capture again with clear face\n- Ensure adequate lighting\n- Look straight at camera",
+      "timeout": "Connection timeout. Please check network connection and try again.",
+      "connectionError": "Unable to connect to server. Please check network connection."
+    }
   },
   "actions": {
     "signIn": "Sign In",
@@ -33,6 +74,14 @@
     "noUsername": "Not provided"
   },
   "accountSettings": "Account Settings",
+  "hrHub": {
+    "title": "HR Hub",
+    "subtitle": "Human resource management & timekeeping"
+  },
+  "adminHub": {
+    "title": "Admin Hub",
+    "subtitle": "System management & reports"
+  },
   "settings": "Settings",
   "theme": {
     "title": "Theme",

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import 'shared_widgets.dart';
@@ -27,7 +28,7 @@ class FilterBar extends StatelessWidget {
           child: TextField(
             controller: dateController,
             decoration: InputDecoration(
-              labelText: 'Ngày (yyyy-MM-dd)',
+              labelText: 'hr.attendance.date'.tr(),
               prefixIcon: const Icon(Icons.calendar_today_outlined, size: 18),
               contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
               filled: true,
@@ -44,7 +45,7 @@ class FilterBar extends StatelessWidget {
           width: 170,
           child: InputDecorator(
             decoration: InputDecoration(
-              labelText: 'Clinic',
+              labelText: 'hr.common.clinic'.tr(),
               prefixIcon: const Icon(Icons.business_outlined, size: 18),
               contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               filled: true,
@@ -61,9 +62,9 @@ class FilterBar extends StatelessWidget {
                 icon: const Icon(Icons.arrow_drop_down),
                 onChanged: onClinicChanged,
                 items: [
-                  const DropdownMenuItem<int?>(
+                  DropdownMenuItem<int?>(
                     value: null,
-                    child: Text('Tất cả'),
+                    child: Text('hr.common.all'.tr()),
                   ),
                   ...clinics.map((c) {
                     final id = int.tryParse((c['id'] ?? c['clinicId'] ?? '').toString());
@@ -82,7 +83,7 @@ class FilterBar extends StatelessWidget {
         FilledButton.icon(
           onPressed: onFilter,
           icon: const Icon(Icons.search, size: 18),
-          label: const Text('Lọc'),
+          label: Text('hr.common.filter'.tr()),
           style: FilledButton.styleFrom(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -206,18 +207,18 @@ class AttendanceCard extends StatelessWidget {
             const SizedBox(height: 8),
             InfoRow(
               icon: Icons.login_rounded,
-              label: 'Check-in',
+              label: 'hr.attendance.checkIn'.tr(),
               value: checkIn,
             ),
             InfoRow(
               icon: Icons.logout_rounded,
-              label: 'Check-out',
+              label: 'hr.attendance.checkOut'.tr(),
               value: checkOut,
             ),
             if (clinic.toString().isNotEmpty)
               InfoRow(
                 icon: Icons.business_outlined,
-                label: 'Phòng khám',
+                label: 'hr.common.clinic'.tr(),
                 value: clinic.toString(),
               ),
           ],

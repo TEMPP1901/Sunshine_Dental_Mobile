@@ -1,0 +1,151 @@
+{
+  "title": "HR Hub",
+  "features": "Tính năng",
+  "common": {
+    "loading": "Đang tải...",
+    "error": "Lỗi",
+    "retry": "Thử lại",
+    "cancel": "Hủy",
+    "confirm": "Xác nhận",
+    "filter": "Lọc",
+    "reset": "Reset",
+    "search": "Tìm kiếm",
+    "all": "Tất cả",
+    "status": "Trạng thái",
+    "active": "Hoạt động",
+    "inactive": "Đã khóa",
+    "resignation": "Nghỉ việc",
+    "clinic": "Phòng khám",
+    "department": "Phòng ban",
+    "role": "Vai trò",
+    "employee": "Nhân viên",
+    "employees": "Nhân viên",
+    "total": "Tổng",
+    "loadMore": "Tải thêm",
+    "noData": "Không có dữ liệu",
+    "noDataFound": "Không tìm thấy dữ liệu"
+  },
+  "shortcuts": {
+    "employees": {
+      "title": "Employees",
+      "subtitle": "Quản lý nhân sự"
+    },
+    "attendance": {
+      "title": "Attendance",
+      "subtitle": "Lịch sử chấm công"
+    },
+    "schedules": {
+      "title": "Schedules",
+      "subtitle": "Lịch làm việc"
+    },
+    "faceApprovals": {
+      "title": "Face approvals",
+      "subtitle": "Duyệt khuôn mặt"
+    },
+    "approvedLeaves": {
+      "title": "Approved leaves",
+      "subtitle": "Đơn nghỉ đã duyệt"
+    },
+    "pendingExplanations": {
+      "title": "Pending explanations",
+      "subtitle": "Giải trình cần xử lý"
+    }
+  },
+  "employees": {
+    "title": "Nhân viên (HR)",
+    "searchPlaceholder": "Tìm kiếm tên/mã",
+    "totalEmployees": "Tổng: {count} nhân viên",
+    "statusUpdated": "Đã cập nhật trạng thái",
+    "emptyState": "Thử thay đổi bộ lọc để tìm kiếm"
+  },
+  "attendance": {
+    "title": "Lịch sử chấm công",
+    "selectDate": "Vui lòng chọn ngày",
+    "date": "Ngày (yyyy-MM-dd)",
+    "searchEmployee": "Tìm kiếm tên nhân viên",
+    "allDepartments": "Tất cả phòng ban",
+    "noDataForDate": "Không tìm thấy lịch sử attendance cho ngày đã chọn",
+    "noSearchResults": "Không tìm thấy kết quả",
+    "tryChangeFilters": "Thử thay đổi bộ lọc hoặc từ khóa tìm kiếm",
+    "checkIn": "Check-in",
+    "checkOut": "Check-out",
+    "missingCheckOut": "Thiếu check-out",
+    "onTime": "Đúng giờ",
+    "late": "Muộn",
+    "absent": "Vắng mặt",
+    "approvedLeave": "Nghỉ phép đã duyệt",
+    "totalRecords": "Tổng: {count} bản ghi"
+  },
+  "schedules": {
+    "title": "Lịch làm việc (HR)",
+    "currentWeek": "Tuần hiện tại",
+    "selectDate": "Chọn ngày",
+    "selectDateToView": "Chọn ngày xem lịch",
+    "scheduleForDate": "Lịch ngày {date}",
+    "error": {
+      "loadFailed": "Đã xảy ra lỗi khi tải dữ liệu",
+      "unauthorized": "Không có quyền truy cập. Vui lòng đăng nhập lại.",
+      "forbidden": "Bạn không có quyền truy cập tính năng này.",
+      "notFound": "Không tìm thấy dữ liệu.",
+      "serverError": "Lỗi server. Vui lòng thử lại sau.",
+      "networkError": "Không thể kết nối đến server. Vui lòng kiểm tra kết nối mạng."
+    }
+  },
+  "faceApprovals": {
+    "title": "Duyệt khuôn mặt",
+    "approve": "Duyệt",
+    "reject": "Từ chối",
+    "rejectTitle": "Từ chối yêu cầu",
+    "rejectReason": "Lý do (tùy chọn)",
+    "approved": "Đã duyệt",
+    "rejected": "Đã từ chối",
+    "noPendingRequests": "Không có yêu cầu nào đang chờ duyệt",
+    "code": "Mã: {code}",
+    "requestedAt": "Yêu cầu: {date}"
+  },
+  "approvedLeaves": {
+    "title": "Đơn xin nghỉ cần xử lý",
+    "approve": "Duyệt",
+    "reject": "Từ chối",
+    "approveTitle": "Duyệt đơn xin nghỉ",
+    "rejectTitle": "Từ chối đơn xin nghỉ",
+    "note": "Ghi chú (tùy chọn)",
+    "noteHint": "Nhập ghi chú nếu cần...",
+    "approved": "Đã duyệt đơn xin nghỉ",
+    "rejected": "Đã từ chối đơn xin nghỉ",
+    "missingId": "Không tìm thấy ID đơn xin nghỉ",
+    "noPendingLeaves": "Không có đơn xin nghỉ cần xử lý",
+    "allProcessed": "Tất cả đơn đã được xử lý",
+    "fromDate": "Từ ngày",
+    "toDate": "Đến ngày",
+    "days": "Số ngày",
+    "day": "ngày",
+    "daysPlural": "ngày",
+    "type": "Loại",
+    "reason": "Lý do",
+    "createdDate": "Ngày tạo",
+    "status": {
+      "pending": "Chờ duyệt",
+      "pendingAdmin": "Chờ Admin duyệt"
+    }
+  },
+  "pendingExplanations": {
+    "title": "Giải trình cần xử lý",
+    "approve": "Duyệt",
+    "reject": "Từ chối",
+    "approveTitle": "Duyệt giải trình",
+    "rejectTitle": "Từ chối giải trình",
+    "hrNote": "Ghi chú HR (tùy chọn)",
+    "hrNoteHint": "Nhập ghi chú nếu cần",
+    "missingId": "Không tìm thấy ID giải trình",
+    "approved": "Đã duyệt giải trình",
+    "rejected": "Đã từ chối giải trình",
+    "noPendingExplanations": "Không có giải trình nào cần xử lý",
+    "allProcessed": "Tất cả giải trình đã được xử lý",
+    "filterByClinic": "Lọc theo phòng khám",
+    "workDate": "Ngày làm việc",
+    "type": "Loại",
+    "reason": "Lý do"
+  }
+}
+

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -43,7 +44,7 @@ class _AdminReportsPageState extends State<AdminReportsPage> {
     } catch (e) {
       setState(() => _isLoading = false);
       debugPrint('Error loading data: $e');
-      Fluttertoast.showToast(msg: 'Không thể tải dữ liệu: $e');
+      Fluttertoast.showToast(msg: 'admin.reports.error.loadFailed'.tr(args: [e.toString()]));
     }
   }
 
@@ -85,9 +86,9 @@ class _AdminReportsPageState extends State<AdminReportsPage> {
           icon: const Icon(Icons.arrow_back_ios_new_rounded),
           onPressed: () => context.canPop() ? context.pop() : context.go('/admin'),
         ),
-        title: const Text(
-          'Báo cáo & Thống kê',
-          style: TextStyle(
+        title: Text(
+          'admin.reports.title'.tr(),
+          style: const TextStyle(
             fontWeight: FontWeight.w700,
             letterSpacing: -0.5,
           ),
@@ -116,13 +117,13 @@ class _AdminReportsPageState extends State<AdminReportsPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Revenue Section
-                    _buildSectionTitle('Doanh thu', Icons.trending_up_rounded, const Color(0xFF10B981), isDark),
+                    _buildSectionTitle('admin.reports.revenue'.tr(), Icons.trending_up_rounded, const Color(0xFF10B981), isDark),
                     const SizedBox(height: 12),
                     Row(
                       children: [
                         Expanded(
                           child: _StatCard(
-                            'Tháng này',
+                            'admin.reports.thisMonth'.tr(),
                             _formatCurrency(_stats['monthRevenue']),
                             Icons.calendar_month_rounded,
                             const Color(0xFF8B5CF6),
@@ -132,7 +133,7 @@ class _AdminReportsPageState extends State<AdminReportsPage> {
                         const SizedBox(width: 10),
                         Expanded(
                           child: _StatCard(
-                            'Lợi nhuận',
+                            'admin.reports.profit'.tr(),
                             _formatCurrency(_stats['netProfit']),
                             Icons.account_balance_wallet_rounded,
                             const Color(0xFF14B8A6),
@@ -144,13 +145,13 @@ class _AdminReportsPageState extends State<AdminReportsPage> {
                     const SizedBox(height: 20),
 
                     // Appointments Section
-                    _buildSectionTitle('Lịch hẹn', Icons.calendar_today_rounded, const Color(0xFF3B82F6), isDark),
+                    _buildSectionTitle('admin.reports.appointments'.tr(), Icons.calendar_today_rounded, const Color(0xFF3B82F6), isDark),
                     const SizedBox(height: 12),
                     Row(
                       children: [
                         Expanded(
                           child: _StatCard(
-                            'Tháng này',
+                            'admin.reports.thisMonth'.tr(),
                             '${_parseInt(_stats['monthAppointments'])}',
                             Icons.calendar_month_rounded,
                             const Color(0xFF8B5CF6),
@@ -160,7 +161,7 @@ class _AdminReportsPageState extends State<AdminReportsPage> {
                         const SizedBox(width: 10),
                         Expanded(
                           child: _StatCard(
-                            'Đã hủy',
+                            'admin.reports.cancelled'.tr(),
                             '${_parseInt(_stats['todayCancelledAppointments'])}',
                             Icons.cancel_rounded,
                             const Color(0xFFEF4444),
@@ -172,13 +173,13 @@ class _AdminReportsPageState extends State<AdminReportsPage> {
                     const SizedBox(height: 20),
 
                     // Staff & Patients Section
-                    _buildSectionTitle('Nhân sự & Bệnh nhân', Icons.people_rounded, const Color(0xFF6366F1), isDark),
+                    _buildSectionTitle('admin.reports.staffAndPatients'.tr(), Icons.people_rounded, const Color(0xFF6366F1), isDark),
                     const SizedBox(height: 12),
                     Row(
                       children: [
                         Expanded(
                           child: _StatCard(
-                            'Tổng nhân viên',
+                            'admin.reports.totalStaff'.tr(),
                             '${_parseInt(_stats['totalStaff'])}',
                             Icons.people_alt_rounded,
                             const Color(0xFF8B5CF6),
@@ -188,7 +189,7 @@ class _AdminReportsPageState extends State<AdminReportsPage> {
                         const SizedBox(width: 10),
                         Expanded(
                           child: _StatCard(
-                            'Tổng bệnh nhân',
+                            'admin.reports.totalPatients'.tr(),
                             '${_parseInt(_stats['totalPatients'])}',
                             Icons.person_outline_rounded,
                             const Color(0xFF06B6D4),
@@ -200,10 +201,10 @@ class _AdminReportsPageState extends State<AdminReportsPage> {
                     const SizedBox(height: 20),
 
                     // Clinics Section
-                    _buildSectionTitle('Phòng khám', Icons.local_hospital_rounded, const Color(0xFFEF4444), isDark),
+                    _buildSectionTitle('admin.reports.clinics'.tr(), Icons.local_hospital_rounded, const Color(0xFFEF4444), isDark),
                     const SizedBox(height: 12),
                     _StatCard(
-                      'Tổng phòng khám',
+                      'admin.reports.totalClinics'.tr(),
                       '${_parseInt(_stats['totalClinics'])}',
                       Icons.business_rounded,
                       const Color(0xFF3B82F6),
@@ -214,13 +215,13 @@ class _AdminReportsPageState extends State<AdminReportsPage> {
 
                     // Inventory Section
                     if (_inventoryStats.isNotEmpty) ...[
-                      _buildSectionTitle('Cảnh báo kho hàng', Icons.warning_rounded, const Color(0xFFF59E0B), isDark),
+                      _buildSectionTitle('admin.reports.inventoryAlerts'.tr(), Icons.warning_rounded, const Color(0xFFF59E0B), isDark),
                       const SizedBox(height: 12),
                       Row(
                         children: [
                           Expanded(
                             child: _StatCard(
-                              'Sắp hết',
+                              'admin.reports.lowStock'.tr(),
                               '${_parseInt(_inventoryStats['lowStockProductsCount'])}',
                               Icons.warning_rounded,
                               const Color(0xFFF59E0B),
@@ -230,7 +231,7 @@ class _AdminReportsPageState extends State<AdminReportsPage> {
                           const SizedBox(width: 10),
                           Expanded(
                             child: _StatCard(
-                              'Hết hàng',
+                              'admin.reports.outOfStock'.tr(),
                               '${_parseInt(_inventoryStats['outOfStockProductsCount'])}',
                               Icons.error_rounded,
                               const Color(0xFFEF4444),
@@ -244,10 +245,10 @@ class _AdminReportsPageState extends State<AdminReportsPage> {
 
                     // Pending Actions
                     if ((_stats['pendingLeaveRequests'] ?? 0) > 0) ...[
-                      _buildSectionTitle('Cần xử lý', Icons.notifications_active_rounded, const Color(0xFFF59E0B), isDark),
+                      _buildSectionTitle('admin.reports.pendingActions'.tr(), Icons.notifications_active_rounded, const Color(0xFFF59E0B), isDark),
                       const SizedBox(height: 12),
                       _StatCard(
-                        'Đơn nghỉ chờ',
+                        'admin.reports.pendingLeaves'.tr(),
                         '${_parseInt(_stats['pendingLeaveRequests'])}',
                         Icons.description_rounded,
                         const Color(0xFFF59E0B),

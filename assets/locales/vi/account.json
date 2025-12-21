@@ -17,6 +17,7 @@
   },
   "myAccount": {
     "title": "Tài khoản của tôi",
+    "subtitle": "Xem và cập nhật thông tin cá nhân",
     "fullName": "Họ và tên",
     "email": "Email",
     "phone": "Số điện thoại",

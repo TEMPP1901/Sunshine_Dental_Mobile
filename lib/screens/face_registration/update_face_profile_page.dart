@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -32,7 +33,7 @@ class _UpdateFaceProfilePageState extends State<UpdateFaceProfilePage> {
       }
     } catch (e) {
       Fluttertoast.showToast(
-        msg: 'Không thể mở camera. Vui lòng thử lại.',
+        msg: 'profile.updateFaceProfile.toast.cameraError'.tr(),
         backgroundColor: Colors.red,
       );
     }
@@ -41,7 +42,7 @@ class _UpdateFaceProfilePageState extends State<UpdateFaceProfilePage> {
   Future<void> _submitUpdateRequest() async {
     if (_capturedImage == null) {
       Fluttertoast.showToast(
-        msg: 'Vui lòng chụp ảnh khuôn mặt trước khi gửi yêu cầu.',
+        msg: 'profile.updateFaceProfile.toast.noImage'.tr(),
         backgroundColor: Colors.orange,
       );
       return;
@@ -73,7 +74,7 @@ class _UpdateFaceProfilePageState extends State<UpdateFaceProfilePage> {
       });
 
       Fluttertoast.showToast(
-        msg: 'Yêu cầu cập nhật khuôn mặt đã được gửi thành công.\nVui lòng chờ HR duyệt trước khi sử dụng.',
+        msg: 'profile.updateFaceProfile.toast.success'.tr(),
         toastLength: Toast.LENGTH_LONG,
         backgroundColor: Colors.green,
         textColor: Colors.white,
@@ -85,7 +86,7 @@ class _UpdateFaceProfilePageState extends State<UpdateFaceProfilePage> {
         context.pop();
       }
     } catch (e) {
-      String errorMsg = 'Lỗi khi gửi yêu cầu cập nhật khuôn mặt. Vui lòng thử lại.';
+      String errorMsg = 'profile.updateFaceProfile.toast.error'.tr();
       
       if (e is DioException) {
         if (e.response != null) {
@@ -102,7 +103,7 @@ class _UpdateFaceProfilePageState extends State<UpdateFaceProfilePage> {
             } else if (error != null && error.isNotEmpty) {
               errorMsg = error;
             } else if (statusCode == 500) {
-              errorMsg = 'Lỗi máy chủ. Vui lòng thử lại sau.\nNếu bạn chưa đăng ký khuôn mặt, vui lòng đăng ký trước.';
+              errorMsg = 'profile.updateFaceProfile.toast.serverError'.tr();
             }
           }
           
@@ -110,22 +111,22 @@ class _UpdateFaceProfilePageState extends State<UpdateFaceProfilePage> {
           if (statusCode == 400) {
             if (errorMsg.contains('does not have a face profile') || 
                 errorMsg.contains('register first')) {
-              errorMsg = 'Bạn chưa đăng ký khuôn mặt. Vui lòng đăng ký khuôn mặt trước khi cập nhật.';
+              errorMsg = 'profile.updateFaceProfile.toast.notRegistered'.tr();
             } else if (errorMsg.contains('pending')) {
-              errorMsg = 'Bạn đã có yêu cầu cập nhật đang chờ duyệt. Vui lòng chờ HR duyệt trước khi gửi yêu cầu mới.';
+              errorMsg = 'profile.updateFaceProfile.toast.pendingRequest'.tr();
             } else if (errorMsg.contains('embedding') || errorMsg.contains('face')) {
-              errorMsg = 'Không thể nhận diện khuôn mặt từ ảnh. Vui lòng:\n- Đảm bảo khuôn mặt rõ ràng\n- Nhìn thẳng vào camera\n- Ánh sáng đủ';
+              errorMsg = 'profile.updateFaceProfile.toast.faceRecognitionFailed'.tr();
             }
           } else if (statusCode == 500) {
             if (errorMsg.contains('extract') || errorMsg.contains('embedding')) {
-              errorMsg = 'Không thể xử lý ảnh khuôn mặt. Vui lòng:\n- Chụp lại ảnh với khuôn mặt rõ ràng\n- Đảm bảo ánh sáng đủ\n- Nhìn thẳng vào camera';
+              errorMsg = 'profile.updateFaceProfile.toast.faceProcessingFailed'.tr();
             }
           }
         } else if (e.type == DioExceptionType.connectionTimeout || 
                    e.type == DioExceptionType.receiveTimeout) {
-          errorMsg = 'Kết nối quá lâu. Vui lòng kiểm tra kết nối mạng và thử lại.';
+          errorMsg = 'profile.updateFaceProfile.toast.timeout'.tr();
         } else if (e.type == DioExceptionType.connectionError) {
-          errorMsg = 'Không thể kết nối đến máy chủ. Vui lòng kiểm tra kết nối mạng.';
+          errorMsg = 'profile.updateFaceProfile.toast.connectionError'.tr();
         }
       }
       
@@ -157,7 +158,7 @@ class _UpdateFaceProfilePageState extends State<UpdateFaceProfilePage> {
           icon: const Icon(Icons.arrow_back_ios_new_rounded),
           onPressed: () => context.pop(),
         ),
-        title: const Text('Cập nhật khuôn mặt chấm công'),
+        title: Text('profile.updateFaceProfile.title'.tr()),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
@@ -181,7 +182,7 @@ class _UpdateFaceProfilePageState extends State<UpdateFaceProfilePage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Lưu ý quan trọng',
+                          'profile.updateFaceProfile.importantNote'.tr(),
                           style: Theme.of(context).textTheme.titleSmall?.copyWith(
                                 fontWeight: FontWeight.bold,
                                 color: Colors.orange.shade900,
@@ -189,7 +190,7 @@ class _UpdateFaceProfilePageState extends State<UpdateFaceProfilePage> {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          'Yêu cầu cập nhật khuôn mặt của bạn sẽ được gửi đến HR để duyệt. Bạn chỉ có thể sử dụng khuôn mặt mới sau khi được HR phê duyệt.',
+                          'profile.updateFaceProfile.importantNoteMessage'.tr(),
                           style: Theme.of(context).textTheme.bodySmall?.copyWith(
                                 color: Colors.orange.shade800,
                               ),
@@ -205,7 +206,7 @@ class _UpdateFaceProfilePageState extends State<UpdateFaceProfilePage> {
             // Preview ảnh đã chụp
             if (_previewUrl != null) ...[
               Text(
-                'Ảnh đã chụp',
+                'profile.updateFaceProfile.capturedImage'.tr(),
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w600,
                       color: colorScheme.onSurface,
@@ -252,7 +253,7 @@ class _UpdateFaceProfilePageState extends State<UpdateFaceProfilePage> {
                         Icon(Icons.camera_alt_rounded, color: colorScheme.primary),
                         const SizedBox(width: 12),
                         Text(
-                          'Hướng dẫn chụp ảnh',
+                          'profile.updateFaceProfile.instructions.title'.tr(),
                           style: Theme.of(context).textTheme.titleMedium?.copyWith(
                                 fontWeight: FontWeight.w600,
                                 color: colorScheme.onSurface,
@@ -264,29 +265,29 @@ class _UpdateFaceProfilePageState extends State<UpdateFaceProfilePage> {
                     _buildInstructionItem(
                       context,
                       Icons.light_mode_outlined,
-                      'Đảm bảo ánh sáng đủ',
-                      'Chụp ở nơi có ánh sáng tốt, tránh ánh sáng quá mạnh hoặc quá tối',
+                      'profile.updateFaceProfile.instructions.lighting.title'.tr(),
+                      'profile.updateFaceProfile.instructions.lighting.description'.tr(),
                     ),
                     const SizedBox(height: 12),
                     _buildInstructionItem(
                       context,
                       Icons.face_outlined,
-                      'Nhìn thẳng vào camera',
-                      'Giữ khuôn mặt thẳng, nhìn trực tiếp vào camera, không nghiêng đầu',
+                      'profile.updateFaceProfile.instructions.faceStraight.title'.tr(),
+                      'profile.updateFaceProfile.instructions.faceStraight.description'.tr(),
                     ),
                     const SizedBox(height: 12),
                     _buildInstructionItem(
                       context,
                       Icons.visibility_outlined,
-                      'Khuôn mặt rõ ràng',
-                      'Đảm bảo khuôn mặt không bị che bởi khẩu trang, kính râm, hoặc vật dụng khác',
+                      'profile.updateFaceProfile.instructions.faceClear.title'.tr(),
+                      'profile.updateFaceProfile.instructions.faceClear.description'.tr(),
                     ),
                     const SizedBox(height: 12),
                     _buildInstructionItem(
                       context,
                       Icons.straighten_outlined,
-                      'Giữ khoảng cách phù hợp',
-                      'Đưa khuôn mặt vào đúng vùng hướng dẫn trên màn hình',
+                      'profile.updateFaceProfile.instructions.distance.title'.tr(),
+                      'profile.updateFaceProfile.instructions.distance.description'.tr(),
                     ),
                   ],
                 ),
@@ -307,7 +308,9 @@ class _UpdateFaceProfilePageState extends State<UpdateFaceProfilePage> {
                       ),
                     )
                   : const Icon(Icons.camera_alt_rounded),
-              label: Text(_capturedImage == null ? 'Chụp ảnh khuôn mặt' : 'Chụp lại ảnh'),
+              label: Text(_capturedImage == null 
+                  ? 'profile.updateFaceProfile.buttons.capture'.tr() 
+                  : 'profile.updateFaceProfile.buttons.captureAgain'.tr()),
               style: FilledButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -329,7 +332,9 @@ class _UpdateFaceProfilePageState extends State<UpdateFaceProfilePage> {
                         ),
                       )
                     : const Icon(Icons.send_rounded),
-                label: Text(_isUploading ? 'Đang gửi yêu cầu...' : 'Gửi yêu cầu cập nhật'),
+                label: Text(_isUploading 
+                    ? 'profile.updateFaceProfile.buttons.submitting'.tr() 
+                    : 'profile.updateFaceProfile.buttons.submit'.tr()),
                 style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),

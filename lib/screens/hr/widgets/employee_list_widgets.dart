@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 /// Helper functions cho employee widgets
@@ -68,7 +69,7 @@ class EmployeeEmptyState extends StatelessWidget {
           ),
           const SizedBox(height: 20),
           Text(
-            'Không có dữ liệu',
+            'hr.common.noData'.tr(),
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w700,
@@ -77,7 +78,7 @@ class EmployeeEmptyState extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            'Thử thay đổi bộ lọc để tìm kiếm',
+            'hr.employees.emptyState'.tr(),
             style: TextStyle(
               fontSize: 14, 
               color: isDark ? Colors.grey[400] : Colors.grey[600],
@@ -148,7 +149,7 @@ class EmployeeStatusChip extends StatelessWidget {
           ),
           const SizedBox(width: 8),
           Text(
-            active ? 'Active' : 'Locked',
+            active ? 'hr.common.active'.tr() : 'hr.common.inactive'.tr(),
             style: TextStyle(
               color: color,
               fontSize: 12,
@@ -177,7 +178,7 @@ class EmployeeCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final active = employee['active'] ?? employee['isActive'] ?? true;
-    final name = employee['fullName'] ?? 'Nhân viên';
+    final name = employee['fullName'] ?? 'hr.common.employee'.tr();
     final code = employee['code'] ?? employee['employeeCode'] ?? '';
     final role = employee['roleName'] ?? '';
     final email = employee['email'] ?? '';
@@ -388,7 +389,7 @@ class EmployeeCard extends StatelessWidget {
                                       ),
                                       const SizedBox(width: 4),
                                       Text(
-                                        active == true ? 'Khoá' : 'Mở',
+                                        active == true ? 'hr.common.inactive'.tr() : 'hr.common.active'.tr(),
                                         style: TextStyle(
                                           fontSize: 12,
                                           fontWeight: FontWeight.w700,
@@ -472,7 +473,7 @@ class EmployeeFilterDropdown extends StatelessWidget {
         DropdownMenuItem(
           value: null,
           child: Text(
-            'Tất cả', 
+            'hr.common.all'.tr(), 
             overflow: TextOverflow.ellipsis,
             style: TextStyle(color: isDark ? Colors.white : const Color(0xFF1E293B)),
           ),
@@ -495,7 +496,7 @@ class EmployeeFilterDropdown extends StatelessWidget {
         final isDark = Theme.of(context).brightness == Brightness.dark;
         return [
           Text(
-            'Tất cả', 
+            'hr.common.all'.tr(), 
             overflow: TextOverflow.ellipsis,
             style: TextStyle(color: isDark ? Colors.white : const Color(0xFF1E293B)),
           ),

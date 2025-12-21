@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'common/hr_app_bar.dart';
@@ -239,7 +240,7 @@ class _EmployeeListPageState extends State<EmployeeListPage> {
     if (id == null) return;
     try {
       await _hr.toggleEmployeeStatus(employeeId: int.parse(id.toString()), isActive: target, reason: 'Mobile toggle');
-      Fluttertoast.showToast(msg: 'Đã cập nhật trạng thái');
+      Fluttertoast.showToast(msg: 'hr.employees.statusUpdated'.tr());
       _load();
     } catch (e) {
       Fluttertoast.showToast(msg: e.toString());
@@ -258,7 +259,7 @@ class _EmployeeListPageState extends State<EmployeeListPage> {
     return Scaffold(
       appBar: HrAppBar(
         context: context,
-        titleText: 'Nhân viên (HR)',
+        titleText: 'hr.employees.title'.tr(),
         onRefresh: _loading ? null : () => _load(page: 0),
       ),
       body: RefreshIndicator(
@@ -298,7 +299,7 @@ class _EmployeeListPageState extends State<EmployeeListPage> {
             ),
             const SizedBox(height: 24),
             Text(
-              'Đang tải...',
+              'hr.common.loading'.tr(),
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
@@ -345,7 +346,7 @@ class _EmployeeListPageState extends State<EmployeeListPage> {
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    'Tổng: $_totalElements nhân viên',
+                    'hr.employees.totalEmployees'.tr(namedArgs: {'count': _totalElements.toString()}),
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w700,
@@ -383,7 +384,7 @@ class _EmployeeListPageState extends State<EmployeeListPage> {
                       color: isDark ? const Color(0xFF7C3AED) : const Color(0xFF6D28D9),
                     ),
                     label: Text(
-                      'Tải thêm',
+                      'hr.common.loadMore'.tr(),
                       style: TextStyle(
                         fontSize: 15, 
                         fontWeight: FontWeight.w600,
@@ -493,7 +494,7 @@ class _EmployeeListPageState extends State<EmployeeListPage> {
                   letterSpacing: 0.3,
                 ),
                 decoration: InputDecoration(
-                  hintText: 'Tìm kiếm tên/mã',
+                  hintText: 'hr.employees.searchPlaceholder'.tr(),
                   hintStyle: TextStyle(
                     color: isDark ? Colors.grey[400] : Colors.grey[500], 
                     fontSize: 15, 
@@ -554,7 +555,7 @@ class _EmployeeListPageState extends State<EmployeeListPage> {
               children: [
                 Expanded(
                   child: EmployeeFilterDropdown(
-                    label: 'Clinic',
+                    label: 'hr.common.clinic'.tr(),
                     value: _clinicId,
                     data: _clinics,
                     onChanged: (v) => setState(() => _clinicId = v),
@@ -563,7 +564,7 @@ class _EmployeeListPageState extends State<EmployeeListPage> {
                 const SizedBox(width: 14),
                 Expanded(
                   child: EmployeeFilterDropdown(
-                    label: 'Dept',
+                    label: 'hr.common.department'.tr(),
                     value: _departmentId,
                     data: _departments,
                     onChanged: (v) => setState(() => _departmentId = v),
@@ -576,7 +577,7 @@ class _EmployeeListPageState extends State<EmployeeListPage> {
               children: [
                 Expanded(
                   child: EmployeeFilterDropdown(
-                    label: 'Role',
+                    label: 'hr.common.role'.tr(),
                     value: _roleId,
                     data: _roles,
                     onChanged: (v) {
@@ -603,7 +604,7 @@ class _EmployeeListPageState extends State<EmployeeListPage> {
                       value: _statusFilter,
                       isExpanded: true,
                       decoration: InputDecoration(
-                        labelText: 'Trạng thái',
+                        labelText: 'hr.common.status'.tr(),
                         labelStyle: TextStyle(
                           color: isDark ? Colors.grey[300] : Colors.grey[700], 
                           fontSize: 13,
@@ -626,29 +627,29 @@ class _EmployeeListPageState extends State<EmployeeListPage> {
                         color: isDark ? Colors.grey[400] : Colors.grey[600],
                         size: 22,
                       ),
-                      items: const [
+                      items: [
                         DropdownMenuItem(
                           value: "all",
-                          child: Text('Tất cả', overflow: TextOverflow.ellipsis, maxLines: 1, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+                          child: Text('hr.common.all'.tr(), overflow: TextOverflow.ellipsis, maxLines: 1, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
                         ),
                         DropdownMenuItem(
                           value: "active",
-                          child: Text('Hoạt động', overflow: TextOverflow.ellipsis, maxLines: 1, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+                          child: Text('hr.common.active'.tr(), overflow: TextOverflow.ellipsis, maxLines: 1, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
                         ),
                         DropdownMenuItem(
                           value: "inactive",
-                          child: Text('Đã khóa', overflow: TextOverflow.ellipsis, maxLines: 1, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+                          child: Text('hr.common.inactive'.tr(), overflow: TextOverflow.ellipsis, maxLines: 1, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
                         ),
                         DropdownMenuItem(
                           value: "resignation",
-                          child: Text('Nghỉ việc', overflow: TextOverflow.ellipsis, maxLines: 1, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+                          child: Text('hr.common.resignation'.tr(), overflow: TextOverflow.ellipsis, maxLines: 1, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
                         ),
                       ],
-                      selectedItemBuilder: (context) => const [
-                        Text('Tất cả', overflow: TextOverflow.ellipsis, maxLines: 1, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
-                        Text('Hoạt động', overflow: TextOverflow.ellipsis, maxLines: 1, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
-                        Text('Đã khóa', overflow: TextOverflow.ellipsis, maxLines: 1, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
-                        Text('Nghỉ việc', overflow: TextOverflow.ellipsis, maxLines: 1, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+                      selectedItemBuilder: (context) => [
+                        Text('hr.common.all'.tr(), overflow: TextOverflow.ellipsis, maxLines: 1, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+                        Text('hr.common.active'.tr(), overflow: TextOverflow.ellipsis, maxLines: 1, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+                        Text('hr.common.inactive'.tr(), overflow: TextOverflow.ellipsis, maxLines: 1, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+                        Text('hr.common.resignation'.tr(), overflow: TextOverflow.ellipsis, maxLines: 1, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
                       ],
                       onChanged: (v) {
                         if (v != null) {
@@ -697,6 +698,7 @@ class _EmployeeListPageState extends State<EmployeeListPage> {
                           alignment: Alignment.center,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.min,
                             children: [
                               Icon(
                                 Icons.refresh_rounded,
@@ -704,12 +706,15 @@ class _EmployeeListPageState extends State<EmployeeListPage> {
                                 color: isDark ? Colors.grey[300] : const Color(0xFF64748B),
                               ),
                               const SizedBox(width: 8),
-                              Text(
-                                'Reset',
-                                style: TextStyle(
-                                  fontSize: 15, 
-                                  fontWeight: FontWeight.w700, 
-                                  color: isDark ? Colors.grey[300] : const Color(0xFF64748B),
+                              Flexible(
+                                child: Text(
+                                  'hr.common.reset'.tr(),
+                                  style: TextStyle(
+                                    fontSize: 15, 
+                                    fontWeight: FontWeight.w700, 
+                                    color: isDark ? Colors.grey[300] : const Color(0xFF64748B),
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
                             ],
@@ -748,12 +753,12 @@ class _EmployeeListPageState extends State<EmployeeListPage> {
                           alignment: Alignment.center,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
-                            children: const [
-                              Icon(Icons.filter_alt_rounded, size: 20, color: Colors.white),
-                              SizedBox(width: 8),
+                            children: [
+                              const Icon(Icons.filter_alt_rounded, size: 20, color: Colors.white),
+                              const SizedBox(width: 8),
                               Text(
-                                'Lọc',
-                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: Colors.white, letterSpacing: 0.5),
+                                'hr.common.filter'.tr(),
+                                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: Colors.white, letterSpacing: 0.5),
                               ),
                             ],
                           ),

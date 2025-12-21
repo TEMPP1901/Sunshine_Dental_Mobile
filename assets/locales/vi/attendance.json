@@ -72,12 +72,7 @@
   },
   "explanation": {
     "title": "Cần giải trình chấm công",
-    "typeLate": "Đi trễ",
-    "typeAbsent": "Vắng mặt",
-    "typeMissingCheckIn": "Thiếu chấm công vào",
     "typeMissingCheckOut": "Thiếu chấm công ra",
-    "late": "Đi trễ",
-    "earlyLeave": "Về sớm",
     "submit": "Gửi",
     "date": "Ngày: {date}",
     "attendanceStatus": "Trạng thái: {status}",

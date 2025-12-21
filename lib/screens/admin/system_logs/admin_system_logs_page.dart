@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -66,7 +67,10 @@ class _AdminSystemLogsPageState extends State<AdminSystemLogsPage> {
       // Nếu đã load đến giới hạn, thông báo
       if (currentPage >= maxPages && totalPages > maxPages) {
         Fluttertoast.showToast(
-          msg: 'Đã tải ${allLogs.length} logs gần nhất. Có thêm ${(totalPages - maxPages) * _pageSize} logs cũ hơn.',
+          msg: 'admin.systemLogs.loadedLogs'.tr(namedArgs: {
+            'count': '${allLogs.length}',
+            'older': '${(totalPages - maxPages) * _pageSize}'
+          }),
           toastLength: Toast.LENGTH_LONG,
         );
       }
@@ -80,7 +84,7 @@ class _AdminSystemLogsPageState extends State<AdminSystemLogsPage> {
       });
     } catch (e) {
       setState(() => _isLoading = false);
-      Fluttertoast.showToast(msg: 'Không thể tải dữ liệu: $e');
+      Fluttertoast.showToast(msg: 'admin.systemLogs.error.loadFailed'.tr(args: [e.toString()]));
     }
   }
 
@@ -175,9 +179,9 @@ class _AdminSystemLogsPageState extends State<AdminSystemLogsPage> {
           icon: const Icon(Icons.arrow_back_ios_new_rounded),
           onPressed: () => context.canPop() ? context.pop() : context.go('/admin'),
         ),
-        title: const Text(
-          'Nhật ký hệ thống',
-          style: TextStyle(
+        title: Text(
+          'admin.systemLogs.title'.tr(),
+          style: const TextStyle(
             fontWeight: FontWeight.w700,
             letterSpacing: -0.5,
           ),
@@ -264,7 +268,7 @@ class _AdminSystemLogsPageState extends State<AdminSystemLogsPage> {
                               child: Text(
                                 _selectedDate != null
                                     ? DateFormat('dd/MM/yyyy').format(_selectedDate!)
-                                    : 'Chọn ngày',
+                                    : 'admin.systemLogs.selectDate'.tr(),
                                 style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: _selectedDate != null 
@@ -317,7 +321,7 @@ class _AdminSystemLogsPageState extends State<AdminSystemLogsPage> {
                       fontWeight: FontWeight.w500,
                     ),
                     decoration: InputDecoration(
-                      hintText: 'Tìm kiếm...',
+                      hintText: 'admin.systemLogs.search'.tr(),
                       hintStyle: TextStyle(
                         color: colorScheme.onSurfaceVariant.withOpacity(0.5),
                         fontSize: 13,
@@ -409,7 +413,7 @@ class _AdminSystemLogsPageState extends State<AdminSystemLogsPage> {
                             ),
                             const SizedBox(height: 16),
                             Text(
-                              'Không có nhật ký',
+                              'admin.systemLogs.noLogs'.tr(),
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
@@ -419,8 +423,8 @@ class _AdminSystemLogsPageState extends State<AdminSystemLogsPage> {
                             const SizedBox(height: 8),
                             Text(
                               _selectedDate != null
-                                  ? 'Không có hoạt động nào vào ngày ${DateFormat('dd/MM/yyyy').format(_selectedDate!)}'
-                                  : 'Chưa có hoạt động nào được ghi lại',
+                                  ? 'admin.systemLogs.noActivityForDate'.tr(args: [DateFormat('dd/MM/yyyy').format(_selectedDate!)])
+                                  : 'admin.systemLogs.noActivityRecorded'.tr(),
                               style: TextStyle(
                                 fontSize: 14,
                                 color: colorScheme.onSurfaceVariant.withOpacity(0.7),
@@ -484,7 +488,7 @@ class _AdminSystemLogsPageState extends State<AdminSystemLogsPage> {
             ),
             const SizedBox(height: 16),
             Text(
-              'Không tìm thấy kết quả',
+              'admin.systemLogs.noResults'.tr(),
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
@@ -493,7 +497,7 @@ class _AdminSystemLogsPageState extends State<AdminSystemLogsPage> {
             ),
             const SizedBox(height: 8),
             Text(
-              'Thử tìm kiếm với từ khóa khác',
+              'admin.systemLogs.tryDifferentKeyword'.tr(),
               style: TextStyle(
                 fontSize: 14,
                 color: colorScheme.onSurfaceVariant.withOpacity(0.7),
@@ -560,9 +564,9 @@ class _DateHeader extends StatelessWidget {
     
     String dateText;
     if (dateOnly == today) {
-      dateText = 'Hôm nay';
+      dateText = 'admin.systemLogs.today'.tr();
     } else if (dateOnly == yesterday) {
-      dateText = 'Hôm qua';
+      dateText = 'admin.systemLogs.yesterday'.tr();
     } else {
       dateText = DateFormat('EEEE, dd/MM/yyyy', 'vi').format(date);
       // Capitalize first letter
@@ -803,7 +807,7 @@ class _LogCard extends StatelessWidget {
                   _InfoChip(
                     icon: Icons.person_outline_rounded,
                     label: log['user']['username']?.toString() ?? 
-                           log['user']['fullName']?.toString() ?? 'User',
+                           log['user']['fullName']?.toString() ?? 'admin.common.user'.tr(),
                     isDark: isDark,
                   ),
                 if (log['action'] != null)
@@ -821,7 +825,7 @@ class _LogCard extends StatelessWidget {
                 if (log['recordId'] != null)
                   _InfoChip(
                     icon: Icons.tag_rounded,
-                    label: 'ID: ${log['recordId']}',
+                    label: 'admin.systemLogs.recordId'.tr(namedArgs: {'id': '${log['recordId']}'}),
                     isDark: isDark,
                   ),
               ],
@@ -844,7 +848,7 @@ class _LogCard extends StatelessWidget {
               if (log['ipAddr'] != null)
                 _InfoRow(
                   icon: Icons.language_rounded,
-                  label: 'IP: ${log['ipAddr']}',
+                  label: 'admin.systemLogs.ipAddress'.tr(namedArgs: {'ip': '${log['ipAddr']}'}),
                   isDark: isDark,
                 ),
               if (log['userAgent'] != null)

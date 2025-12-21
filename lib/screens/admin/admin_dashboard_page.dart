@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import '../../services/admin_service.dart';
 import '../hr/common/empty_error_state.dart';
@@ -107,7 +108,9 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                   const SizedBox(width: 16),
                   Expanded(
                     child: Text(
-                      action == 'APPROVE' ? 'Duyệt đơn xin nghỉ' : 'Từ chối đơn xin nghỉ',
+                      action == 'APPROVE' 
+                          ? 'admin.dashboard.approveLeaveRequest'.tr()
+                          : 'admin.dashboard.rejectLeaveRequest'.tr(),
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w800,
@@ -123,8 +126,8 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                 controller: noteController,
                 maxLines: 3,
                 decoration: InputDecoration(
-                  labelText: 'Ghi chú (tùy chọn)',
-                  hintText: 'Nhập ghi chú nếu có...',
+                  labelText: 'admin.dashboard.noteOptional'.tr(),
+                  hintText: 'admin.dashboard.enterNoteIfAny'.tr(),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -144,9 +147,9 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      child: const Text(
-                        'Hủy',
-                        style: TextStyle(fontWeight: FontWeight.w600),
+                      child: Text(
+                        'admin.dashboard.cancel'.tr(),
+                        style: const TextStyle(fontWeight: FontWeight.w600),
                       ),
                     ),
                   ),
@@ -187,7 +190,9 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                                 ),
                                 const SizedBox(width: 8),
                                 Text(
-                                  action == 'APPROVE' ? 'Duyệt' : 'Từ chối',
+                                  action == 'APPROVE' 
+                                      ? 'admin.dashboard.approve'.tr()
+                                      : 'admin.dashboard.reject'.tr(),
                                   style: const TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w800,
@@ -215,7 +220,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
 
     final leaveId = item['id'] ?? item['leaveRequestId'];
     if (leaveId == null) {
-      Fluttertoast.showToast(msg: 'Thiếu leaveRequestId');
+      Fluttertoast.showToast(msg: 'admin.dashboard.missingLeaveRequestId'.tr());
       return;
     }
 
@@ -225,7 +230,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
         action: action,
         comment: noteController.text,
       );
-      Fluttertoast.showToast(msg: 'Đã xử lý đơn nghỉ');
+      Fluttertoast.showToast(msg: 'admin.dashboard.leaveRequestProcessed'.tr());
       _loadLeaveRequests();
     } catch (e) {
       Fluttertoast.showToast(msg: e.toString());
@@ -246,9 +251,9 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
           icon: const Icon(Icons.arrow_back_ios_new_rounded),
           onPressed: () => _hasBack(context) ? context.pop() : context.go('/home'),
         ),
-        title: const Text(
-          'Duyệt đơn nghỉ',
-          style: TextStyle(
+        title: Text(
+          'admin.dashboard.title'.tr(),
+          style: const TextStyle(
             fontWeight: FontWeight.w700,
             letterSpacing: -0.5,
           ),
@@ -266,7 +271,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
         ),
       ),
       body: _LeaveTab(
-        title: 'Đơn nghỉ chờ Admin',
+        title: 'admin.dashboard.pendingLeaveRequests'.tr(),
         loading: _loadingLeave,
         error: _errorLeave,
         items: _pendingLeaveAdmin,

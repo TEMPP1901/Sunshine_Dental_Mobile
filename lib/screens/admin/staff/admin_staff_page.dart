@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -225,7 +226,7 @@ class _AdminStaffPageState extends State<AdminStaffPage> {
       setState(() => _isLoading = false);
       debugPrint('Error loading staff: $e');
       Fluttertoast.showToast(
-        msg: 'Không thể tải dữ liệu: ${e.toString()}',
+        msg: 'admin.staff.error.loadFailed'.tr(namedArgs: {'error': e.toString()}),
         toastLength: Toast.LENGTH_LONG,
       );
     }
@@ -245,9 +246,9 @@ class _AdminStaffPageState extends State<AdminStaffPage> {
           icon: const Icon(Icons.arrow_back_ios_new_rounded),
           onPressed: () => context.canPop() ? context.pop() : context.go('/admin'),
         ),
-        title: const Text(
-          'Quản lý nhân viên',
-          style: TextStyle(
+        title: Text(
+          'admin.staff.title'.tr(),
+          style: const TextStyle(
             fontWeight: FontWeight.w700,
             letterSpacing: -0.5,
           ),
@@ -289,7 +290,7 @@ class _AdminStaffPageState extends State<AdminStaffPage> {
               controller: _searchController,
               enabled: !_isLoading,
               decoration: InputDecoration(
-                hintText: 'Tìm kiếm theo tên, email, phone, code...',
+                hintText: 'admin.staff.searchPlaceholder'.tr(),
                 prefixIcon: Icon(
                   Icons.search_rounded,
                   size: 20,
@@ -370,7 +371,7 @@ class _AdminStaffPageState extends State<AdminStaffPage> {
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    'Tổng: $_totalElements nhân viên',
+                    'admin.staff.totalStaff'.tr(namedArgs: {'count': '$_totalElements'}),
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
@@ -410,7 +411,7 @@ class _AdminStaffPageState extends State<AdminStaffPage> {
                             ),
                             const SizedBox(height: 20),
                             Text(
-                              'Không tìm thấy nhân viên',
+                              'admin.staff.notFound'.tr(),
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
@@ -420,8 +421,8 @@ class _AdminStaffPageState extends State<AdminStaffPage> {
                             const SizedBox(height: 8),
                             Text(
                               _searchController.text.isNotEmpty
-                                  ? 'Thử thay đổi từ khóa tìm kiếm'
-                                  : 'Danh sách nhân viên trống',
+                                  ? 'admin.staff.tryChangeSearch'.tr()
+                                  : 'admin.staff.emptyList'.tr(),
                               style: TextStyle(
                                 fontSize: 14,
                                 color: isDark ? Colors.grey[400] : Colors.grey[600],
@@ -624,7 +625,7 @@ class StaffCard extends StatelessWidget {
                             ),
                             const SizedBox(width: 4),
                             Text(
-                              'Mã: ${staff['code']}',
+                              'admin.staff.code'.tr(namedArgs: {'code': '${staff['code']}'}),
                               style: TextStyle(
                                 fontSize: 13,
                                 color: textSecondaryColor,
@@ -661,7 +662,7 @@ class StaffCard extends StatelessWidget {
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        isActive ? 'Hoạt động' : 'Không hoạt động',
+                        isActive ? 'admin.staff.active'.tr() : 'admin.staff.inactive'.tr(),
                         style: TextStyle(
                           color: isActive ? const Color(0xFF10B981) : Colors.red,
                           fontWeight: FontWeight.w700,
@@ -695,7 +696,7 @@ class StaffCard extends StatelessWidget {
                     StaffInfoRow(
                       icon: Icons.email_rounded,
                       iconColor: const Color(0xFF3B82F6),
-                      label: 'Email',
+                      label: 'admin.staff.email'.tr(),
                       value: staff['email'].toString(),
                       isDark: isDark,
                     ),
@@ -704,7 +705,7 @@ class StaffCard extends StatelessWidget {
                     StaffInfoRow(
                       icon: Icons.phone_rounded,
                       iconColor: const Color(0xFF8B5CF6),
-                      label: 'Số điện thoại',
+                      label: 'admin.staff.phone'.tr(),
                       value: staff['phone'].toString(),
                       isDark: isDark,
                     ),
@@ -714,7 +715,7 @@ class StaffCard extends StatelessWidget {
                     StaffInfoRow(
                       icon: Icons.badge_rounded,
                       iconColor: const Color(0xFF10B981),
-                      label: 'Vai trò',
+                      label: 'admin.staff.role'.tr(),
                       value: (staff['roles'] as List).map((r) {
                         try {
                           if (r is Map<String, dynamic>) {
@@ -735,7 +736,7 @@ class StaffCard extends StatelessWidget {
                     StaffInfoRow(
                       icon: Icons.business_rounded,
                       iconColor: const Color(0xFFF59E0B),
-                      label: 'Phòng ban',
+                      label: 'admin.staff.department'.tr(),
                       value: staff['departmentName'].toString(),
                       isDark: isDark,
                     ),
@@ -745,7 +746,7 @@ class StaffCard extends StatelessWidget {
                     StaffInfoRow(
                       icon: Icons.local_hospital_rounded,
                       iconColor: const Color(0xFFEF4444),
-                      label: 'Phòng khám',
+                      label: 'admin.common.clinic'.tr(),
                       value: (staff['clinics'] as List).map((c) {
                         try {
                           if (c is Map<String, dynamic>) {

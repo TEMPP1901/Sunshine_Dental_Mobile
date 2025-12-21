@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -55,7 +56,7 @@ class _AdminAttendancePageState extends State<AdminAttendancePage> {
       debugPrint('Error loading clinics: $e');
       debugPrint('Error stack: ${e.toString()}');
       Fluttertoast.showToast(
-        msg: 'Không tải được danh sách phòng khám: ${e.toString()}',
+        msg: 'admin.attendance.error.loadClinicsFailed'.tr(args: [e.toString()]),
         toastLength: Toast.LENGTH_LONG,
       );
     }
@@ -103,7 +104,7 @@ class _AdminAttendancePageState extends State<AdminAttendancePage> {
         DateFormat('yyyy-MM-dd').parseStrict(_dateController.text);
       } catch (e) {
         Fluttertoast.showToast(
-          msg: 'Định dạng ngày không hợp lệ. Vui lòng nhập theo định dạng yyyy-MM-dd',
+          msg: 'admin.attendance.error.invalidDateFormat'.tr(),
           toastLength: Toast.LENGTH_LONG,
         );
         return;
@@ -150,7 +151,7 @@ class _AdminAttendancePageState extends State<AdminAttendancePage> {
       final errorMsg = e.toString().replaceFirst('Exception: ', '');
       debugPrint('Error loading attendance: $errorMsg');
       Fluttertoast.showToast(
-        msg: 'Không thể tải dữ liệu: $errorMsg',
+        msg: 'admin.attendance.error.loadFailed'.tr(args: [errorMsg]),
         toastLength: Toast.LENGTH_LONG,
       );
     }
@@ -234,7 +235,7 @@ class _AdminAttendancePageState extends State<AdminAttendancePage> {
                   const SizedBox(width: 16),
                   Expanded(
                     child: Text(
-                      'Cập nhật trạng thái',
+                      'admin.attendance.updateStatus'.tr(),
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w800,
@@ -259,7 +260,7 @@ class _AdminAttendancePageState extends State<AdminAttendancePage> {
                 child: Row(
                   children: [
                     Text(
-                      'Trạng thái mới: ',
+                      'admin.attendance.newStatus'.tr(),
                       style: TextStyle(
                         color: isDark ? Colors.grey[300] : Colors.grey[700],
                         fontWeight: FontWeight.w500,
@@ -280,8 +281,8 @@ class _AdminAttendancePageState extends State<AdminAttendancePage> {
               TextField(
                 controller: noteController,
                 decoration: InputDecoration(
-                  labelText: 'Ghi chú (tùy chọn)',
-                  hintText: 'Nhập ghi chú nếu có...',
+                  labelText: 'admin.attendance.note'.tr(),
+                  hintText: 'admin.attendance.noteHint'.tr(),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -302,9 +303,9 @@ class _AdminAttendancePageState extends State<AdminAttendancePage> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      child: const Text(
-                        'Hủy',
-                        style: TextStyle(fontWeight: FontWeight.w600),
+                      child: Text(
+                        'admin.common.cancel'.tr(),
+                        style: const TextStyle(fontWeight: FontWeight.w600),
                       ),
                     ),
                   ),
@@ -344,8 +345,8 @@ class _AdminAttendancePageState extends State<AdminAttendancePage> {
                                   size: 20,
                                 ),
                                 const SizedBox(width: 8),
-                                const Text(
-                                  'Cập nhật',
+                                Text(
+                                  'admin.attendance.update'.tr(),
                                   style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w800,
@@ -376,10 +377,10 @@ class _AdminAttendancePageState extends State<AdminAttendancePage> {
         newStatus: newStatus,
         adminNote: noteController.text,
       );
-      Fluttertoast.showToast(msg: 'Đã cập nhật trạng thái');
+      Fluttertoast.showToast(msg: 'admin.attendance.statusUpdated'.tr());
       _loadAttendance();
     } catch (e) {
-      Fluttertoast.showToast(msg: 'Lỗi: $e');
+      Fluttertoast.showToast(msg: '${'admin.common.error'.tr()}: $e');
     }
   }
 
@@ -397,8 +398,8 @@ class _AdminAttendancePageState extends State<AdminAttendancePage> {
           icon: const Icon(Icons.arrow_back_ios_new_rounded),
           onPressed: () => context.canPop() ? context.pop() : context.go('/admin'),
         ),
-        title: const Text(
-          'Chấm công',
+        title: Text(
+          'admin.attendance.title'.tr(),
           style: TextStyle(
             fontWeight: FontWeight.w700,
             letterSpacing: -0.5,
@@ -449,8 +450,8 @@ class _AdminAttendancePageState extends State<AdminAttendancePage> {
                         borderRadius: BorderRadius.circular(10),
                         child: InputDecorator(
                           decoration: InputDecoration(
-                            labelText: 'Ngày',
-                            hintText: 'Chọn ngày',
+                            labelText: 'admin.attendance.date'.tr(),
+                            hintText: 'admin.attendance.selectDate'.tr(),
                             prefixIcon: Icon(
                               Icons.calendar_today_rounded,
                               size: 20,
@@ -492,7 +493,7 @@ class _AdminAttendancePageState extends State<AdminAttendancePage> {
                           child: Text(
                             _dateController.text.isNotEmpty
                                 ? _dateController.text
-                                : 'Chọn ngày',
+                                : 'admin.attendance.selectDate'.tr(),
                             style: TextStyle(
                               fontSize: 14,
                               color: _dateController.text.isNotEmpty
@@ -509,8 +510,8 @@ class _AdminAttendancePageState extends State<AdminAttendancePage> {
                         value: _selectedClinicId,
                         isExpanded: true,
                         decoration: InputDecoration(
-                          labelText: 'Phòng khám',
-                          hintText: 'Chọn phòng khám',
+                          labelText: 'admin.common.clinic'.tr(),
+                          hintText: 'admin.attendance.selectClinic'.tr(),
                           prefixIcon: Icon(
                             Icons.business_rounded,
                             size: 20,
@@ -558,7 +559,7 @@ class _AdminAttendancePageState extends State<AdminAttendancePage> {
                                 DropdownMenuItem<int>(
                                   value: null,
                                   child: Text(
-                                    'Đang tải...',
+                                    'admin.common.loading'.tr(),
                                     style: TextStyle(
                                       color: isDark ? Colors.grey[400] : Colors.grey[600],
                                     ),
@@ -569,7 +570,7 @@ class _AdminAttendancePageState extends State<AdminAttendancePage> {
                                 DropdownMenuItem<int>(
                                   value: null,
                                   child: Text(
-                                    'Tất cả phòng khám',
+                                    'admin.attendance.allClinics'.tr(),
                                     style: TextStyle(
                                       color: isDark ? Colors.grey[400] : Colors.grey[600],
                                     ),
@@ -582,7 +583,7 @@ class _AdminAttendancePageState extends State<AdminAttendancePage> {
                                   final clinicName = clinic['clinicName']?.toString() ?? 
                                                    clinic['name']?.toString() ??
                                                    clinic['clinicCode']?.toString() ??
-                                                   'Phòng khám ${clinicId ?? ''}';
+                                                   'admin.attendance.clinicName'.tr(namedArgs: {'id': '${clinicId ?? ''}'});
                                   debugPrint('Clinic item: id=$clinicId, name=$clinicName, fullData=$clinic');
                                   // Xử lý clinicId có thể là int hoặc dynamic
                                   final int? clinicIdInt = clinicId is int 
@@ -619,7 +620,7 @@ class _AdminAttendancePageState extends State<AdminAttendancePage> {
                 const SizedBox(height: 10),
                 // Status filter
                 Text(
-                  'Trạng thái:',
+                  'admin.attendance.status'.tr(),
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
@@ -632,7 +633,7 @@ class _AdminAttendancePageState extends State<AdminAttendancePage> {
                   runSpacing: 6,
                   children: [
                     AttendanceFilterChip(
-                      label: 'Tất cả',
+                      label: 'admin.common.all'.tr(),
                       selected: _selectedStatus == null,
                       disabled: _isLoading,
                       onTap: () {
@@ -644,7 +645,7 @@ class _AdminAttendancePageState extends State<AdminAttendancePage> {
                       },
                     ),
                     AttendanceFilterChip(
-                      label: 'PRESENT',
+                      label: 'admin.attendance.statusOptions.present'.tr(),
                       selected: _selectedStatus == 'PRESENT',
                       disabled: _isLoading,
                       onTap: () {
@@ -656,7 +657,7 @@ class _AdminAttendancePageState extends State<AdminAttendancePage> {
                       },
                     ),
                     AttendanceFilterChip(
-                      label: 'LATE',
+                      label: 'admin.attendance.statusOptions.late'.tr(),
                       selected: _selectedStatus == 'LATE',
                       disabled: _isLoading,
                       onTap: () {
@@ -668,7 +669,7 @@ class _AdminAttendancePageState extends State<AdminAttendancePage> {
                       },
                     ),
                     AttendanceFilterChip(
-                      label: 'ABSENT',
+                      label: 'admin.attendance.statusOptions.absent'.tr(),
                       selected: _selectedStatus == 'ABSENT',
                       disabled: _isLoading,
                       onTap: () {
@@ -710,7 +711,7 @@ class _AdminAttendancePageState extends State<AdminAttendancePage> {
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    'Tìm thấy ${_attendanceList.length} kết quả',
+                    'admin.attendance.foundResults'.tr(namedArgs: {'count': '${_attendanceList.length}'}),
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
@@ -750,7 +751,7 @@ class _AdminAttendancePageState extends State<AdminAttendancePage> {
                             ),
                             const SizedBox(height: 20),
                             Text(
-                              'Không có dữ liệu chấm công',
+                              'admin.attendance.noData'.tr(),
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
@@ -759,7 +760,7 @@ class _AdminAttendancePageState extends State<AdminAttendancePage> {
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              'Thử thay đổi bộ lọc để tìm kiếm',
+                              'admin.attendance.tryChangeFilters'.tr(),
                               style: TextStyle(
                                 fontSize: 14,
                                 color: isDark ? Colors.grey[400] : Colors.grey[600],

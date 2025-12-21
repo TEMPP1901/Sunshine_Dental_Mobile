@@ -482,9 +482,9 @@ class _MyAccountPageState extends State<MyAccountPage> {
     return OutlinedButton.icon(
       onPressed: () => context.push('/update-face-profile'),
       icon: const Icon(Icons.face_retouching_natural_rounded, size: 20),
-      label: const Text(
-        'Cập nhật khuôn mặt chấm công',
-        style: TextStyle(
+      label: Text(
+        'profile.updateFaceProfile.title'.tr(),
+        style: const TextStyle(
           fontSize: 15,
           fontWeight: FontWeight.w600,
           letterSpacing: 0.2,

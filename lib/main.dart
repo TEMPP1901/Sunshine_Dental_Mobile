@@ -91,6 +91,8 @@ class MultiAssetLoader extends AssetLoader {
       'onboarding',
       'splash',
       'web',
+      'admin',
+      'hr',
     ];
 
     // Lần lượt đọc từng file và merge vào map chính
@@ -101,7 +103,10 @@ class MultiAssetLoader extends AssetLoader {
         );
         final Map<String, dynamic> jsonData = json.decode(jsonString);
         merged[file] = jsonData;
+        debugPrint('[MultiAssetLoader] Loaded: $file.json for ${locale.languageCode}');
       } catch (e) {
+        // Log lỗi để debug
+        debugPrint('[MultiAssetLoader] Failed to load $file.json for ${locale.languageCode}: $e');
         // Bỏ qua file không tồn tại
         continue;
       }

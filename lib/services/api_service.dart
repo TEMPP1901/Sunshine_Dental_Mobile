@@ -128,11 +128,36 @@ class ApiService {
           }
         }
         if (error.response?.statusCode == 401) {
-          // Khi token hết hạn/xảy ra lỗi xác thực thì xóa token ở local storage
-          final prefs = await SharedPreferences.getInstance();
-          await prefs.remove('accessToken');
-          await prefs.remove('user');
-          cachedToken = null;
+          // Kiểm tra xem 401 có phải do face verification failed không
+          // Nếu là face verification failed thì KHÔNG xóa token (chỉ báo lỗi)
+          final errorData = error.response?.data;
+          final errorType = errorData is Map 
+              ? errorData['error']?.toString().toLowerCase() 
+              : null;
+          final errorMessage = errorData is Map 
+              ? errorData['message']?.toString().toLowerCase() 
+              : null;
+          
+          final isFaceVerificationError = 
+              (errorType != null && errorType.contains('face verification')) ||
+              (errorMessage != null && errorMessage.contains('face verification')) ||
+              (errorMessage != null && errorMessage.contains('khuôn mặt'));
+          
+          if (!isFaceVerificationError) {
+            // Chỉ xóa token khi 401 là do token hết hạn/không hợp lệ (KHÔNG phải face verification)
+            if (enableLogging) {
+              debugPrint(' [ApiService] 401 Unauthorized - Token expired/invalid. Clearing auth data.');
+            }
+            final prefs = await SharedPreferences.getInstance();
+            await prefs.remove('accessToken');
+            await prefs.remove('user');
+            cachedToken = null;
+          } else {
+            // Face verification failed - giữ nguyên token, chỉ báo lỗi
+            if (enableLogging) {
+              debugPrint(' [ApiService] 401 Face Verification Failed - Keeping token.');
+            }
+          }
         }
         return handler.next(error);
       },

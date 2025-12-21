@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'attendance_info_row.dart';
@@ -133,7 +134,7 @@ class AttendanceCard extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        item['fullName'] ?? item['employeeName'] ?? item['userName'] ?? 'Nhân viên',
+                        item['fullName'] ?? item['employeeName'] ?? item['userName'] ?? 'admin.common.employee'.tr(),
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
@@ -156,7 +157,7 @@ class AttendanceCard extends StatelessWidget {
                                 item['jobTitle']?.toString() ?? 
                                 item['roleName']?.toString() ?? 
                                 (item['role'] is Map ? item['role']['roleName']?.toString() : item['role']?.toString()) ?? 
-                                'Nhân viên',
+                                'admin.common.employee'.tr(),
                                 style: TextStyle(
                                   fontSize: 13,
                                   color: textSecondaryColor,
@@ -173,12 +174,16 @@ class AttendanceCard extends StatelessWidget {
                               color: textSecondaryColor,
                             ),
                             const SizedBox(width: 4),
-                            Text(
-                              'ID: ${item['userId'] ?? item['employeeId'] ?? ''}',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: textSecondaryColor,
-                                fontWeight: FontWeight.w500,
+                            Flexible(
+                              child: Text(
+                                'admin.attendance.userId'.tr(namedArgs: {'id': '${item['userId'] ?? item['employeeId'] ?? ''}'}),
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: textSecondaryColor,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
                           ],
@@ -241,7 +246,7 @@ class AttendanceCard extends StatelessWidget {
                   AttendanceInfoRow(
                     icon: Icons.access_time_rounded,
                     iconColor: const Color(0xFF3B82F6),
-                    label: 'Check-in',
+                    label: 'admin.attendance.checkIn'.tr(),
                     value: _formatDateTime(item['checkInTime']?.toString() ?? item['checkIn']?.toString() ?? '--'),
                     isDark: isDark,
                   ),
@@ -249,7 +254,7 @@ class AttendanceCard extends StatelessWidget {
                   AttendanceInfoRow(
                     icon: Icons.logout_rounded,
                     iconColor: const Color(0xFF8B5CF6),
-                    label: 'Check-out',
+                    label: 'admin.attendance.checkOut'.tr(),
                     value: _formatDateTime(item['checkOutTime']?.toString() ?? item['checkOut']?.toString() ?? '--'),
                     isDark: isDark,
                   ),
@@ -258,7 +263,7 @@ class AttendanceCard extends StatelessWidget {
                     AttendanceInfoRow(
                       icon: Icons.business_rounded,
                       iconColor: const Color(0xFF10B981),
-                      label: 'Phòng khám',
+                      label: 'admin.common.clinic'.tr(),
                       value: item['clinicName']?.toString() ?? item['clinic']?.toString() ?? '--',
                       isDark: isDark,
                     ),
@@ -274,7 +279,7 @@ class AttendanceCard extends StatelessWidget {
                   children: [
                     Expanded(
                       child: AttendanceActionButton(
-                        label: 'PRESENT',
+                        label: 'admin.attendance.statusOptions.present'.tr(),
                         color: const Color(0xFF10B981),
                         icon: Icons.check_circle_rounded,
                         isDark: isDark,
@@ -284,7 +289,7 @@ class AttendanceCard extends StatelessWidget {
                     const SizedBox(width: 8),
                     Expanded(
                       child: AttendanceActionButton(
-                        label: 'LATE',
+                        label: 'admin.attendance.statusOptions.late'.tr(),
                         color: const Color(0xFFF59E0B),
                         icon: Icons.schedule_rounded,
                         isDark: isDark,
@@ -294,7 +299,7 @@ class AttendanceCard extends StatelessWidget {
                     const SizedBox(width: 8),
                     Expanded(
                       child: AttendanceActionButton(
-                        label: 'ABSENT',
+                        label: 'admin.attendance.statusOptions.absent'.tr(),
                         color: const Color(0xFFEF4444),
                         icon: Icons.cancel_rounded,
                         isDark: isDark,

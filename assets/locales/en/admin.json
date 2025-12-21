@@ -1,0 +1,137 @@
+{
+  "adminHub": "Admin Hub",
+  "features": "Features",
+  "comingSoon": "Coming soon",
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "cancel": "Cancel",
+    "all": "All",
+    "clinic": "Clinic",
+    "employee": "Employee",
+    "user": "User"
+  },
+  "dashboard": {
+    "title": "Approve Leave Requests",
+    "pendingLeaveRequests": "Leave Requests Pending Admin",
+    "approveLeaveRequest": "Approve Leave Request",
+    "rejectLeaveRequest": "Reject Leave Request",
+    "noteOptional": "Note (optional)",
+    "enterNoteIfAny": "Enter note if any...",
+    "approve": "Approve",
+    "reject": "Reject",
+    "cancel": "Cancel",
+    "missingLeaveRequestId": "Missing leaveRequestId",
+    "leaveRequestProcessed": "Leave request processed"
+  },
+  "shortcuts": {
+    "leaveRequests": {
+      "title": "Leave Requests",
+      "subtitle": "Approve leave requests"
+    },
+    "reports": {
+      "title": "Reports",
+      "subtitle": "Reports & Statistics"
+    },
+    "attendance": {
+      "title": "Attendance",
+      "subtitle": "Time tracking"
+    },
+    "staff": {
+      "title": "Staff",
+      "subtitle": "Staff management"
+    },
+    "systemLogs": {
+      "title": "System Logs",
+      "subtitle": "System logs"
+    }
+  },
+  "attendance": {
+    "title": "Attendance",
+    "date": "Date",
+    "selectDate": "Select date",
+    "selectClinic": "Select clinic",
+    "allClinics": "All clinics",
+    "status": "Status",
+    "newStatus": "New status: ",
+    "updateStatus": "Update status",
+    "update": "Update",
+    "statusUpdated": "Status updated",
+    "note": "Note (optional)",
+    "noteHint": "Enter note if any...",
+    "checkIn": "Check-in",
+    "checkOut": "Check-out",
+    "foundResults": "Found {count} results",
+    "noData": "No attendance data",
+    "tryChangeFilters": "Try changing filters to search",
+    "clinicName": "Clinic {id}",
+    "userId": "ID: {id}",
+    "statusOptions": {
+      "present": "Present",
+      "late": "Late",
+      "absent": "Absent"
+    },
+    "error": {
+      "loadClinicsFailed": "Failed to load clinics list: {error}",
+      "invalidDateFormat": "Invalid date format. Please enter in yyyy-MM-dd format",
+      "loadFailed": "Failed to load data: {error}"
+    }
+  },
+  "staff": {
+    "title": "Staff Management",
+    "searchPlaceholder": "Search by name, email, phone, code...",
+    "email": "Email",
+    "phone": "Phone",
+    "role": "Role",
+    "department": "Department",
+    "code": "Code: {code}",
+    "totalStaff": "Total: {count} staff",
+    "notFound": "Staff not found",
+    "tryChangeSearch": "Try changing search keyword",
+    "emptyList": "Staff list is empty",
+    "active": "Active",
+    "inactive": "Inactive",
+    "error": {
+      "loadFailed": "Failed to load data: {error}"
+    }
+  },
+  "reports": {
+    "title": "Reports & Statistics",
+    "revenue": "Revenue",
+    "thisMonth": "This month",
+    "profit": "Profit",
+    "appointments": "Appointments",
+    "cancelled": "Cancelled",
+    "staffAndPatients": "Staff & Patients",
+    "totalStaff": "Total staff",
+    "totalPatients": "Total patients",
+    "clinics": "Clinics",
+    "totalClinics": "Total clinics",
+    "inventoryAlerts": "Inventory Alerts",
+    "lowStock": "Low stock",
+    "outOfStock": "Out of stock",
+    "pendingActions": "Pending Actions",
+    "pendingLeaves": "Pending leaves",
+    "error": {
+      "loadFailed": "Failed to load data: {error}"
+    }
+  },
+  "systemLogs": {
+    "title": "System Logs",
+    "search": "Search...",
+    "selectDate": "Select date",
+    "noLogs": "No logs",
+    "noActivityForDate": "No activity on {date}",
+    "noActivityRecorded": "No activity recorded yet",
+    "noResults": "No results found",
+    "tryDifferentKeyword": "Try searching with different keyword",
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "recordId": "ID: {id}",
+    "ipAddress": "IP: {ip}",
+    "loadedLogs": "Loaded {count} recent logs. There are {older} older logs.",
+    "error": {
+      "loadFailed": "Failed to load data: {error}"
+    }
+  }
+}
