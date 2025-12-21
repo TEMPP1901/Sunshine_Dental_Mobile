@@ -182,13 +182,27 @@ class MedicalRecordDetailDialog extends StatelessWidget {
                           decoration: BoxDecoration(
                             border: Border.all(color: Colors.grey.shade200),
                           ),
-                          child: Image.network(
-                            ApiService.resolveUrl(record.imageUrl!),
-                            headers: ApiService.authHeaders(),
-                            width: double.infinity,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) =>
-                                Container(
+                          child: (record.imageUrl != null && 
+                                  record.imageUrl!.isNotEmpty &&
+                                  ApiService.resolveUrl(record.imageUrl!).isNotEmpty)
+                              ? Image.network(
+                                  ApiService.resolveUrl(record.imageUrl!),
+                                  headers: ApiService.authHeaders(),
+                                  width: double.infinity,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) =>
+                                      Container(
+                                        height: 150,
+                                        color: Colors.grey.shade100,
+                                        child: const Center(
+                                          child: Icon(
+                                            Icons.broken_image,
+                                            color: Colors.grey,
+                                          ),
+                                        ),
+                                      ),
+                                )
+                              : Container(
                                   height: 150,
                                   color: Colors.grey.shade100,
                                   child: const Center(
@@ -198,7 +212,6 @@ class MedicalRecordDetailDialog extends StatelessWidget {
                                     ),
                                   ),
                                 ),
-                          ),
                         ),
                       ),
                     ],

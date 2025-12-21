@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
 import '../../../providers/booking/booking_provider.dart';
 import '../../../services/booking/booking_api_service.dart';
 import '../../../models/booking/booking_models.dart';
@@ -98,19 +99,20 @@ class _StepServiceClinicState extends State<StepServiceClinic> {
             (service) => ExpansionTile(
               title: Text(service.serviceName),
               children: service.variants.map((variant) {
-                bool isSelected =
-                    provider.selectedServiceVariant?.variantId ==
-                    variant.variantId;
+                bool isSelected = provider.isServiceSelected(variant);
                 return ListTile(
                   title: Text(variant.variantName),
                   subtitle: Text(
-                    "${variant.price} VND - ${variant.duration} phút",
+                    "${NumberFormat("#,###").format(variant.price)} VND - ${variant.duration} phút",
                   ),
-                  trailing: isSelected
-                      ? const Icon(Icons.check, color: Colors.blue)
-                      : null,
+                  trailing: Checkbox(
+                    value: isSelected,
+                    onChanged: (value) {
+                      provider.toggleService(service, variant);
+                    },
+                  ),
                   selected: isSelected,
-                  onTap: () => provider.setService(service, variant),
+                  onTap: () => provider.toggleService(service, variant),
                 );
               }).toList(),
             ),
@@ -123,10 +125,12 @@ class _StepServiceClinicState extends State<StepServiceClinic> {
             ),
             onPressed:
                 (provider.selectedClinic != null &&
-                    provider.selectedServiceVariant != null)
+                    provider.selectedServices.isNotEmpty)
                 ? provider.nextStep
                 : null,
-            child: const Text("Tiếp tục"),
+            child: Text(provider.selectedServices.isNotEmpty
+                ? "Tiếp tục (${provider.selectedServices.length} dịch vụ)"
+                : "Tiếp tục"),
           ),
         ],
       ),

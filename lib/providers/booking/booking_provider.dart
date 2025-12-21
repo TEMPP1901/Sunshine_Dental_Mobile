@@ -17,8 +17,11 @@ class BookingProvider with ChangeNotifier {
   double bookingFee = 500000;
 
   BookingClinic? selectedClinic;
-  BookingServiceVariant? selectedServiceVariant;
-  BookingService? selectedServiceParent;
+  BookingServiceVariant? selectedServiceVariant; // Giữ lại để tương thích với code cũ
+  BookingService? selectedServiceParent; // Giữ lại để tương thích với code cũ
+  
+  // Danh sách dịch vụ đã chọn (hỗ trợ chọn nhiều dịch vụ)
+  List<BookingServiceVariant> selectedServices = [];
 
   BookingDoctor? selectedDoctor; // Chỉ VIP
 
@@ -45,7 +48,42 @@ class BookingProvider with ChangeNotifier {
   void setService(BookingService parent, BookingServiceVariant variant) {
     selectedServiceParent = parent;
     selectedServiceVariant = variant;
+    // Thêm vào danh sách nếu chưa có
+    if (!selectedServices.any((s) => s.variantId == variant.variantId)) {
+      selectedServices.add(variant);
+    }
     notifyListeners();
+  }
+  
+  // Toggle dịch vụ (thêm/xóa khỏi danh sách)
+  void toggleService(BookingService parent, BookingServiceVariant variant) {
+    final existingIndex = selectedServices.indexWhere((s) => s.variantId == variant.variantId);
+    
+    if (existingIndex >= 0) {
+      // Xóa nếu đã có
+      selectedServices.removeAt(existingIndex);
+      // Nếu xóa dịch vụ cuối cùng, cập nhật selectedServiceVariant
+      if (selectedServices.isEmpty) {
+        selectedServiceVariant = null;
+        selectedServiceParent = null;
+      } else {
+        // Giữ selectedServiceVariant là dịch vụ đầu tiên
+        selectedServiceVariant = selectedServices.first;
+        selectedServiceParent = parent;
+      }
+    } else {
+      // Thêm mới
+      selectedServices.add(variant);
+      // Cập nhật selectedServiceVariant và selectedServiceParent
+      selectedServiceVariant = variant;
+      selectedServiceParent = parent;
+    }
+    notifyListeners();
+  }
+  
+  // Kiểm tra dịch vụ có được chọn không
+  bool isServiceSelected(BookingServiceVariant variant) {
+    return selectedServices.any((s) => s.variantId == variant.variantId);
   }
 
   // Bước 2 (VIP): Chọn Doctor
@@ -83,12 +121,35 @@ class BookingProvider with ChangeNotifier {
 
   // --- API CALLS ---
 
-  // Lấy danh sách bác sĩ (VIP)
+  // Lấy danh sách bác sĩ (VIP) - hỗ trợ nhiều dịch vụ
   Future<List<BookingDoctor>> fetchDoctors() async {
-    if (selectedClinic == null || selectedServiceParent == null) return [];
+    if (selectedClinic == null || selectedServices.isEmpty) return [];
+    
+    // Lấy danh sách categories từ parent service của các dịch vụ đã chọn
+    // Cần tìm parent service cho mỗi variant
+    final categories = <String>{};
+    
+    // Load lại services để tìm parent
+    final allServices = await _apiService.getServices();
+    for (var variant in selectedServices) {
+      for (var service in allServices) {
+        if (service.variants.any((v) => v.variantId == variant.variantId)) {
+          if (service.category.isNotEmpty) {
+            categories.add(service.category);
+          }
+          break;
+        }
+      }
+    }
+    
+    if (categories.isEmpty) return [];
+    
+    // Gửi categories dưới dạng chuỗi phân cách bằng dấu phẩy
+    final specialtyParam = categories.join(',');
+    
     return await _apiService.getDoctors(
       selectedClinic!.id,
-      selectedServiceParent!.category,
+      specialtyParam,
     );
   }
 
@@ -150,9 +211,10 @@ class BookingProvider with ChangeNotifier {
         "status": (appointmentType == 'VIP') ? "AWAITING_PAYMENT" : "PENDING",
         "channel": "Mobile App", // Set channel để phân biệt booking từ mobile
         "note": "Booking via Mobile App ($appointmentType)",
-        "services": [
-          {"serviceId": selectedServiceVariant!.variantId, "quantity": 1},
-        ],
+        "services": selectedServices.map((s) => {
+          "serviceId": s.variantId,
+          "quantity": 1,
+        }).toList(),
       };
 
       final response = await _apiService.createAppointment(payload);
@@ -171,6 +233,8 @@ class BookingProvider with ChangeNotifier {
     currentStep = 0;
     selectedClinic = null;
     selectedServiceVariant = null;
+    selectedServiceParent = null;
+    selectedServices.clear();
     selectedDoctor = null;
     selectedDate = null;
     selectedTime = null;
@@ -207,6 +271,10 @@ class BookingProvider with ChangeNotifier {
             if (variant.variantId == serviceId) {
               selectedServiceParent = service;
               selectedServiceVariant = variant;
+              // Thêm vào danh sách dịch vụ
+              if (!selectedServices.any((s) => s.variantId == variant.variantId)) {
+                selectedServices.add(variant);
+              }
 
               // 🚀 NHẢY CÓC: Đến thẳng bước chọn ngày (Step 2)
               currentStep = 2;

@@ -51,6 +51,9 @@ import '../screens/hr/pending_explanations_page.dart';
 import '../screens/patient/dashboard/patient_dashboard_screen.dart';
 import '../screens/patient/appointments/my_appointments_screen.dart';
 
+// --- Booking ---
+import '../screens/booking/booking_screen.dart';
+
 final appRouter = GoRouter(
   initialLocation: '/',
   routes: [
@@ -204,6 +207,14 @@ final appRouter = GoRouter(
         context,
         state,
         const MyAppointmentsScreen(),
+      ),
+    ),
+    GoRoute(
+      path: '/booking',
+      pageBuilder: (context, state) => _buildPageWithTransition(
+        context,
+        state,
+        const BookingScreen(),
       ),
     ),
     GoRoute(

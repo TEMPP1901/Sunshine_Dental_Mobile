@@ -24,7 +24,35 @@ class StepSummary extends StatelessWidget {
 
           _buildInfoRow("Loại lịch", provider.appointmentType),
           _buildInfoRow("Cơ sở", provider.selectedClinic?.clinicName),
-          _buildInfoRow("Dịch vụ", provider.selectedServiceVariant?.variantName),
+          
+          // Hiển thị danh sách dịch vụ đã chọn
+          if (provider.selectedServices.isNotEmpty) ...[
+            const SizedBox(height: 8),
+            const Text("Dịch vụ đã chọn:", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+            const SizedBox(height: 8),
+            ...provider.selectedServices.map((service) => Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(width: 20, child: Text("•", style: TextStyle(color: Colors.blue, fontSize: 18))),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(service.variantName, style: const TextStyle(fontWeight: FontWeight.w500)),
+                        Text(
+                          "${NumberFormat("#,###").format(service.price)} VND - ${service.duration} phút",
+                          style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            )),
+          ] else
+            _buildInfoRow("Dịch vụ", "Chưa chọn"),
 
           if (provider.appointmentType == 'VIP')
             _buildInfoRow("Bác sĩ", provider.selectedDoctor?.fullName),

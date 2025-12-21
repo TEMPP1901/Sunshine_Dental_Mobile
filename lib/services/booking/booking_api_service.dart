@@ -4,11 +4,14 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart'; // Đảm bảo đã thêm vào pubspec.yaml
 import '../../models/booking/booking_models.dart';
+import '../api_service.dart';
 
 class BookingApiService {
-  // Thay đổi URL này cho đúng với IP máy tính chạy Backend (không dùng localhost nếu chạy máy ảo)
-  // Ví dụ: http://10.0.2.2:8080 (Android Emulator) hoặc IP LAN
-  static const String baseUrl = 'http://10.0.2.2:8080/api';
+  // Sử dụng cùng logic resolve baseUrl như ApiService để tự động detect platform
+  static String get baseUrl {
+    // Lấy baseUrl từ ApiService và thêm /api
+    return '${ApiService.baseUrl}/api';
+  }
 
   Future<String?> _getToken() async {
     final prefs = await SharedPreferences.getInstance();

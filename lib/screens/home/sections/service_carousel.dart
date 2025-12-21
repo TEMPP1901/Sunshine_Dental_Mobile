@@ -72,8 +72,7 @@ class ServiceCarousel extends StatelessWidget {
               child: InkWell(
                 borderRadius: BorderRadius.circular(20),
                 onTap: () {
-                  context.push('/products');
-                  Fluttertoast.showToast(msg: "Đã chọn: ${s['name']}");
+                  context.push('/booking');
                 },
                 child: Padding(
                   padding: const EdgeInsets.all(12.0),

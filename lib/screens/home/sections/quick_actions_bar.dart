@@ -20,51 +20,41 @@ class QuickActionsBar extends StatelessWidget {
     final String location = GoRouterState.of(context).uri.toString();
 
     final icons = [
-      Icons.home_rounded,
-      Icons.storefront_rounded, // [CỦA CHÚNG TA] 1. Thêm Icon Cửa hàng
-      if (isDoctor) Icons.calendar_today_rounded,
-      Icons.message_outlined,
-      Icons.history_rounded,
-      Icons.person_rounded,
+      Icons.storefront_rounded, // Store ở đầu
+      Icons.home_rounded, // Home ở giữa
+      if (isDoctor) Icons.calendar_today_rounded, // Schedule (nếu có)
+      Icons.person_rounded, // Profile ở cuối
     ];
 
     final labels = [
-      'home.nav.home',
-      'Store', // [CỦA CHÚNG TA] 2. Tên hiển thị Store
-      if (isDoctor) 'home.nav.schedule',
-      'home.nav.chat',
-      'home.nav.history',
-      'home.nav.profile',
+      'Store', // Store ở đầu
+      'home.nav.home', // Home ở giữa
+      if (isDoctor) 'home.nav.schedule', // Schedule (nếu có)
+      'home.nav.profile', // Profile ở cuối
     ];
 
     final routes = [
-      '/home',
-      '/products', // [CỦA CHÚNG TA] 3. Đường dẫn Store
-      if (isDoctor) '/schedule',
-      '/chat',
-      '/history',
-      '/profile',
+      '/products', // Store ở đầu
+      '/home', // Home ở giữa
+      if (isDoctor) '/schedule', // Schedule (nếu có)
+      '/profile', // Profile ở cuối
     ];
 
     // [CỦA CHÚNG TA] Logic xác định currentIndex dựa trên đường dẫn
-    int currentIndex = 0; // Mặc định là Home
+    int currentIndex = 1; // Mặc định là Home (index 1)
 
     // Nếu đường dẫn chứa /products (Ví dụ: /products hoặc /products/123) thì active tab Store
     if (location.startsWith('/products')) {
+      currentIndex = 0;
+    }
+    else if (location.startsWith('/home')) {
       currentIndex = 1;
     }
     else if (location.startsWith('/schedule') && isDoctor) {
       currentIndex = 2;
     }
-    // Các logic khác (Chat, History...)
-    else if (location.startsWith('/chat')) {
-      currentIndex = isDoctor ? 3 : 2;
-    }
-    else if (location.startsWith('/history')) {
-      currentIndex = isDoctor ? 4 : 3;
-    }
     else if (location.startsWith('/profile') || location.startsWith('/my-account')) {
-      currentIndex = isDoctor ? 5 : 4;
+      currentIndex = isDoctor ? 3 : 2;
     }
 
     return Card(
@@ -77,35 +67,23 @@ class QuickActionsBar extends StatelessWidget {
           children: List.generate(icons.length, (index) {
             final isActive = index == currentIndex;
 
-            // Logic cũ: Chat là primary action (nút to hơn)
-            final chatIndex = isDoctor ? 2 : 1;
-            // [CỦA CHÚNG TA] Store (index 1) cũng nên to một chút nếu muốn nhấn mạnh, hoặc giữ nguyên logic cũ
-            final isPrimaryAction = index == chatIndex;
+            // Không có primary action nữa
+            final isPrimaryAction = false;
 
             return GestureDetector(
               onTap: () {
-                // [CỦA CHÚNG TA] Thêm check route '/products' để không báo Coming soon
-                if (routes[index] != '/home' &&
-                    routes[index] != '/profile' &&
-                    routes[index] != '/schedule' &&
-                    routes[index] != '/products') {
-                  Fluttertoast.showToast(
-                    msg: '${labels[index].tr()} is coming soon',
-                  );
-                } else {
-                  // [CỦA CHÚNG TA] Dùng push cho Products để giữ nút Back, còn lại dùng go
-                  if (routes[index] == '/products') {
-                    context.push('/products');
-                  }
-                  else if (routes[index] == '/home') {
-                    context.go('/home');
-                  }
-                  else if (routes[index] == '/profile') {
-                    context.push('/profile');
-                  }
-                  else {
-                    context.go(routes[index]);
-                  }
+                // [CỦA CHÚNG TA] Dùng push cho Products để giữ nút Back, còn lại dùng go
+                if (routes[index] == '/products') {
+                  context.push('/products');
+                }
+                else if (routes[index] == '/home') {
+                  context.go('/home');
+                }
+                else if (routes[index] == '/profile') {
+                  context.push('/profile');
+                }
+                else {
+                  context.go(routes[index]);
                 }
               },
               child: Column(

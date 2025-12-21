@@ -27,7 +27,6 @@ class _ProfilePageState extends State<ProfilePage> {
     'DOCTOR',
     'RECEPTION',
     'ACCOUNTANT',
-    'ADMIN',
   };
   static const _attendanceForbidden = {'PATIENT', 'USER'};
   static const _staffRoles = {
@@ -114,8 +113,9 @@ class _ProfilePageState extends State<ProfilePage> {
   bool get _canCheckAttendance {
     final roles = _extractRoles(_user?['roles']);
     if (roles.isEmpty) return false;
-    if (roles.any((r) => _attendanceForbidden.contains(r)) &&
-        !roles.contains('ADMIN')) {
+    // Ẩn card attendance nếu user là ADMIN
+    if (roles.contains('ADMIN')) return false;
+    if (roles.any((r) => _attendanceForbidden.contains(r))) {
       if (roles.any((r) => _attendanceRoles.contains(r))) return true;
       return false;
     }

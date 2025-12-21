@@ -140,20 +140,28 @@ class _UpcomingAppointmentCardState extends State<UpcomingAppointmentCard> {
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(12),
-                  child: Image.network(
-                    // [FIX] Dùng trường doctorAvatar thay vì lấy từ object doctor lồng nhau
-                    ApiService.resolveUrl(_appointment!.doctorAvatar ?? ''),
-                    height: 48,
-                    width: 48,
-                    fit: BoxFit.cover,
-                    headers: ApiService.authHeaders(),
-                    errorBuilder: (context, error, stackTrace) => Container(
-                      height: 48,
-                      width: 48,
-                      color: Colors.white24,
-                      child: const Icon(Icons.person, color: Colors.white),
-                    ),
-                  ),
+                  child: _appointment!.doctorAvatar != null && 
+                         _appointment!.doctorAvatar!.isNotEmpty &&
+                         ApiService.resolveUrl(_appointment!.doctorAvatar!).isNotEmpty
+                      ? Image.network(
+                          ApiService.resolveUrl(_appointment!.doctorAvatar!),
+                          height: 48,
+                          width: 48,
+                          fit: BoxFit.cover,
+                          headers: ApiService.authHeaders(),
+                          errorBuilder: (context, error, stackTrace) => Container(
+                            height: 48,
+                            width: 48,
+                            color: Colors.white24,
+                            child: const Icon(Icons.person, color: Colors.white),
+                          ),
+                        )
+                      : Container(
+                          height: 48,
+                          width: 48,
+                          color: Colors.white24,
+                          child: const Icon(Icons.person, color: Colors.white),
+                        ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(

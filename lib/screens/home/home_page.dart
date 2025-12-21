@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:go_router/go_router.dart';
 
 // Import màn hình AI Chat (theo cấu trúc folder mới)
 import '../ai_chat/ai_chat_screen.dart';
@@ -80,8 +81,7 @@ class HomePage extends StatelessWidget {
                     // 4. Services
                     SectionTitle(
                       title: 'home.section.services'.tr(),
-                      onSeeAll: () =>
-                          Fluttertoast.showToast(msg: 'Navigating to Services'),
+                      onSeeAll: () => GoRouter.of(context).push('/booking'),
                     ),
                     const SizedBox(height: 16),
                     const ServiceCarousel(),
