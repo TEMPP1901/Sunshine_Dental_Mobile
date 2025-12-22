@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:easy_localization/easy_localization.dart'; // Import i18n
+import 'package:easy_localization/easy_localization.dart';
 import '../../../../models/patient/patient_models.dart';
 import '../../../../services/patient/patient_service.dart';
 import '../appointments/widgets/appointment_card.dart';
 import 'widgets/rank_card.dart';
 import 'widgets/wellness_card.dart';
+import 'widgets/rank_benefits_sheet.dart'; // <--- IMPORT WIDGET MỚI
 
 class PatientDashboardScreen extends StatefulWidget {
   const PatientDashboardScreen({super.key});
@@ -35,33 +36,45 @@ class _PatientDashboardScreenState extends State<PatientDashboardScreen> {
     }
   }
 
-  // Helper để lấy thông tin giảm giá
+  // Helper giảm giá (Giữ lại để tô màu Badge bên ngoài)
   Map<String, dynamic>? _getDiscountInfo(String tier) {
     switch (tier) {
       case 'DIAMOND':
         return {
           'pct': 15,
-          'color': const Color(0xFF9333EA), // Purple
+          'color': const Color(0xFF9333EA),
           'bgColor': const Color(0xFFF3E8FF),
           'borderColor': const Color(0xFFD8B4FE),
         };
       case 'GOLD':
         return {
           'pct': 10,
-          'color': const Color(0xFFA16207), // Yellow/Brown
+          'color': const Color(0xFFA16207),
           'bgColor': const Color(0xFFFEF9C3),
           'borderColor': const Color(0xFFFEF08A),
         };
       case 'SILVER':
         return {
           'pct': 5,
-          'color': const Color(0xFF374151), // Gray
+          'color': const Color(0xFF374151),
           'bgColor': const Color(0xFFF3F4F6),
           'borderColor': const Color(0xFFE5E7EB),
         };
       default:
         return null;
     }
+  }
+
+  // Hàm gọi Modal đã được rút gọn
+  void _showRankBenefits(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      backgroundColor: Colors.white,
+      builder: (ctx) => const RankBenefitsSheet(), // <--- GỌI WIDGET Ở ĐÂY
+    );
   }
 
   @override
@@ -107,9 +120,26 @@ class _PatientDashboardScreenState extends State<PatientDashboardScreen> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        RankCard(data: _data!),
+                        Stack(
+                          children: [
+                            RankCard(data: _data!),
+                            // Icon Info
+                            Positioned(
+                              top: 10,
+                              right: 10,
+                              child: IconButton(
+                                icon: const Icon(
+                                  Icons.info_outline,
+                                  color: Colors.white70,
+                                ),
+                                onPressed: () => _showRankBenefits(context),
+                                tooltip: "Xem quyền lợi",
+                              ),
+                            ),
+                          ],
+                        ),
 
-                        // Hiển thị ưu đãi giảm giá
+                        // Discount Badge
                         Builder(
                           builder: (context) {
                             final discount = _getDiscountInfo(
@@ -118,39 +148,48 @@ class _PatientDashboardScreenState extends State<PatientDashboardScreen> {
                             if (discount == null) {
                               return const SizedBox.shrink();
                             }
-                            return Container(
-                              margin: const EdgeInsets.only(top: 12),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 8,
-                              ),
-                              decoration: BoxDecoration(
-                                color: discount['bgColor'],
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(
-                                  color: discount['borderColor'],
+                            return GestureDetector(
+                              onTap: () => _showRankBenefits(context),
+                              child: Container(
+                                margin: const EdgeInsets.only(top: 12),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 8,
                                 ),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  const Text(
-                                    "🎁 ",
-                                    style: TextStyle(fontSize: 16),
+                                decoration: BoxDecoration(
+                                  color: discount['bgColor'],
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(
+                                    color: discount['borderColor'],
                                   ),
-                                  Text(
-                                    'dashboard.discount'.tr(
-                                      namedArgs: {
-                                        'percent': discount['pct'].toString(),
-                                      },
-                                    ), // "Ưu đãi thành viên..."
-                                    style: TextStyle(
-                                      color: discount['color'],
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 13,
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const Text(
+                                      "🎁 ",
+                                      style: TextStyle(fontSize: 16),
                                     ),
-                                  ),
-                                ],
+                                    Text(
+                                      'dashboard.discount'.tr(
+                                        namedArgs: {
+                                          'percent': discount['pct'].toString(),
+                                        },
+                                      ),
+                                      style: TextStyle(
+                                        color: discount['color'],
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Icon(
+                                      Icons.help_outline,
+                                      size: 14,
+                                      color: discount['color'].withOpacity(0.5),
+                                    ),
+                                  ],
+                                ),
                               ),
                             );
                           },

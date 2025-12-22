@@ -1,0 +1,11 @@
+{
+  "title": "QUYỀN LỢI THÀNH VIÊN",
+  "note": "* Áp dụng trên tổng hóa đơn dịch vụ",
+  "ranks": {
+    "member": "Thành viên",
+    "silver": "Bạc",
+    "gold": "Vàng",
+    "diamond": "Kim Cương"
+  }
+}
+

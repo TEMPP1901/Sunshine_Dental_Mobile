@@ -1,0 +1,11 @@
+{
+  "title": "MEMBER BENEFITS",
+  "note": "* Applied to total service bill",
+  "ranks": {
+    "member": "Member",
+    "silver": "Silver",
+    "gold": "Gold",
+    "diamond": "Diamond"
+  }
+}
+

@@ -11,7 +11,7 @@ class ApiService {
   // === CẤU HÌNH IP CHO MÁY THỰC ===
   // Thay đổi IP này theo IP Wi-Fi của máy chạy backend (kiểm tra bằng ipconfig trên Windows)
   // Ví dụ: Nếu IP Wi-Fi là 192.168.1.122 thì set: '192.168.1.122'
-  static const String _realDeviceIp = '192.168.1.5';
+  static const String _realDeviceIp = '192.168.1.27';
   static const int _serverPort = 8080;
 
   // Chọn chế độ: 'emulator' hoặc 'real_device'

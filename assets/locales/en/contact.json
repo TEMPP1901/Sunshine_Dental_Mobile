@@ -22,6 +22,7 @@
   "form": {
     "name": "Name",
     "email": "Email",
+    "subject": "Subject",
     "message": "Message",
     "sendMessage": "Send Message"
   }

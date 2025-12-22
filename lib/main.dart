@@ -93,7 +93,8 @@ class MultiAssetLoader extends AssetLoader {
       'dashboard', // Mới thêm
       'records', // Mới thêm
       'appointments', // Mới thêm
-      'profilePatient', // Mới thêm (fix lỗi profile)
+      'patientProfile', // Mới thêm (fix lỗi profile)
+      'benefits', // Mới thêm - quyền lợi thành viên
     ];
 
     // Sử dụng Future.wait để tải tất cả file cùng lúc
