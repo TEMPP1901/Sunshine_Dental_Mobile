@@ -100,8 +100,8 @@
     "approved": "Approved",
     "rejected": "Rejected",
     "noPendingRequests": "No pending requests",
-    "code": "Code: {code}",
-    "requestedAt": "Requested: {date}"
+    "code": "Code: {}",
+    "requestedAt": "Requested: {}"
   },
   "approvedLeaves": {
     "title": "Leave Requests to Process",

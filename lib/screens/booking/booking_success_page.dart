@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../providers/booking/booking_provider.dart';
 
@@ -40,7 +41,8 @@ class _BookingSuccessPageState extends State<BookingSuccessPage> with SingleTick
   void _startTimer() {
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_countdown == 0) {
-        _navigateToHome();
+        // Tự động đi đến màn hình xem lịch hẹn thay vì về home
+        _navigateToMyAppointments();
       } else {
         setState(() {
           _countdown--;
@@ -51,8 +53,18 @@ class _BookingSuccessPageState extends State<BookingSuccessPage> with SingleTick
 
   void _navigateToHome() {
     _timer?.cancel();
-    // Quay về màn hình đầu tiên (Home) trong Stack
-    Navigator.of(context).popUntil((route) => route.isFirst);
+    // Quay về trang chủ sử dụng GoRouter
+    if (mounted) {
+      context.go('/home');
+    }
+  }
+
+  void _navigateToMyAppointments() {
+    _timer?.cancel();
+    // Đi đến màn hình xem lịch hẹn của tôi
+    if (mounted) {
+      context.go('/my-appointments');
+    }
   }
 
   @override
@@ -116,10 +128,11 @@ class _BookingSuccessPageState extends State<BookingSuccessPage> with SingleTick
             const Spacer(),
 
             // --- BUTTONS ---
+            // Nút xem lịch hẹn (chính)
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: _navigateToHome,
+                onPressed: _navigateToMyAppointments,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue.shade600,
                   foregroundColor: Colors.white,
@@ -130,8 +143,30 @@ class _BookingSuccessPageState extends State<BookingSuccessPage> with SingleTick
                   elevation: 2,
                 ),
                 child: const Text(
-                  "Về trang chủ",
+                  "Xem lịch hẹn của tôi",
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 12),
+
+            // Nút về trang chủ (phụ)
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton(
+                onPressed: _navigateToHome,
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: Colors.blue.shade600,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  side: BorderSide(color: Colors.blue.shade600, width: 2),
+                ),
+                child: const Text(
+                  "Về trang chủ",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                 ),
               ),
             ),
@@ -140,7 +175,7 @@ class _BookingSuccessPageState extends State<BookingSuccessPage> with SingleTick
 
             // --- COUNTDOWN TEXT ---
             Text(
-              "Tự động chuyển hướng sau $_countdown giây...",
+              "Tự động chuyển đến lịch hẹn sau $_countdown giây...",
               style: TextStyle(color: Colors.grey.shade400, fontSize: 13),
             ),
 

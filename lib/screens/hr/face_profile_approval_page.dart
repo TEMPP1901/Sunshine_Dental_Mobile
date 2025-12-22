@@ -1,4 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
@@ -174,9 +175,62 @@ class FaceProfileCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                CircleAvatar(
-                  radius: 28,
-                  backgroundImage: ApiService.resolveAvatarImage(item.newFaceImageUrl),
+                Builder(
+                  builder: (context) {
+                    // Resolve URL trước để log và debug
+                    final imageUrl = item.newFaceImageUrl;
+                    final resolvedUrl = imageUrl.isNotEmpty 
+                        ? ApiService.resolveUrl(imageUrl)
+                        : '';
+                    
+                    if (kDebugMode) {
+                      debugPrint('[FaceProfileCard] Image URL resolution:');
+                      debugPrint('  - Original URL: $imageUrl');
+                      debugPrint('  - Resolved URL: $resolvedUrl');
+                      debugPrint('  - Base URL: ${ApiService.baseUrl}');
+                    }
+                    
+                    // Sử dụng Container với ClipRRect và Image widget giống home page
+                    // để có error handling tốt hơn
+                    return ClipRRect(
+                      borderRadius: BorderRadius.circular(28),
+                      child: Container(
+                        width: 56,
+                        height: 56,
+                        color: Colors.grey[300],
+                        child: imageUrl.isNotEmpty
+                            ? Image(
+                                image: ApiService.resolveAvatarImage(
+                                  imageUrl,
+                                  defaultAsset: 'assets/images/doctor.png',
+                                ),
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) {
+                                  if (kDebugMode) {
+                                    debugPrint('[FaceProfileCard] Failed to load image:');
+                                    debugPrint('  - Original URL: $imageUrl');
+                                    debugPrint('  - Resolved URL: $resolvedUrl');
+                                    debugPrint('  - Error: $error');
+                                    debugPrint('  - StackTrace: $stackTrace');
+                                  }
+                                  return Container(
+                                    color: Colors.grey[300],
+                                    child: Icon(
+                                      Icons.person,
+                                      size: 32,
+                                      color: Colors.grey[600],
+                                    ),
+                                  );
+                                },
+                              )
+                            : Icon(
+                                Icons.person,
+                                size: 32,
+                                color: Colors.grey[600],
+                              ),
+                      ),
+                    );
+                  },
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -244,12 +298,22 @@ class FaceProfileRequest {
       requestedAt = DateTime.tryParse(requestedAtRaw);
     }
 
+    final newFaceImageUrl = map['newFaceImageUrl']?.toString() ?? '';
+    
+    // Debug: Log the image URL to see what backend is returning
+    debugPrint('[FaceProfileRequest] Parsing request:');
+    debugPrint('  - RequestId: ${map['requestId']}');
+    debugPrint('  - UserId: ${user?['id']}');
+    debugPrint('  - FullName: ${user?['fullName']}');
+    debugPrint('  - newFaceImageUrl: $newFaceImageUrl');
+    debugPrint('  - Raw map: $map');
+
     return FaceProfileRequest(
       requestId: int.parse(map['requestId']?.toString() ?? map['id']?.toString() ?? '0'),
       fullName: user?['fullName']?.toString() ?? 'N/A',
       email: user?['email']?.toString() ?? '',
       code: user?['code']?.toString() ?? '',
-      newFaceImageUrl: map['newFaceImageUrl']?.toString() ?? '',
+      newFaceImageUrl: newFaceImageUrl,
       requestedAt: requestedAt,
     );
   }

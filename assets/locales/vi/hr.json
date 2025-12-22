@@ -100,8 +100,8 @@
     "approved": "Đã duyệt",
     "rejected": "Đã từ chối",
     "noPendingRequests": "Không có yêu cầu nào đang chờ duyệt",
-    "code": "Mã: {code}",
-    "requestedAt": "Yêu cầu: {date}"
+    "code": "Mã: {}",
+    "requestedAt": "Yêu cầu: {}"
   },
   "approvedLeaves": {
     "title": "Đơn xin nghỉ cần xử lý",

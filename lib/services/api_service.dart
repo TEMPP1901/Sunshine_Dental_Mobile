@@ -197,11 +197,26 @@ class ApiService {
   }
 
   // Kiểm tra xem url có phải là link cloudinary (public, không cần đính kèm token)
+  // Cloudinary URL có thể có format:
+  // - https://res.cloudinary.com/{cloud_name}/image/upload/...
+  // - http://{host}/dchzko3lj/image/upload/... (relative path từ backend)
   static bool _isCloudinaryUrl(String url) {
     try {
       final uri = Uri.parse(url);
-      return uri.host.contains('cloudinary.com') ||
-          uri.host.contains('res.cloudinary.com');
+      // Check host
+      if (uri.host.contains('cloudinary.com') ||
+          uri.host.contains('res.cloudinary.com')) {
+        return true;
+      }
+      // Check path pattern: /{cloud_name}/image/upload/...
+      // Cloudinary path thường có pattern: /{cloud_name}/image/upload/...
+      final path = uri.path;
+      if (path.contains('/image/upload/') || path.contains('/image/fetch/')) {
+        // Đây có thể là Cloudinary URL đã bị resolve sai
+        // Hoặc là relative path từ backend
+        return true;
+      }
+      return false;
     } catch (e) {
       return false;
     }
@@ -225,20 +240,52 @@ class ApiService {
       return AssetImage(assetPath);
     }
 
+    // QUAN TRỌNG: Kiểm tra Cloudinary URL TRƯỚC khi resolve
+    // Vì Cloudinary URL không cần resolve và không cần headers
+    if (_isCloudinaryUrl(trimmed)) {
+      // Nếu là Cloudinary URL nhưng có localhost/IP, cần convert về đúng format
+      String cloudinaryUrl = trimmed;
+      try {
+        final uri = Uri.parse(trimmed);
+        // Nếu path có pattern Cloudinary nhưng host là localhost/IP
+        if (uri.path.contains('/image/upload/') || uri.path.contains('/image/fetch/')) {
+          // Extract cloud_name từ path (thường là phần đầu tiên sau /)
+          final pathParts = uri.path.split('/');
+          if (pathParts.length > 1 && pathParts[1].isNotEmpty) {
+            final cloudName = pathParts[1];
+            // Tìm vị trí /image/upload/ trong path
+            final imageUploadIndex = uri.path.indexOf('/image/');
+            if (imageUploadIndex > 0) {
+              final imagePath = uri.path.substring(imageUploadIndex);
+              // Build lại Cloudinary URL đúng format
+              cloudinaryUrl = 'https://res.cloudinary.com/$cloudName$imagePath';
+              if (uri.hasQuery) {
+                cloudinaryUrl += '?${uri.query}';
+              }
+              if (enableLogging) {
+                debugPrint(' [ApiService] Converted Cloudinary URL:');
+                debugPrint('   Original: $trimmed');
+                debugPrint('   Converted: $cloudinaryUrl');
+              }
+            }
+          }
+        }
+      } catch (e) {
+        if (enableLogging) {
+          debugPrint(' [ApiService] Error processing Cloudinary URL: $e');
+        }
+      }
+      
+      if (enableLogging) {
+        debugPrint(' [ApiService] Using Cloudinary URL (no headers): $cloudinaryUrl');
+      }
+      return NetworkImage(cloudinaryUrl);
+    }
+
     // QUAN TRỌNG: Luôn gọi resolveUrl trước để thay thế localhost bằng IP thực tế
     final resolvedUrl = resolveUrl(trimmed);
     if (resolvedUrl.isEmpty) {
       return AssetImage(defaultAsset);
-    }
-
-    // Kiểm tra cloudinary sau khi đã resolve
-    if (_isCloudinaryUrl(resolvedUrl)) {
-      if (enableLogging) {
-        debugPrint(
-          ' [ApiService] Using Cloudinary URL (no headers): $resolvedUrl',
-        );
-      }
-      return NetworkImage(resolvedUrl);
     }
 
     // URL từ server nội bộ, cần headers để xác thực
@@ -258,24 +305,38 @@ class ApiService {
       return '';
     }
 
+    // KHÔNG resolve Cloudinary URL - chúng đã được xử lý riêng
+    if (_isCloudinaryUrl(value)) {
+      return value;
+    }
+
     if (value.startsWith('http')) {
       try {
         final uri = Uri.parse(value);
-        // Nếu Backend trả về link ảnh là localhost, phải đổi sang IP máy ảo mới load được
-        if (uri.host == 'localhost' || uri.host == '127.0.0.1') {
-          // Thay host bằng host và scheme baseUrl thật
+        final baseHost = _baseUri.host;
+        
+        // Nếu host khác với baseUrl host (localhost, 127.0.0.1, hoặc IP khác), 
+        // thay thế bằng baseUrl host để đảm bảo app có thể kết nối được
+        if (uri.host != baseHost) {
+          // Thay host bằng host của baseUrl, giữ nguyên port nếu có
           final resolvedUri = uri.replace(
             scheme: _baseUri.scheme,
-            host: _baseUri.host,
-            port: _baseUri.hasPort
-                ? _baseUri.port
-                : (uri.hasPort ? uri.port : null),
+            host: baseHost,
+            port: _baseUri.hasPort ? _baseUri.port : (uri.hasPort ? uri.port : null),
           );
           final resolved = resolvedUri.toString();
           if (enableLogging) {
-            debugPrint(' [ApiService] Resolved URL: $value -> $resolved');
+            debugPrint(' [ApiService] Resolved URL (host mismatch):');
+            debugPrint('   Original: $value');
+            debugPrint('   Original host: ${uri.host}${uri.hasPort ? ':${uri.port}' : ''}');
+            debugPrint('   Base host: $baseHost${_baseUri.hasPort ? ':${_baseUri.port}' : ''}');
+            debugPrint('   Resolved: $resolved');
           }
           return resolved;
+        }
+        // URL đã có host đúng với baseUrl, giữ nguyên
+        if (enableLogging) {
+          debugPrint(' [ApiService] URL already has correct host: $value');
         }
         return value;
       } catch (e) {
@@ -290,7 +351,10 @@ class ApiService {
     final normalizedPath = value.startsWith('/') ? value : '/$value';
     final resolved = _baseUri.replace(path: normalizedPath).toString();
     if (enableLogging) {
-      debugPrint(' [ApiService] Resolved relative path: $value -> $resolved');
+      debugPrint(' [ApiService] Resolved relative path:');
+      debugPrint('   Original: $value');
+      debugPrint('   Resolved: $resolved');
+      debugPrint('   Base URI: $_baseUri');
     }
     return resolved;
   }
